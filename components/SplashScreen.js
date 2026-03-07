@@ -138,8 +138,8 @@ export default function SplashScreen({ onEnter }) {
           onError={() => setVideoFailed(true)}
           style={{
             position: "absolute", top: "50%", left: "50%",
-            width: "100vw", height: "100dvh",
-            minWidth: "100%", minHeight: "100%",
+            width: "140vw", height: "140dvh",
+            minWidth: "140%", minHeight: "140%",
             transform: "translate(-50%, -50%)",
             objectFit: "cover", zIndex: 1,
           }}
