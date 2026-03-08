@@ -1,6 +1,8 @@
+import { AuthProvider } from "../components/AuthContext";
+
 export const metadata = {
   title: "Symbiosis Vault",
-  description: "NFC Collectible Series â Jack & Jack",
+  description: "NFC Collectible Series — Jack & Jack",
   themeColor: "#0C0B0E",
   appleWebApp: {
     capable: true,
@@ -29,7 +31,9 @@ export default function RootLayout({ children }) {
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
       <body style={{ margin: 0, padding: 0, background: "#000", overscrollBehavior: "none" }}>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
