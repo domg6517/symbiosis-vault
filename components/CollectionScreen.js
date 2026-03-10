@@ -37,7 +37,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onPr
       <div style={{ padding: "18px 20px 0", zIndex: 1 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <div style={{ fontSize: 9, letterSpacing: 4, color: C.textDim, fontFamily: MONO }}>SYMBIOSIS VAULT</div>
+            <div style={{ fontSize: 9, letterSpacing: 4, color: C.textDim, fontFamily: MONO }}><img src="/vault-logo.png" style={{ width: 56, height: 56, borderRadius: 10, marginBottom: 6 }} alt="Vault" />{"SYMBIOSIS VAULT"}</div>
             <div style={{ fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 4, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Collection</div>
           </div>
           <div onClick={onProfile} style={{
@@ -105,7 +105,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onPr
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>G</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J&J</div>
-                <div style={{ flex: 1, textAlign: "left", paddingLeft: 8, fontSize: 8, color: C.textDim + "66" }}>DUPES →</div>
+                <div style={{ flex: 1, textAlign: "left", paddingLeft: 8, fontSize: 8, color: C.textDim + "66" }}>DUPES â</div>
               </div>
               <div style={{ width: 32, flexShrink: 0 }} />
             </div>
@@ -122,7 +122,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onPr
             <div style={{ margin: "16px 16px 20px", padding: "16px", ...skeuo.card, position: "relative", overflow: "hidden", textAlign: "center" }}>
               <div style={skeuo.gloss} />
               <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 3, color: completeSingles === 10 ? C.accent : C.textDim, position: "relative", zIndex: 1 }}>
-                {completeSingles === 10 ? "✦ ALL 10 SINGLES COMPLETE" : "COMPLETE ALL 10 SINGLES TO UNLOCK ULTIMATE REWARD"}
+                {completeSingles === 10 ? "â¦ ALL 10 SINGLES COMPLETE" : `${completeSingles} OF 10 COLLECTED`}
               </div>
               <div style={{ marginTop: 8, height: 4, ...skeuo.inset, overflow: "hidden", borderRadius: 4, position: "relative", zIndex: 1 }}>
                 <div style={{ width: `${(completeSingles / 10) * 100}%`, height: "100%", ...skeuo.btnGold, borderRadius: 4, transition: "width 0.5s ease" }} />
@@ -138,7 +138,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onPr
               padding: "14px 20px 10px",
               fontSize: 13, fontFamily: SANS, color: C.textSec, lineHeight: 1.5,
             }}>
-              Booster packs cover the rest of the album. Same rules — 3 perspectives per song, 70/30 common/rare split.
+              Booster packs cover the rest of the album. Same rules â 3 perspectives per song, 70/30 common/rare split.
             </div>
 
             <div style={{
@@ -150,7 +150,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onPr
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>G</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J&J</div>
-                <div style={{ flex: 1, textAlign: "left", paddingLeft: 8, fontSize: 8, color: C.textDim + "66" }}>DUPES →</div>
+                <div style={{ flex: 1, textAlign: "left", paddingLeft: 8, fontSize: 8, color: C.textDim + "66" }}>DUPES â</div>
               </div>
               <div style={{ width: 32, flexShrink: 0 }} />
             </div>
@@ -167,7 +167,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onPr
             <div style={{ margin: "16px 16px 20px", padding: "16px", ...skeuo.card, position: "relative", overflow: "hidden", textAlign: "center" }}>
               <div style={skeuo.gloss} />
               <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 3, color: C.textDim, position: "relative", zIndex: 1 }}>
-                COMPLETE ALL 22 BOOSTERS TO UNLOCK BONUS
+                {completeBoosters} OF 22 COLLECTED
               </div>
               <div style={{ marginTop: 8, height: 4, ...skeuo.inset, overflow: "hidden", borderRadius: 4, position: "relative", zIndex: 1 }}>
                 <div style={{ width: `${(completeBoosters / 22) * 100}%`, height: "100%", background: `linear-gradient(180deg, #8AAE98, #6B8E7B, #5A7D6A)`, boxShadow: "0 1px 0 rgba(255,255,255,0.2) inset", borderRadius: 4, transition: "width 0.5s ease" }} />
@@ -196,7 +196,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onPr
                 <span style={{ color: C.megaGold, fontFamily: MONO, fontWeight: 600 }}>{ownedUltraCount}</span> / 30 discovered
               </div>
               <div style={{ height: 4, width: 80, ...skeuo.inset, overflow: "hidden", borderRadius: 4, position: "relative", zIndex: 1 }}>
-                <div style={{ width: `${(ownedUltraCount / 30) * 100}%`, height: "100%", background: `linear-gradient(180deg, #E4BC4A, #D4A43A, #C49430)`, boxShadow: "0 1px 0 rgba(255,255,255,0.25) inset", borderRadius: 4 }} />
+                <div style={{ width: `${(ownedUltraCount / 30) * 100}%`, height: "100%", background: `linear-gradient(180deg, #E4BC4A, #C0C0CC, #C49430)`, boxShadow: "0 1px 0 rgba(255,255,255,0.25) inset", borderRadius: 4 }} />
               </div>
             </div>
 
@@ -249,7 +249,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onPr
         )}
       </div>
 
-      {/* Bottom Nav — raised dock */}
+      {/* Bottom Nav â raised dock */}
       <div style={{
         display: "flex", justifyContent: "space-around", alignItems: "center",
         padding: "6px 16px 22px",
