@@ -106,7 +106,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
             </div>
           </div>
 
-          {!scanning && (
+          {!scanning && (<>
           {!scanning && !found && !manualMode && (
             <div style={{ textAlign: "center", marginTop: 32 }}>
               <button onClick={startNfcScan} style={{
@@ -149,7 +149,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
               }}>LINK CARD</button>
             </div>
           )}
-          )}
+          </>)}
         </>
       ) : (
         <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
