@@ -1,4 +1,4 @@
-// ─── SONG DATA ─────────────────────────────
+// --- SONG DATA ---
 export const SINGLES = [
   { id: 1, title: "If This Isn't Love", num: "01" },
   { id: 2, title: "Hideaway", num: "02" },
@@ -10,6 +10,7 @@ export const SINGLES = [
   { id: 8, title: "Goodbye LA", num: "08" },
   { id: 9, title: "Wrong Mind", num: "09" },
   { id: 10, title: "Bulletproof", num: "10" },
+  { id: 33, title: "Test", num: "T1" },
 ];
 
 export const BOOSTERS = Array.from({ length: 22 }, (_, i) => ({
@@ -20,7 +21,7 @@ export const BOOSTERS = Array.from({ length: 22 }, (_, i) => ({
 
 export const PERSPECTIVES = ["Jack G", "Jack J", "J&J"];
 
-// ─── DEMO DATA ─────────────────────────────
+// --- DEMO DATA (fallback when Supabase not configured) ---
 export const generateOwnedCards = () => [
   { chipId: "NFC-S001", songId: 1, perspective: "Jack G", rarity: "common", linked: true, type: "single" },
   { chipId: "NFC-S002", songId: 1, perspective: "Jack G", rarity: "common", linked: true, type: "single" },
@@ -51,8 +52,8 @@ export const generateUltraRares = () => {
         id: `UR-${song.num}-${pi + 1}`,
         songId: song.id, songTitle: song.title, songNum: song.num,
         perspective: persp,
-        owned: (song.id === 1 && pi === 0) || (song.id === 3 && pi === 2),
-        linked: (song.id === 1 && pi === 0) || (song.id === 3 && pi === 2),
+        owned: false,
+        linked: false,
       });
     });
   });
