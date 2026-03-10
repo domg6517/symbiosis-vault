@@ -6,6 +6,7 @@ const AuthContext = createContext({});
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -17,6 +18,7 @@ export function AuthProvider({ children }) {
 
     // Check current session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) fetchProfile(session.user.id);
       setLoading(false);
@@ -25,6 +27,7 @@ export function AuthProvider({ children }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
+        setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
           fetchProfile(session.user.id);
@@ -69,6 +72,7 @@ export function AuthProvider({ children }) {
     if (!supabase) return;
     await supabase.auth.signOut();
     setUser(null);
+    setSession(null);
     setProfile(null);
   }
 
@@ -76,6 +80,7 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
+        session,
         profile,
         loading,
         signUp,
