@@ -10,8 +10,10 @@ export default function ScanScreen({ session, onBack, onScanned }) {
   const [cardResult, setCardResult] = useState(null);
   const [error, setError] = useState("");
   const [isSetComplete, setIsSetComplete] = useState(false);
+  const [nfcSupported] = useState(typeof window !== "undefined" && "NDEFReader" in window);
+  const [manualMode, setManualMode] = useState(false);
 
-  const startScan = async () => {
+  const linkCard = async () => {
     if (!chipId.trim()) {
       setError("Enter a chip ID");
       return;
@@ -48,6 +50,24 @@ export default function ScanScreen({ session, onBack, onScanned }) {
     }
   };
 
+  const startNfcScan = async () => {
+    if (!nfcSupported) { setManualMode(true); return; }
+    setScanning(true);
+    setError("");
+    try {
+      const ndef = new NDEFReader();
+      await ndef.scan();
+      ndef.addEventListener("reading", async ({ serialNumber }) => {
+        const nfcId = serialNumber.toUpperCase().replace(/-/g, ":");
+        setChipId(nfcId);
+        await linkCard(nfcId);
+      });
+    } catch (e) {
+      setManualMode(true);
+      setScanning(false);
+    }
+  };
+
   return (
     <div style={{
       height: "100%", display: "flex", flexDirection: "column",
@@ -74,6 +94,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
             {scanning && (<div style={{ position: "absolute", inset: -8, borderRadius: "50%", border: `1px solid ${C.accent}18`, animation: "scanPulse 1.5s ease-in-out infinite" }} />)}
             <NfcIcon size={36} color={scanning ? C.accent : C.textDim} />
           </div>
+            {!manualMode && !scanning && <div onClick={() => setManualMode(true)} style={{ marginTop: 16, color: C.textDim, fontSize: 13, cursor: "pointer", textDecoration: "underline" }}>Enter chip ID manually</div>}
 
           <div style={{ marginTop: 32, textAlign: "center", zIndex: 1 }}>
             <div style={{ fontSize: 18, fontWeight: 300, color: C.cream, fontFamily: SERIF, textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>
@@ -85,7 +106,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
           </div>
 
           {!scanning && (
-            <div style={{ marginTop: 32, width: "100%", maxWidth: 280, zIndex: 1 }}>
+            {manualMode && (<div style={{ marginTop: 32, width: "100%", maxWidth: 280, zIndex: 1 }}>
               <div style={{ ...skeuo.inset, padding: "2px", marginBottom: 12 }}>
                 <input
                   type="text"
@@ -113,8 +134,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
                 ...skeuo.btnGhost,
                 color: C.accent, fontSize: 10, fontFamily: MONO, letterSpacing: 4, cursor: "pointer",
               }}>LINK CARD</button>
-            </div>
-          )}
+            </div></div>)}     )}
         </>
       ) : (
         <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
