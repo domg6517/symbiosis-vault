@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
 "use client";
+import { useState, useRef } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { FilmGrain, Divider, ChevronLeft, MusicIcon } from "./Icons";
 import { SINGLES, BOOSTERS, PERSPECTIVES, generateUltraRares } from "./data";
