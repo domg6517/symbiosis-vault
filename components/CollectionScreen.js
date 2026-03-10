@@ -37,7 +37,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onPr
       <div style={{ padding: "18px 20px 0", zIndex: 1 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <div style={{ fontSize: 9, letterSpacing: 4, color: C.textDim, fontFamily: MONO }}><img src="/vault-logo.png" style={{ width: 56, height: 56, borderRadius: 10, marginBottom: 6 }} alt="Vault" />{"SYMBIOSIS VAULT"}</div>
+            <div style={{ fontSize: 9, letterSpacing: 4, color: C.textDim, fontFamily: MONO }}><img src="/vault-logo.png" style={{ width: 56, height: 56, borderRadius: 10, marginBottom: 6 }} alt="" />{"SYMBIOSIS VAULT"}</div>
             <div style={{ fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 4, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Collection</div>
           </div>
           <div onClick={onProfile} style={{
@@ -196,7 +196,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onPr
                 <span style={{ color: C.megaGold, fontFamily: MONO, fontWeight: 600 }}>{ownedUltraCount}</span> / 30 discovered
               </div>
               <div style={{ height: 4, width: 80, ...skeuo.inset, overflow: "hidden", borderRadius: 4, position: "relative", zIndex: 1 }}>
-                <div style={{ width: `${(ownedUltraCount / 30) * 100}%`, height: "100%", background: `linear-gradient(180deg, #E4BC4A, #C0C0CC, #C49430)`, boxShadow: "0 1px 0 rgba(255,255,255,0.25) inset", borderRadius: 4 }} />
+                <div style={{ width: `${(ownedUltraCount / 30) * 100}%`, height: "100%", background: `linear-gradient(180deg, #E4BC4A, #D4A43A, #C49430)`, boxShadow: "0 1px 0 rgba(255,255,255,0.25) inset", borderRadius: 4 }} />
               </div>
             </div>
 
