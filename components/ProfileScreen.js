@@ -1,3 +1,4 @@
+import { useState, useRef } from "react";
 "use client";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { FilmGrain, Divider, ChevronLeft, MusicIcon } from "./Icons";
@@ -7,6 +8,20 @@ const ULTRA_RARES = generateUltraRares();
 
 export default function ProfileScreen({ ownedCards, onBack }) {
   const linked = ownedCards.filter((c) => c.linked);
+  const [editingName, setEditingName] = useState(false);
+  const [displayName, setDisplayName] = useState("Collector");
+  const [profilePic, setProfilePic] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setProfilePic(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
   const singleCards = linked.filter((c) => c.type === "single");
   const boosterCards = linked.filter((c) => c.type === "booster");
   const completeSingles = SINGLES.filter((s) => new Set(singleCards.filter((c) => c.songId === s.id).map((c) => c.perspective)).size === 3).length;
@@ -22,14 +37,45 @@ export default function ProfileScreen({ ownedCards, onBack }) {
       </div>
 
       <div style={{ textAlign: "center", padding: "16px 22px 24px", zIndex: 1 }}>
-        <div style={{
-          width: 60, height: 60,
-          ...skeuo.card, borderRadius: "50%",
-          border: `1.5px solid ${C.accent}33`,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          margin: "0 auto", fontSize: 20, fontFamily: SERIF, fontStyle: "italic", color: C.accent,
-        }}>D</div>
-        <div style={{ fontSize: 20, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 14, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Collector</div>
+          <div onClick={() => fileInputRef.current?.click()} style={{
+            width: 70, height: 70,
+            ...skeuo.card, borderRadius: "50%",
+            border: `2px solid ${C.accent}55`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            margin: "0 auto", cursor: "pointer", position: "relative",
+            overflow: "hidden",
+            background: profilePic ? "none" : `linear-gradient(135deg, ${C.accent}22, ${C.accent}44)`,
+          }}>
+            {profilePic ? (
+              <img src={profilePic} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="Profile" />
+            ) : (
+              <span style={{ fontSize: 24, fontFamily: SERIF, color: C.accent }}>{displayName[0]}</span>
+            )}
+            <div style={{
+              position: "absolute", bottom: 0, right: 0, width: 22, height: 22,
+              borderRadius: "50%", background: C.accent, display: "flex",
+              alignItems: "center", justifyContent: "center", fontSize: 11, color: C.bg
+            }}>+</div>
+          </div>
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} style={{ display: "none" }} />
+          {editingName ? (
+            <input
+              autoFocus
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              onBlur={() => setEditingName(false)}
+              onKeyDown={(e) => e.key === "Enter" && setEditingName(false)}
+              style={{
+                fontSize: 20, fontWeight: 300, color: C.cream, fontFamily: SERIF,
+                background: "transparent", border: "none", borderBottom: `1px solid ${C.accent}`,
+                outline: "none", textAlign: "center", width: "60%", marginTop: 10,
+              }}
+            />
+          ) : (
+            <div onClick={() => setEditingName(true)} style={{ fontSize: 20, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 10, cursor: "pointer" }}>
+              {displayName} <span style={{ fontSize: 11, color: C.textDim }}>&#9998;</span>
+            </div>
+          )}
         <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 5 }}>MEMBER SINCE 2026</div>
       </div>
 
