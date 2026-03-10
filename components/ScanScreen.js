@@ -13,6 +13,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
   const [nfcSupported] = useState(typeof window !== "undefined" && "NDEFReader" in window);
   const [manualMode, setManualMode] = useState(false);
 
+
   const linkCard = async () => {
     if (!chipId.trim()) {
       setError("Enter a chip ID");
@@ -68,6 +69,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
     }
   };
 
+
   return (
     <div style={{
       height: "100%", display: "flex", flexDirection: "column",
@@ -81,7 +83,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
       {!found ? (
         <>
           <div style={{
-            width: 150, height: 150,
+            width: 150, height: 150, margin: "0 auto",
             ...(scanning ? skeuo.card : skeuo.inset),
             borderRadius: "50%",
             border: `1.5px solid ${scanning ? C.accent + "44" : C.textDim + "22"}`,
@@ -94,7 +96,6 @@ export default function ScanScreen({ session, onBack, onScanned }) {
             {scanning && (<div style={{ position: "absolute", inset: -8, borderRadius: "50%", border: `1px solid ${C.accent}18`, animation: "scanPulse 1.5s ease-in-out infinite" }} />)}
             <NfcIcon size={36} color={scanning ? C.accent : C.textDim} />
           </div>
-            {!manualMode && !scanning && <div onClick={() => setManualMode(true)} style={{ marginTop: 16, color: C.textDim, fontSize: 13, cursor: "pointer", textDecoration: "underline" }}>Enter chip ID manually</div>}
 
           <div style={{ marginTop: 32, textAlign: "center", zIndex: 1 }}>
             <div style={{ fontSize: 18, fontWeight: 300, color: C.cream, fontFamily: SERIF, textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>
@@ -106,7 +107,19 @@ export default function ScanScreen({ session, onBack, onScanned }) {
           </div>
 
           {!scanning && (
-            {manualMode && (<div style={{ marginTop: 32, width: "100%", maxWidth: 280, zIndex: 1 }}>
+          {!scanning && !found && !manualMode && (
+            <div style={{ textAlign: "center", marginTop: 32 }}>
+              <button onClick={startNfcScan} style={{
+                ...skeuo.btnGhost,
+                color: C.accent, fontSize: 11, fontFamily: MONO, letterSpacing: 3, cursor: "pointer",
+                padding: "14px 32px",
+              }}>SCAN CARD</button>
+              <div onClick={() => setManualMode(true)} style={{ marginTop: 12, color: C.textDim, fontSize: 11, cursor: "pointer" }}>or enter chip ID manually</div>
+            </div>
+          )}
+
+          {manualMode && (
+            <div style={{ marginTop: 32, width: "100%", maxWidth: 280, zIndex: 1 }}>
               <div style={{ ...skeuo.inset, padding: "2px", marginBottom: 12 }}>
                 <input
                   type="text"
@@ -129,12 +142,14 @@ export default function ScanScreen({ session, onBack, onScanned }) {
                 }}>{error}</div>
               )}
 
-              <button onClick={startScan} style={{
+              <button onClick={() => linkCard(chipId)} style={{
                 width: "100%", padding: "13px 0",
                 ...skeuo.btnGhost,
                 color: C.accent, fontSize: 10, fontFamily: MONO, letterSpacing: 4, cursor: "pointer",
               }}>LINK CARD</button>
-            </div></div>)}     )}
+            </div>
+          )}
+          )}
         </>
       ) : (
         <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
