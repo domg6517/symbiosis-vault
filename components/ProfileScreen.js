@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { FilmGrain, Divider, ChevronLeft, MusicIcon } from "./Icons";
 import { SINGLES, BOOSTERS, PERSPECTIVES, generateUltraRares } from "./data";
+import { supabase } from "../lib/supabase";
 
 const ULTRA_RARES = generateUltraRares();
 
@@ -93,7 +94,7 @@ export default function ProfileScreen({ ownedCards, onBack }) {
       <div style={{ padding: "24px 22px 36px", zIndex: 1 }}>
         <Divider style={{ marginBottom: 20 }} />
         {["Notifications", "Trade Offers", "Help & Support", "Sign Out"].map((item) => (
-          <div key={item} style={{
+          <div key={item} onClick={() => { if (item === "Sign Out") { supabase.auth.signOut(); window.location.reload(); } else { alert(item + " — coming soon!"); } }} style={{ cursor: "pointer",
             padding: "13px 14px", marginBottom: 6,
             ...skeuo.card,
             fontSize: 14, fontFamily: SANS, position: "relative", overflow: "hidden",
