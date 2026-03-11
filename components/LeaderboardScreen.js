@@ -30,7 +30,7 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer", fontSize: 18,
           }}
-        >\u2190</div>
+        >←</div>
         <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700 }}>Leaderboard</div>
       </div>
 
@@ -90,13 +90,13 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
                   fontFamily: MONO, fontSize: 11, color: C.textDim,
                   marginTop: 3, letterSpacing: 1,
                 }}>
-                  {entry.totalCards} CARD{entry.totalCards !== 1 ? "S" : ""} \u00B7{" "}
+                  {entry.totalCards} CARD{entry.totalCards !== 1 ? "S" : ""} ·{" "}
                   {entry.uniqueSongs} SONG{entry.uniqueSongs !== 1 ? "S" : ""}
                 </div>
               </div>
 
               {/* Arrow */}
-              <div style={{ fontSize: 16, color: C.textDim }}>\u203A</div>
+              <div style={{ fontSize: 16, color: C.textDim }}>›</div>
             </div>
           ))}
         </div>
