@@ -214,47 +214,129 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
       </div>
 
       {showInstall && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.9)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, backdropFilter: "blur(12px)" }} onClick={() => setShowInstall(false)}>
-          <div onClick={(e) => e.stopPropagation()} style={{ ...skeuo, borderRadius: 20, padding: "28px 24px", maxWidth: 340, width: "100%", maxHeight: "80vh", overflow: "auto", border: "1px solid " + C.accent + "33", boxShadow: "0 0 40px rgba(0,0,0,0.5), 0 0 80px " + C.accent + "11, inset 0 1px 0 rgba(255,255,255,0.06)" }}>
-            <div onClick={() => setShowInstall(false)} style={{ ...skeuo, width: 34, height: 34, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", border: "1px solid " + C.accent + "22", marginBottom: 16 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, backdropFilter: "blur(14px)" }} onClick={() => setShowInstall(false)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ ...skeuo, borderRadius: 22, padding: "24px 20px", maxWidth: 360, width: "100%", maxHeight: "85vh", overflow: "auto", border: "1px solid " + C.accent + "33", boxShadow: "0 0 60px rgba(0,0,0,0.6), 0 0 100px " + C.accent + "0d, inset 0 1px 0 rgba(255,255,255,0.06)" }}>
+
+            {/* Back arrow */}
+            <div onClick={() => setShowInstall(false)} style={{ ...skeuo, width: 34, height: 34, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", border: "1px solid " + C.accent + "22", marginBottom: 12 }}>
               <span style={{ fontSize: 16, color: C.accent }}>{"\u2190"}</span>
             </div>
-            <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700, marginBottom: 4, textAlign: "center", color: C.cream, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Install Symbiosis Vault</div>
-            <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, textAlign: "center", marginBottom: 20 }}>Add to your home screen for the full experience</div>
-            <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.accent, marginBottom: 12, borderBottom: "1px solid " + C.accent + "22", paddingBottom: 8 }}>iPHONE / iPAD</div>
-            {[
-              { step: "1", text: "Tap the Share button", detail: "Bottom toolbar in Safari", icon: "\u{1F4E4}" },
-              { step: "2", text: "Scroll and tap 'Add to Home Screen'", detail: "With the + icon", icon: "\u{2795}" },
-              { step: "3", text: "Tap 'Add'", detail: "App icon appears on home screen", icon: "\u{2705}" },
-            ].map((s, i) => (
-              <div key={"ios"+i} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10, padding: "10px 12px", ...skeuo, borderRadius: 12, animation: "fadeSlideIn 0.4s ease " + (i * 0.15) + "s both" }}>
-                <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(180deg, " + C.accent + "22, " + C.accent + "11)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 13, color: C.accent, fontWeight: 700, flexShrink: 0 }}>{s.step}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: SANS, fontSize: 14, fontWeight: 500 }}>{s.text}</div>
-                  <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>{s.detail}</div>
-                </div>
-                <div style={{ fontSize: 18 }}>{s.icon}</div>
+
+            {/* Title */}
+            <div style={{ textAlign: "center", marginBottom: 20 }}>
+              <div style={{ fontFamily: SERIF, fontSize: 21, fontWeight: 700, color: C.cream, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Install Symbiosis Vault</div>
+              <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6, lineHeight: 1.5 }}>Get the full app experience on your phone. Follow these simple steps:</div>
+            </div>
+
+            {/* iPhone Section */}
+            <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.accent, marginBottom: 14, borderBottom: "1px solid " + C.accent + "22", paddingBottom: 8 }}>iPHONE / iPAD (SAFARI)</div>
+
+            {/* Step 1 - Share button */}
+            <div style={{ ...skeuo, borderRadius: 14, padding: "14px 16px", marginBottom: 10, animation: "fadeSlideIn 0.4s ease 0s both" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.accent, color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 14, fontWeight: 800, flexShrink: 0 }}>1</div>
+                <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 600 }}>Tap the Share button</div>
               </div>
-            ))}
-            <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.accent, marginTop: 20, marginBottom: 12, borderBottom: "1px solid " + C.accent + "22", paddingBottom: 8 }}>ANDROID</div>
-            {[
-              { step: "1", text: "Tap the menu (3 dots)", detail: "Top-right in Chrome", icon: "\u{22EE}" },
-              { step: "2", text: "Tap 'Install app'", detail: "Or 'Add to Home screen'", icon: "\u{1F4F2}" },
-              { step: "3", text: "Confirm install", detail: "App icon appears on home screen", icon: "\u{2705}" },
-            ].map((s, i) => (
-              <div key={"and"+i} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10, padding: "10px 12px", ...skeuo, borderRadius: 12, animation: "fadeSlideIn 0.4s ease " + ((i * 0.15) + 0.5) + "s both" }}>
-                <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(180deg, " + C.accent + "22, " + C.accent + "11)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 13, color: C.accent, fontWeight: 700, flexShrink: 0 }}>{s.step}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: SANS, fontSize: 14, fontWeight: 500 }}>{s.text}</div>
-                  <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>{s.detail}</div>
+              <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 10, lineHeight: 1.5 }}>Look at the bottom of your Safari browser for this button:</div>
+              <div style={{ display: "flex", justifyContent: "center", padding: "12px 0" }}>
+                <div style={{ width: 44, height: 44, borderRadius: 10, background: "linear-gradient(180deg, #007AFF, #0066DD)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,122,255,0.4)" }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>
                 </div>
-                <div style={{ fontSize: 18 }}>{s.icon}</div>
               </div>
-            ))}
-            <div onClick={() => setShowInstall(false)} style={{ ...skeuo, borderRadius: 12, padding: "12px 0", textAlign: "center", fontFamily: MONO, fontSize: 11, letterSpacing: 2, color: C.accent, cursor: "pointer", marginTop: 16, border: "1px solid " + C.accent + "22" }}>GOT IT</div>
+              <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, textAlign: "center", fontStyle: "italic" }}>The square with an arrow pointing up</div>
+            </div>
+
+            {/* Step 2 - Add to Home Screen */}
+            <div style={{ ...skeuo, borderRadius: 14, padding: "14px 16px", marginBottom: 10, animation: "fadeSlideIn 0.4s ease 0.15s both" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.accent, color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 14, fontWeight: 800, flexShrink: 0 }}>2</div>
+                <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 600 }}>Scroll down & tap:</div>
+              </div>
+              <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 10, lineHeight: 1.5 }}>A menu will slide up from the bottom. Scroll down until you find:</div>
+              <div style={{ background: "#fff", borderRadius: 12, padding: "13px 16px", display: "flex", alignItems: "center", gap: 12, boxShadow: "0 1px 4px rgba(0,0,0,0.1)" }}>
+                <div style={{ width: 30, height: 30, borderRadius: 7, background: "#f2f2f7", border: "1px solid #e5e5ea", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                </div>
+                <span style={{ fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif", fontSize: 16, color: "#000", fontWeight: 400 }}>Add to Home Screen</span>
+              </div>
+            </div>
+
+            {/* Step 3 - Confirm */}
+            <div style={{ ...skeuo, borderRadius: 14, padding: "14px 16px", marginBottom: 6, animation: "fadeSlideIn 0.4s ease 0.3s both" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.accent, color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 14, fontWeight: 800, flexShrink: 0 }}>3</div>
+                <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 600 }}>Tap "Add" in the top right</div>
+              </div>
+              <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 10, lineHeight: 1.5 }}>You'll see a preview screen. Just tap the blue button:</div>
+              <div style={{ display: "flex", justifyContent: "center", padding: "6px 0" }}>
+                <div style={{ background: "linear-gradient(180deg, #007AFF, #0066DD)", borderRadius: 8, padding: "8px 28px", boxShadow: "0 2px 8px rgba(0,122,255,0.4)" }}>
+                  <span style={{ fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif", fontSize: 16, color: "#fff", fontWeight: 600 }}>Add</span>
+                </div>
+              </div>
+              <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, textAlign: "center", marginTop: 8, fontStyle: "italic" }}>That's it! The app icon will appear on your home screen.</div>
+            </div>
+
+            {/* Safari note */}
+            <div style={{ ...skeuo, borderRadius: 10, padding: "10px 14px", marginBottom: 20, marginTop: 10, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.06), transparent)" }}>
+              <div style={{ fontFamily: SANS, fontSize: 12, color: C.accent, fontWeight: 600, marginBottom: 4 }}>{"\u26A0"} Must use Safari</div>
+              <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, lineHeight: 1.5 }}>On iPhone, this only works in Safari. Chrome and other browsers don't support it on iOS.</div>
+            </div>
+
+            {/* Android Section */}
+            <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.accent, marginBottom: 14, borderBottom: "1px solid " + C.accent + "22", paddingBottom: 8 }}>ANDROID (CHROME)</div>
+
+            {/* Android Step 1 */}
+            <div style={{ ...skeuo, borderRadius: 14, padding: "14px 16px", marginBottom: 10, animation: "fadeSlideIn 0.4s ease 0.5s both" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.accent, color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 14, fontWeight: 800, flexShrink: 0 }}>1</div>
+                <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 600 }}>Tap the 3-dot menu</div>
+              </div>
+              <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 10, lineHeight: 1.5 }}>In Chrome, look for this icon in the top-right corner:</div>
+              <div style={{ display: "flex", justifyContent: "center", padding: "10px 0" }}>
+                <div style={{ width: 40, height: 40, borderRadius: 20, background: "#333", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, boxShadow: "0 2px 6px rgba(0,0,0,0.3)" }}>
+                  <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#fff" }} />
+                  <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#fff" }} />
+                  <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#fff" }} />
+                </div>
+              </div>
+            </div>
+
+            {/* Android Step 2 */}
+            <div style={{ ...skeuo, borderRadius: 14, padding: "14px 16px", marginBottom: 10, animation: "fadeSlideIn 0.4s ease 0.65s both" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.accent, color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 14, fontWeight: 800, flexShrink: 0 }}>2</div>
+                <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 600 }}>Tap "Install app"</div>
+              </div>
+              <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 10, lineHeight: 1.5 }}>In the dropdown menu, look for:</div>
+              <div style={{ background: "#2d2d2d", borderRadius: 8, padding: "12px 16px", display: "flex", alignItems: "center", gap: 12 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8ab4f8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
+                <span style={{ fontFamily: "Roboto, sans-serif", fontSize: 14, color: "#e8eaed" }}>Install app</span>
+              </div>
+              <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, textAlign: "center", marginTop: 8, fontStyle: "italic" }}>It may also say "Add to Home screen"</div>
+            </div>
+
+            {/* Android Step 3 */}
+            <div style={{ ...skeuo, borderRadius: 14, padding: "14px 16px", marginBottom: 6, animation: "fadeSlideIn 0.4s ease 0.8s both" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.accent, color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 14, fontWeight: 800, flexShrink: 0 }}>3</div>
+                <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 600 }}>Tap "Install" to confirm</div>
+              </div>
+              <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 10, lineHeight: 1.5 }}>A popup will appear. Tap the button:</div>
+              <div style={{ display: "flex", justifyContent: "center", padding: "6px 0" }}>
+                <div style={{ background: "#8ab4f8", borderRadius: 20, padding: "10px 36px" }}>
+                  <span style={{ fontFamily: "Roboto, sans-serif", fontSize: 14, color: "#000", fontWeight: 500 }}>Install</span>
+                </div>
+              </div>
+              <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, textAlign: "center", marginTop: 8, fontStyle: "italic" }}>Done! The app icon will appear on your home screen.</div>
+            </div>
+
+            {/* Got it button */}
+            <div onClick={() => setShowInstall(false)} style={{ ...skeuo, borderRadius: 12, padding: "14px 0", textAlign: "center", fontFamily: MONO, fontSize: 12, letterSpacing: 2, color: "#000", cursor: "pointer", marginTop: 20, background: "linear-gradient(180deg, " + C.accent + ", " + C.accent + "cc)", border: "1px solid " + C.accent, fontWeight: 700 }}>GOT IT</div>
+
             <style>{`@keyframes fadeSlideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
           </div>
         </div>
+      )}
       )}
     </div>
   );
