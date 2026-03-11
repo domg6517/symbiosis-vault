@@ -8,22 +8,26 @@ import { FilmGrain, CheckIcon, NfcIcon } from "../../components/Icons";
 function LinkContent() {
   const searchParams = useSearchParams();
   const chipId = searchParams.get("chip");
-  const { session } = useAuth();
+  const { session, loading, isAuthenticated } = useAuth();
   const [status, setStatus] = useState("loading");
   const [cardResult, setCardResult] = useState(null);
   const [error, setError] = useState("");
   const [isSetComplete, setIsSetComplete] = useState(false);
 
   useEffect(() => {
+    if (loading) return;
     if (!chipId) {
       setStatus("error");
       setError("No chip ID found in URL.");
       return;
     }
-    if (!session?.access_token) {
+    if (!isAuthenticated || !session?.access_token) {
+      // Save chip ID so we can link after sign-in
+      try { localStorage.setItem("pendingChip", chipId); } catch(e) {}
       setStatus("needsAuth");
       return;
     }
+    // Auto-link the card
     const link = async () => {
       try {
         const res = await fetch("/api/cards/link", {
@@ -40,6 +44,8 @@ function LinkContent() {
           setError(data.error || "Failed to link card");
           return;
         }
+        // Clear any pending chip
+        try { localStorage.removeItem("pendingChip"); } catch(e) {}
         setCardResult(data.card);
         setIsSetComplete(data.setComplete || false);
         setStatus("success");
@@ -49,9 +55,9 @@ function LinkContent() {
       }
     };
     link();
-  }, [chipId, session]);
+  }, [chipId, session, loading, isAuthenticated]);
 
-  const goToCollection = () => {
+  const goToVault = () => {
     window.location.href = "/";
   };
 
@@ -61,13 +67,11 @@ function LinkContent() {
     background: `radial-gradient(ellipse at 50% 40%, #151312, ${C.bg})`,
     position: "relative", overflow: "hidden",
   };
-
   const circleBase = {
     width: 120, height: 120, margin: "0 auto", ...skeuo.inset,
     borderRadius: "50%", border: `1.5px solid ${C.accent}44`,
     display: "flex", alignItems: "center", justifyContent: "center",
   };
-
   const headingStyle = {
     marginTop: 24, fontSize: 18, fontWeight: 300, color: C.cream,
     fontFamily: SERIF, textShadow: "0 1px 3px rgba(0,0,0,0.4)",
@@ -106,12 +110,16 @@ function LinkContent() {
             <div style={{
               fontSize: 13, color: C.textSec, fontFamily: SANS,
               marginTop: 8, lineHeight: 1.5,
-            }}>Open the Symbiosis Vault app and sign in, then tap this card again.</div>
-            <button onClick={goToCollection} style={{
-              marginTop: 32, padding: "13px 40px", ...skeuo.btnGold,
+            }}>Create an account or sign in, then tap this card again.</div>
+            <div style={{
+              fontSize: 11, color: C.textDim, fontFamily: SANS,
+              marginTop: 6, lineHeight: 1.5,
+            }}>Your card will be saved and linked automatically.</div>
+            <button onClick={goToVault} style={{
+              marginTop: 28, padding: "13px 40px", ...skeuo.btnGold,
               color: C.bg, fontSize: 10, fontFamily: MONO,
               fontWeight: 600, letterSpacing: 3, cursor: "pointer",
-            }}>OPEN VAULT</button>
+            }}>SIGN IN</button>
           </div>
         )}
 
@@ -152,7 +160,7 @@ function LinkContent() {
                 }}>SET COMPLETE &mdash; ULTRA RARE UNLOCKED</div>
               </div>
             )}
-            <button onClick={goToCollection} style={{
+            <button onClick={goToVault} style={{
               marginTop: 32, padding: "13px 40px", ...skeuo.btnGold,
               color: C.bg, fontSize: 10, fontFamily: MONO, fontWeight: 600,
               letterSpacing: 3, cursor: "pointer",
@@ -177,7 +185,7 @@ function LinkContent() {
               fontSize: 12, color: C.rose, fontFamily: MONO,
               letterSpacing: 1, marginTop: 12, maxWidth: 280,
             }}>{error}</div>
-            <button onClick={goToCollection} style={{
+            <button onClick={goToVault} style={{
               marginTop: 32, padding: "13px 40px", ...skeuo.btnGhost,
               color: C.accent, fontSize: 10, fontFamily: MONO,
               letterSpacing: 3, cursor: "pointer",
