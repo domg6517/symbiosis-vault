@@ -7,7 +7,7 @@ import { SongRow } from "./SharedComponents";
 
 const ULTRA_RARES = generateUltraRares();
 
-export default function CollectionScreen({ ownedCards, onCardClick, onScan, onProfile }) {
+export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLeaderboard, onProfile }) {
   const [view, setView] = useState("singles");
 
   const linked = ownedCards.filter((c) => c.linked);
@@ -41,6 +41,13 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onPr
             <div style={{ fontSize: 9, letterSpacing: 4, color: C.textDim, fontFamily: MONO }}>{"SYMBIOSIS VAULT"}</div>
             <div style={{ fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 4, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Collection</div>
           </div>
+          <div onClick={onLeaderboard} style={{
+            width: 34, height: 34,
+            ...skeuo.card,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", fontSize: 16,
+            borderRadius: 8,
+          }}>🏆</div>
           <div onClick={onProfile} style={{
             width: 34, height: 34,
             ...skeuo.card,
