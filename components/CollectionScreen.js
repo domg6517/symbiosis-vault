@@ -37,7 +37,8 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onPr
       <div style={{ padding: "18px 20px 0", zIndex: 1 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <div style={{ fontSize: 9, letterSpacing: 4, color: C.textDim, fontFamily: MONO }}><img src="/vault-logo.png" style={{ width: 56, height: 56, borderRadius: 10, marginBottom: 6 }} alt="" />{"SYMBIOSIS VAULT"}</div>
+            <img src="/vault-logo.png" style={{ width: 48, height: 48, borderRadius: 10, marginBottom: 8, display: "block" }} alt="" />
+            <div style={{ fontSize: 9, letterSpacing: 4, color: C.textDim, fontFamily: MONO }}>{"SYMBIOSIS VAULT"}</div>
             <div style={{ fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 4, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Collection</div>
           </div>
           <div onClick={onProfile} style={{
