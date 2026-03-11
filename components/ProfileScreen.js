@@ -99,7 +99,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
               background: C.accent, color: "#000",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 14, cursor: "pointer",
-            }} onClick={() => fileRef.current?.click()}>\u270F</div>
+            }} onClick={() => fileRef.current?.click()}>{"✏"}</div>
           )}
           <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handlePfpChange} />
         </div>
@@ -139,9 +139,9 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
       <div style={{ padding: "0 16px" }}>
         <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 10 }}>SOCIAL LINKS</div>
         {[
-          { icon: "\u{1F4F7}", label: "Instagram", value: instagram, set: setInstagram, prefix: "@" },
-          { icon: "\u{1D54F}", label: "X / Twitter", value: twitter, set: setTwitter, prefix: "@" },
-          { icon: "\u{1F3B5}", label: "TikTok", value: tiktok, set: setTiktok, prefix: "@" },
+          { icon: "\u{1F4F7}", label: "Instagram", value: instagram, set: setInstagram, prefix: "@", url: "https://instagram.com/" },
+          { icon: "\u{1D54F}", label: "X / Twitter", value: twitter, set: setTwitter, prefix: "@", url: "https://x.com/" },
+          { icon: "\u{1F3B5}", label: "TikTok", value: tiktok, set: setTiktok, prefix: "@", url: "https://tiktok.com/@" },
         ].map((s) => (
           <div key={s.label} style={{ ...skeuo, borderRadius: 12, padding: "12px 16px", marginBottom: 8, display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ fontSize: 20 }}>{s.icon}</div>
@@ -158,7 +158,11 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
                   }}
                 />
               ) : (
-                <div style={{ fontFamily: SANS, fontSize: 15 }}>{s.value || "Not set"}</div>
+                s.value ? (
+                <a href={s.url + s.value.replace(/^@/, "")} target="_blank" rel="noopener noreferrer" style={{ fontFamily: SANS, fontSize: 15, color: C.accent, textDecoration: "none" }}>{s.prefix + s.value.replace(/^@/, "")}</a>
+              ) : (
+                <div style={{ fontFamily: SANS, fontSize: 15, color: C.textDim }}>Not set</div>
+              )
               )}
             </div>
           </div>
