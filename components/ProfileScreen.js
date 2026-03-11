@@ -22,6 +22,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
     session?.user?.user_metadata?.pfp_url || ""
   );
   const [saving, setSaving] = useState(false);
+  const [showInstall, setShowInstall] = useState(false);
 
   const linked = ownedCards.filter((c) => c.linked).length;
   const email = session?.user?.email || "";
@@ -171,11 +172,12 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
 
       {/* Bottom Menu */}
       <div style={{ padding: "20px 16px 0" }}>
-        {["Notifications", "Trade Offers", "Help & Support", "Sign Out"].map((item) => (
+        {["Install App", "Notifications", "Trade Offers", "Help & Support", "Sign Out"].map((item) => (
           <div
             key={item}
             onClick={() => {
               if (item === "Sign Out") { supabase.auth.signOut(); window.location.reload(); }
+              else if (item === "Install App") { setShowInstall(true); }
               else { alert(item + " \u2014 coming soon!"); }
             }}
             style={{
@@ -186,6 +188,47 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
           >{item}</div>
         ))}
       </div>
+
+      {showInstall && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, backdropFilter: "blur(8px)" }} onClick={() => setShowInstall(false)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ ...skeuo, borderRadius: 20, padding: "28px 24px", maxWidth: 340, width: "100%", maxHeight: "80vh", overflow: "auto" }}>
+            <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700, marginBottom: 4, textAlign: "center" }}>Install Symbiosis Vault</div>
+            <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, textAlign: "center", marginBottom: 20 }}>Add to your home screen for the full experience</div>
+            <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.accent, marginBottom: 12 }}>iPHONE / iPAD</div>
+            {[
+              { step: "1", text: "Tap the Share button", detail: "Bottom toolbar in Safari", icon: "\u{1F4E4}" },
+              { step: "2", text: "Scroll and tap 'Add to Home Screen'", detail: "With the + icon", icon: "\u{2795}" },
+              { step: "3", text: "Tap 'Add'", detail: "App icon appears on home screen", icon: "\u{2705}" },
+            ].map((s, i) => (
+              <div key={"ios"+i} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10, padding: "10px 12px", ...skeuo, borderRadius: 12, animation: "fadeSlideIn 0.4s ease " + (i * 0.15) + "s both" }}>
+                <div style={{ width: 32, height: 32, borderRadius: "50%", background: C.accent + "22", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 13, color: C.accent, fontWeight: 700, flexShrink: 0 }}>{s.step}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontFamily: SANS, fontSize: 14, fontWeight: 500 }}>{s.text}</div>
+                  <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>{s.detail}</div>
+                </div>
+                <div style={{ fontSize: 18 }}>{s.icon}</div>
+              </div>
+            ))}
+            <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.accent, marginTop: 20, marginBottom: 12 }}>ANDROID</div>
+            {[
+              { step: "1", text: "Tap the menu (3 dots)", detail: "Top-right in Chrome", icon: "\u{22EE}" },
+              { step: "2", text: "Tap 'Install app'", detail: "Or 'Add to Home screen'", icon: "\u{1F4F2}" },
+              { step: "3", text: "Confirm install", detail: "App icon appears on home screen", icon: "\u{2705}" },
+            ].map((s, i) => (
+              <div key={"and"+i} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10, padding: "10px 12px", ...skeuo, borderRadius: 12, animation: "fadeSlideIn 0.4s ease " + ((i * 0.15) + 0.5) + "s both" }}>
+                <div style={{ width: 32, height: 32, borderRadius: "50%", background: C.accent + "22", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 13, color: C.accent, fontWeight: 700, flexShrink: 0 }}>{s.step}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontFamily: SANS, fontSize: 14, fontWeight: 500 }}>{s.text}</div>
+                  <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>{s.detail}</div>
+                </div>
+                <div style={{ fontSize: 18 }}>{s.icon}</div>
+              </div>
+            ))}
+            <div onClick={() => setShowInstall(false)} style={{ ...skeuo, borderRadius: 12, padding: "12px 0", textAlign: "center", fontFamily: MONO, fontSize: 11, letterSpacing: 2, color: C.accent, cursor: "pointer", marginTop: 16 }}>GOT IT</div>
+            <style>{`@keyframes fadeSlideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
