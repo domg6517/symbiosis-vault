@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
           href="https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap"
           rel="stylesheet"
         />
-        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <link rel="apple-touch-icon" href="/vault-logo.png" />
       </head>
       <body style={{ margin: 0, padding: 0, background: "#000", overscrollBehavior: "none" }}>
         <AuthProvider>
