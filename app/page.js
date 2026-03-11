@@ -11,6 +11,7 @@ import CardDetailScreen from "../components/CardDetailScreen";
 import ScanScreen from "../components/ScanScreen";
 import ProfileScreen from "../components/ProfileScreen";
 import LeaderboardScreen from "../components/LeaderboardScreen";
+import CollectorProfileScreen from "../components/CollectorProfileScreen";
 
 const SITE_PASSWORD = "symbiosis2026";
 
@@ -99,6 +100,7 @@ export default function SymbiosisVault() {
   const [authenticated, setAuthenticated] = useState(false);
   const [screen, setScreen] = useState("splash");
   const [selectedCard, setSelectedCard] = useState(null);
+  const [selectedCollector, setSelectedCollector] = useState(null);
   const [ownedCards, setOwnedCards] = useState([]);
   const { session, isSupabaseConfigured } = useAuth();
 
@@ -186,7 +188,7 @@ export default function SymbiosisVault() {
         <ProfileScreen ownedCards={ownedCards} onBack={() => setScreen("collection")} session={session} />
       )}
         {screen === "leaderboard" && (
-          <LeaderboardScreen onBack={() => setScreen("collection")} />
+          <LeaderboardScreen onBack={() => setScreen("collection")} onViewCollector={(c) => { setSelectedCollector(c); setScreen("collectorProfile"); }} />
         )}
     </div>
   );
