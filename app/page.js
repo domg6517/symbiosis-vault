@@ -32,6 +32,24 @@ export default function SymbiosisVault() {
     }
   }, [loading, isAuthenticated]);
 
+  // Check for pending NFC chip to link (from /link page before sign-in)
+  useEffect(() => {
+    if (!isAuthenticated || !session?.access_token) return;
+    try {
+      const pendingChip = localStorage.getItem("pendingChip");
+      if (!pendingChip) return;
+      localStorage.removeItem("pendingChip");
+      fetch("/api/cards/link", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ chipId: pendingChip }),
+      }).then(() => fetchCards());
+    } catch (e) {}
+  }, [isAuthenticated, session]);
+
   // Fetch cards from API when user is authenticated
   const fetchCards = useCallback(async () => {
     if (!session?.access_token) {
