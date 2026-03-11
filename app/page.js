@@ -183,7 +183,7 @@ export default function SymbiosisVault() {
         />
       )}
       {screen === "profile" && (
-        <ProfileScreen ownedCards={ownedCards} onBack={() => setScreen("collection")} />
+        <ProfileScreen ownedCards={ownedCards} onBack={() => setScreen("collection")} session={session} />
       )}
         {screen === "leaderboard" && (
           <LeaderboardScreen onBack={() => setScreen("collection")} />
