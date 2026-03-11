@@ -1,4 +1,4 @@
-"use client";
+←"use client";
 import { useState, useRef } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { supabase } from "../lib/supabase";
