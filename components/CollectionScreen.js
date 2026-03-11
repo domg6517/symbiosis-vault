@@ -66,11 +66,11 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
           </div>
           <div style={{ ...skeuo.badge, padding: "5px 12px", display: "flex", alignItems: "center", gap: 6 }}>
             <span style={{ color: C.teal, fontFamily: MONO, fontWeight: 600, fontSize: 12 }}>{completeSingles}</span>
-            <span style={{ color: C.textDim, fontSize: 10, fontFamily: MONO }}>/10</span>
+            <span style={{ color: C.textDim, fontSize: 10, fontFamily: MONO }}>linked</span>
           </div>
           <div style={{ ...skeuo.badge, padding: "5px 12px", display: "flex", alignItems: "center", gap: 6 }}>
             <span style={{ color: C.booster, fontFamily: MONO, fontWeight: 600, fontSize: 12 }}>{completeBoosters}</span>
-            <span style={{ color: C.textDim, fontSize: 10, fontFamily: MONO }}>/22</span>
+            <span style={{ color: C.textDim, fontSize: 10, fontFamily: MONO }}>linked</span>
           </div>
         </div>
 
@@ -80,9 +80,9 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
           overflowX: "auto", scrollbarWidth: "none",
         }}>
           {[
-            { key: "singles", label: "SINGLES", count: 10 },
-            { key: "boosters", label: "BOOSTERS", count: 22 },
-            { key: "ultra", label: "ULTRA RARES", count: 30 },
+            { key: "singles", label: "DROP 1", count: "?" },
+            { key: "boosters", label: "DROP 2", count: "?" },
+            { key: "ultra", label: "SPECIALS", count: "?" },
           ].map((tab) => (
             <button key={tab.key} onClick={() => setView(tab.key)} style={{
               padding: "8px 16px",
@@ -130,13 +130,13 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
 
             <div style={{ margin: "16px 16px 20px", padding: "16px", ...skeuo.card, position: "relative", overflow: "hidden", textAlign: "center" }}>
               <div style={skeuo.gloss} />
-              <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 3, color: completeSingles === 10 ? C.accent : C.textDim, position: "relative", zIndex: 1 }}>
-                {completeSingles === 10 ? "ALL 10 SINGLES COMPLETE" : `${completeSingles} OF 10 COLLECTED`}
+              <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 3, color: completeSingles >= 10 ? C.accent : C.textDim, position: "relative", zIndex: 1 }}>
+                {completeSingles === 10 ? "ALL COLLECTED" : `${completeSingles} COLLECTED`}
               </div>
               <div style={{ marginTop: 8, height: 4, ...skeuo.inset, overflow: "hidden", borderRadius: 4, position: "relative", zIndex: 1 }}>
                 <div style={{ width: `${(completeSingles / 10) * 100}%`, height: "100%", ...skeuo.btnGold, borderRadius: 4, transition: "width 0.5s ease" }} />
               </div>
-              <div style={{ fontSize: 10, fontFamily: MONO, color: C.textDim, marginTop: 6, position: "relative", zIndex: 1 }}>{completeSingles} / 10</div>
+              <div style={{ fontSize: 10, fontFamily: MONO, color: C.textDim, marginTop: 6, position: "relative", zIndex: 1 }}>{completeSingles} linked</div>
             </div>
           </div>
         )}
@@ -176,12 +176,12 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             <div style={{ margin: "16px 16px 20px", padding: "16px", ...skeuo.card, position: "relative", overflow: "hidden", textAlign: "center" }}>
               <div style={skeuo.gloss} />
               <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 3, color: C.textDim, position: "relative", zIndex: 1 }}>
-                {completeBoosters} OF 22 COLLECTED
+                {completeBoosters} COLLECTED
               </div>
               <div style={{ marginTop: 8, height: 4, ...skeuo.inset, overflow: "hidden", borderRadius: 4, position: "relative", zIndex: 1 }}>
                 <div style={{ width: `${(completeBoosters / 22) * 100}%`, height: "100%", background: `linear-gradient(180deg, #8AAE98, #6B8E7B, #5A7D6A)`, boxShadow: "0 1px 0 rgba(255,255,255,0.2) inset", borderRadius: 4, transition: "width 0.5s ease" }} />
               </div>
-              <div style={{ fontSize: 10, fontFamily: MONO, color: C.textDim, marginTop: 6, position: "relative", zIndex: 1 }}>{completeBoosters} / 22</div>
+              <div style={{ fontSize: 10, fontFamily: MONO, color: C.textDim, marginTop: 6, position: "relative", zIndex: 1 }}>{completeBoosters} linked</div>
             </div>
           </div>
         )}
@@ -202,7 +202,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
               <div style={skeuo.gloss} />
               <StarIcon size={14} />
               <div style={{ flex: 1, fontSize: 12, fontFamily: SANS, color: C.textSec, position: "relative", zIndex: 1 }}>
-                <span style={{ color: C.megaGold, fontFamily: MONO, fontWeight: 600 }}>{ownedUltraCount}</span> / 30 discovered
+                <span style={{ color: C.megaGold, fontFamily: MONO, fontWeight: 600 }}>{ownedUltraCount}</span> discovered
               </div>
               <div style={{ height: 4, width: 80, ...skeuo.inset, overflow: "hidden", borderRadius: 4, position: "relative", zIndex: 1 }}>
                 <div style={{ width: `${(ownedUltraCount / 30) * 100}%`, height: "100%", background: `linear-gradient(180deg, #E4BC4A, #D4A43A, #C49430)`, boxShadow: "0 1px 0 rgba(255,255,255,0.25) inset", borderRadius: 4 }} />
@@ -221,7 +221,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                     <div style={{ fontSize: 9, fontFamily: MONO, color: C.textDim, letterSpacing: 1 }}>{song.num}</div>
                     <div style={{ fontSize: 13, fontFamily: SANS, fontWeight: 500, color: C.textSec, flex: 1 }}>{song.title}</div>
                     <div style={{ fontSize: 9, fontFamily: MONO, color: songOwnedCount > 0 ? C.megaGold : C.textDim, letterSpacing: 1 }}>
-                      {songOwnedCount}/3
+                      {songOwnedCount} found
                     </div>
                   </div>
                   <div style={{ display: "flex", gap: 6 }}>
