@@ -46,13 +46,33 @@ export const StarIcon = ({ color = C.megaGold, size = 10 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={color}><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
 );
 
+export const TrophyIcon = ({ size = 16, color = C.accent }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 9H4a2 2 0 01-2-2V6a2 2 0 012-2h2" />
+    <path d="M18 9h2a2 2 0 002-2V6a2 2 0 00-2-2h-2" />
+    <path d="M6 4h12v6a6 6 0 01-12 0V4z" />
+    <path d="M10 16h4" />
+    <path d="M12 16v4" />
+    <path d="M8 20h8" />
+  </svg>
+);
+
+export const ProfileIcon = ({ size = 16, color = C.accent }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="8" r="4" />
+    <path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7" />
+  </svg>
+);
+
 export const FilmGrain = ({ opacity = 0.035 }) => (
-  <div style={{
-    position: "absolute", inset: 0, pointerEvents: "none", zIndex: 999,
-    mixBlendMode: "overlay", opacity,
-    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-    backgroundRepeat: "repeat", backgroundSize: "128px 128px",
-  }} />
+  <div
+    style={{
+      position: "absolute", inset: 0, pointerEvents: "none", zIndex: 999,
+      mixBlendMode: "overlay", opacity,
+      backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+      backgroundRepeat: "repeat", backgroundSize: "128px 128px",
+    }}
+  />
 );
 
 export const Divider = ({ style = {} }) => (
