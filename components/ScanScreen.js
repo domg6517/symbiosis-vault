@@ -72,6 +72,16 @@ export default function ScanScreen({ session, onBack, onScanned }) {
 
   return (
     <div style={{
+      <style>{`
+        @keyframes scanPulse {
+          0%, 100% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.15); opacity: 1; }
+        }
+        @keyframes scanRing {
+          0% { transform: scale(1); opacity: 0.6; }
+          100% { transform: scale(2.2); opacity: 0; }
+        }
+      `}</style>
       height: "100%", display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center",
       background: `radial-gradient(ellipse at 50% 40%, #151312, ${C.bg})`,
@@ -93,6 +103,12 @@ export default function ScanScreen({ session, onBack, onScanned }) {
               ? `0 1px 0 rgba(255,255,255,0.04) inset, 0 -1px 0 rgba(0,0,0,0.3) inset, 0 4px 16px rgba(0,0,0,0.4), 0 0 40px ${C.accentDim}`
               : skeuo.inset.boxShadow,
           }}>
+            {scanning && (
+              <>
+                <div style={{ position: "absolute", width: 80, height: 80, borderRadius: "50%", border: "2px solid " + C.accent, animation: "scanRing 1.5s ease-out infinite" }} />
+                <div style={{ position: "absolute", width: 80, height: 80, borderRadius: "50%", border: "2px solid " + C.accent, animation: "scanRing 1.5s ease-out infinite 0.5s" }} />
+              </>
+            )}
             {scanning && (<div style={{ position: "absolute", inset: -8, borderRadius: "50%", border: `1px solid ${C.accent}18`, animation: "scanPulse 1.5s ease-in-out infinite" }} />)}
             <NfcIcon size={36} color={scanning ? C.accent : C.textDim} />
           </div>
