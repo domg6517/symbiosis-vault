@@ -6,11 +6,11 @@ export const ChevronLeft = () => (
 );
 
 export const NfcIcon = ({ size = 24, color = C.text }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.2" strokeLinecap="round">
-    <rect x="3" y="5" width="18" height="14" rx="2.5" />
-    <path d="M8.5 14a4.5 4.5 0 016.5-4" />
-    <path d="M8.5 11a2.2 2.2 0 013.2-2" />
-    <circle cx="9" cy="14" r="0.8" fill={color} />
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 18.5V16a2 2 0 012-2h1.5a1.5 1.5 0 001.5-1.5v0A1.5 1.5 0 009.5 11H9a3 3 0 00-3 3v4.5" />
+    <path d="M12 8.5a3.5 3.5 0 013.5 3.5" />
+    <path d="M12 5a7 7 0 017 7" />
+    <path d="M12 12v0" strokeWidth="2" />
   </svg>
 );
 
