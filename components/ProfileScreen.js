@@ -1,4 +1,4 @@
-←"use client";
+"use client";
 import { useState, useRef } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { supabase } from "../lib/supabase";
@@ -60,7 +60,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer", fontSize: 18,
           }}
-        >\u2190</div>
+        >←</div>
         <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700 }}>Profile</div>
         <div style={{ flex: 1 }} />
         <div
