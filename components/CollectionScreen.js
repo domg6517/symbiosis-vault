@@ -259,7 +259,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
 
       {/* Bottom Nav â raised dock */}
       <div style={{
-        display: "flex", justifyContent: "space-around", alignItems: "center",
+        display: "flex", justifyContent: "space-evenly", alignItems: "center",
         padding: "6px 16px 22px",
         position: "relative", zIndex: 2,
         background: `linear-gradient(180deg, transparent, ${C.bg} 30%)`,
