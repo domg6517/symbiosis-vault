@@ -71,18 +71,19 @@ export default function ScanScreen({ session, onBack, onScanned }) {
 
 
   return (
+    <>
+    <style dangerouslySetInnerHTML={{ __html: `
+      @keyframes scanPulse {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.15); opacity: 1; }
+      }
+      @keyframes scanRing {
+        0% { transform: scale(1); opacity: 0.6; }
+        100% { transform: scale(2.2); opacity: 0; }
+      }
+    ` }} />
     <div style={{
-      <style>{`
-        @keyframes scanPulse {
-          0%, 100% { transform: scale(1); opacity: 0.8; }
-          50% { transform: scale(1.15); opacity: 1; }
-        }
-        @keyframes scanRing {
-          0% { transform: scale(1); opacity: 0.6; }
-          100% { transform: scale(2.2); opacity: 0; }
-        }
-      `}</style>
-      height: "100%", display: "flex", flexDirection: "column",
+    height: "100%", display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center",
       background: `radial-gradient(ellipse at 50% 40%, #151312, ${C.bg})`,
       position: "relative", overflow: "hidden",
@@ -200,5 +201,6 @@ export default function ScanScreen({ session, onBack, onScanned }) {
         </div>
       )}
     </div>
+    </>
   );
 }
