@@ -114,7 +114,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>G</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J&J</div>
-                <div style={{ flex: 1, textAlign: "left", paddingLeft: 8, fontSize: 8, color: C.textDim + "66" }}>DUPES â</div>
+                <div style={{ flex: 1, textAlign: "left", paddingLeft: 8, fontSize: 8, color: C.textDim + "66" }}>DUPES</div>
               </div>
               <div style={{ width: 32, flexShrink: 0 }} />
             </div>
@@ -131,7 +131,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             <div style={{ margin: "16px 16px 20px", padding: "16px", ...skeuo.card, position: "relative", overflow: "hidden", textAlign: "center" }}>
               <div style={skeuo.gloss} />
               <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 3, color: completeSingles === 10 ? C.accent : C.textDim, position: "relative", zIndex: 1 }}>
-                {completeSingles === 10 ? "â¦ ALL 10 SINGLES COMPLETE" : `${completeSingles} OF 10 COLLECTED`}
+                {completeSingles === 10 ? "ALL 10 SINGLES COMPLETE" : `${completeSingles} OF 10 COLLECTED`}
               </div>
               <div style={{ marginTop: 8, height: 4, ...skeuo.inset, overflow: "hidden", borderRadius: 4, position: "relative", zIndex: 1 }}>
                 <div style={{ width: `${(completeSingles / 10) * 100}%`, height: "100%", ...skeuo.btnGold, borderRadius: 4, transition: "width 0.5s ease" }} />
@@ -147,7 +147,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
               padding: "14px 20px 10px",
               fontSize: 13, fontFamily: SANS, color: C.textSec, lineHeight: 1.5,
             }}>
-              Booster packs cover the rest of the album. Same rules â 3 perspectives per song, 70/30 common/rare split.
+              More to come. Stay tuned.
             </div>
 
             <div style={{
@@ -159,7 +159,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>G</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J&J</div>
-                <div style={{ flex: 1, textAlign: "left", paddingLeft: 8, fontSize: 8, color: C.textDim + "66" }}>DUPES â</div>
+                <div style={{ flex: 1, textAlign: "left", paddingLeft: 8, fontSize: 8, color: C.textDim + "66" }}>DUPES</div>
               </div>
               <div style={{ width: 32, flexShrink: 0 }} />
             </div>
@@ -191,7 +191,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             <div style={{
               fontSize: 13, fontFamily: SANS, color: C.textSec, lineHeight: 1.6, marginBottom: 20,
             }}>
-              3 hand-printed, signed polaroids per single. 30 total across all drops. Each is one of a kind.
+              Something special. More details coming soon.
             </div>
 
             <div style={{
@@ -258,7 +258,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
         )}
       </div>
 
-      {/* Bottom Nav â raised dock */}
+      {/* Bottom Nav - raised dock */}
       <div style={{
         display: "flex", justifyContent: "space-evenly", alignItems: "center",
         padding: "6px 16px 22px",
