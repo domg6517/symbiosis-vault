@@ -1,108 +1,185 @@
 "use client";
 import { useState, useRef } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
-import { FilmGrain, Divider, ChevronLeft, MusicIcon } from "./Icons";
-import { SINGLES, BOOSTERS, PERSPECTIVES, generateUltraRares } from "./data";
 import { supabase } from "../lib/supabase";
 
-const ULTRA_RARES = generateUltraRares();
+export default function ProfileScreen({ ownedCards, onBack, session }) {
+  const [editing, setEditing] = useState(false);
+  const [displayName, setDisplayName] = useState(
+    session?.user?.user_metadata?.display_name || "Collector"
+  );
+  const [instagram, setInstagram] = useState(
+    session?.user?.user_metadata?.instagram || ""
+  );
+  const [twitter, setTwitter] = useState(
+    session?.user?.user_metadata?.twitter || ""
+  );
+  const [tiktok, setTiktok] = useState(
+    session?.user?.user_metadata?.tiktok || ""
+  );
+  const fileRef = useRef(null);
+  const [pfpUrl, setPfpUrl] = useState(
+    session?.user?.user_metadata?.pfp_url || ""
+  );
+  const [saving, setSaving] = useState(false);
 
-export default function ProfileScreen({ ownedCards, onBack }) {
-  const linked = ownedCards.filter((c) => c.linked);
-  const [editingName, setEditingName] = useState(false);
-  const [displayName, setDisplayName] = useState("Collector");
-  const [profilePic, setProfilePic] = useState(null);
-  const fileInputRef = useRef(null);
-  const handlePhotoUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (file) { const reader = new FileReader(); reader.onloadend = () => setProfilePic(reader.result); reader.readAsDataURL(file); }
+  const linked = ownedCards.filter((c) => c.linked).length;
+  const email = session?.user?.email || "";
+
+  const handleSave = async () => {
+    setSaving(true);
+    await supabase.auth.updateUser({
+      data: { display_name: displayName, instagram, twitter, tiktok, pfp_url: pfpUrl },
+    });
+    setSaving(false);
+    setEditing(false);
   };
-  const singleCards = linked.filter((c) => c.type === "single");
-  const boosterCards = linked.filter((c) => c.type === "booster");
-  const completeSingles = SINGLES.filter((s) => new Set(singleCards.filter((c) => c.songId === s.id).map((c) => c.perspective)).size === 3).length;
-  const completeBoosters = BOOSTERS.filter((s) => new Set(boosterCards.filter((c) => c.songId === s.id).map((c) => c.perspective)).size === 3).length;
-  const ultraOwned = ULTRA_RARES.filter((ur) => ur.owned).length;
+
+  const handlePfpChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const ext = file.name.split(".").pop();
+    const path = session.user.id + "/pfp." + ext;
+    const { error } = await supabase.storage
+      .from("avatars")
+      .upload(path, file, { upsert: true });
+    if (!error) {
+      const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+      setPfpUrl(data.publicUrl + "?t=" + Date.now());
+    }
+  };
 
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: C.bg, overflow: "auto", position: "relative" }}>
-      <FilmGrain opacity={0.03} />
-      <div style={{ display: "flex", alignItems: "center", padding: "14px 18px", gap: 10, zIndex: 1 }}>
-        <div onClick={onBack} style={{ cursor: "pointer", padding: 4 }}><ChevronLeft /></div>
-        <div style={{ fontSize: 9, letterSpacing: 3, color: C.textDim, fontFamily: MONO }}>PROFILE</div>
+    <div style={{ minHeight: "100dvh", background: C.bg, color: C.text, padding: "0 0 100px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", padding: "18px 16px 10px", gap: 12 }}>
+        <div
+          onClick={onBack}
+          style={{
+            ...skeuo, width: 36, height: 36, borderRadius: 10,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", fontSize: 18,
+          }}
+        >\u2190</div>
+        <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700 }}>Profile</div>
+        <div style={{ flex: 1 }} />
+        <div
+          onClick={() => editing ? handleSave() : setEditing(true)}
+          style={{
+            ...skeuo, padding: "8px 16px", borderRadius: 10,
+            fontFamily: MONO, fontSize: 11, letterSpacing: 2,
+            cursor: "pointer", color: C.accent,
+          }}
+        >{saving ? "SAVING..." : editing ? "SAVE" : "EDIT"}</div>
       </div>
 
-      <div style={{ textAlign: "center", padding: "16px 22px 24px", zIndex: 1 }}>
-          <div onClick={() => fileInputRef.current?.click()} style={{ width: 70, height: 70, ...skeuo.card, borderRadius: "50%", border: `2px solid ${C.accent}55`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto", cursor: "pointer", position: "relative", overflow: "hidden", background: profilePic ? "none" : `linear-gradient(135deg, ${C.accent}22, ${C.accent}44)` }}>
-            {profilePic ? <img src={profilePic} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" /> : <span style={{ fontSize: 24, fontFamily: SERIF, color: C.accent }}>{displayName[0]}</span>}
-            <div style={{ position: "absolute", bottom: 0, right: 0, width: 22, height: 22, borderRadius: "50%", background: C.accent, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: C.bg }}>+</div>
+      {/* PFP + Name */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "20px 0" }}>
+        <div style={{ position: "relative", marginBottom: 16 }}>
+          <div
+            onClick={() => editing && fileRef.current?.click()}
+            style={{
+              width: 90, height: 90, borderRadius: "50%",
+              ...skeuo, overflow: "hidden",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 36, fontFamily: SERIF, cursor: editing ? "pointer" : "default",
+              border: "2px solid " + C.accent,
+            }}
+          >
+            {pfpUrl ? (
+              <img src={pfpUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" />
+            ) : (
+              displayName.charAt(0).toUpperCase()
+            )}
           </div>
-          <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} style={{ display: "none" }} />
-        <div style={{ fontSize: 20, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 14, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Collector</div>
-        <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 5 }}>MEMBER SINCE 2026</div>
+          {editing && (
+            <div style={{
+              position: "absolute", bottom: 0, right: 0,
+              width: 28, height: 28, borderRadius: "50%",
+              background: C.accent, color: "#000",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 14, cursor: "pointer",
+            }} onClick={() => fileRef.current?.click()}>\u270F</div>
+          )}
+          <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handlePfpChange} />
+        </div>
+
+        {editing ? (
+          <input
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            style={{
+              background: "transparent", border: "1px solid " + C.textDim,
+              borderRadius: 8, padding: "8px 16px", color: C.text,
+              fontFamily: SERIF, fontSize: 20, textAlign: "center", width: 200,
+            }}
+          />
+        ) : (
+          <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700 }}>{displayName}</div>
+        )}
+        <div style={{ fontFamily: MONO, fontSize: 11, color: C.textDim, marginTop: 6, letterSpacing: 1 }}>
+          {email.toUpperCase()}
+        </div>
       </div>
 
       {/* Stats */}
-      <div style={{ display: "flex", gap: 6, padding: "0 20px", marginBottom: 20, zIndex: 1, flexWrap: "wrap" }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: 20, padding: "0 16px 20px" }}>
         {[
-          { label: "LINKED", value: linked.length, color: C.accent },
-          { label: "SINGLES", value: `${completeSingles}/10`, color: C.teal },
-          { label: "BOOSTERS", value: `${completeBoosters}/22`, color: C.booster },
-          { label: "ULTRA", value: `${ultraOwned}/30`, color: C.megaGold },
-        ].map((stat) => (
-          <div key={stat.label} style={{
-            flex: "1 1 22%",
-            ...skeuo.card, padding: "14px 4px",
-            textAlign: "center", margin: "0 1px 4px",
-            position: "relative", overflow: "hidden",
-          }}>
-            <div style={skeuo.gloss} />
-          {editingName ? <input autoFocus value={displayName} onChange={(e) => setDisplayName(e.target.value)} onBlur={() => setEditingName(false)} onKeyDown={(e) => e.key === "Enter" && setEditingName(false)} style={{ fontSize: 20, fontWeight: 300, color: C.cream, fontFamily: SERIF, background: "transparent", border: "none", borderBottom: `1px solid ${C.accent}`, outline: "none", textAlign: "center", width: "60%", marginTop: 10 }} /> : <div onClick={() => setEditingName(true)} style={{ fontSize: 20, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 10, cursor: "pointer" }}>{displayName} &#9998;</div>}
-            <div style={{ fontSize: 7, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 4, position: "relative", zIndex: 1 }}>{stat.label}</div>
+          { label: "CARDS", value: linked },
+          { label: "SONGS", value: new Set(ownedCards.filter((c) => c.linked).map((c) => c.songId)).size },
+        ].map((s) => (
+          <div key={s.label} style={{ ...skeuo, borderRadius: 14, padding: "14px 28px", textAlign: "center" }}>
+            <div style={{ fontFamily: SERIF, fontSize: 24, fontWeight: 700 }}>{s.value}</div>
+            <div style={{ fontFamily: MONO, fontSize: 10, color: C.textDim, letterSpacing: 2, marginTop: 4 }}>{s.label}</div>
           </div>
         ))}
       </div>
 
-      <div style={{ padding: "0 22px", zIndex: 1 }}>
-        <div style={{ fontSize: 9, letterSpacing: 3, color: C.textDim, fontFamily: MONO, marginBottom: 10 }}>SINGLES STATUS</div>
-        {SINGLES.map((song) => {
-          const sc = singleCards.filter((c) => c.songId === song.id);
-          const persps = new Set(sc.map((c) => c.perspective));
-          const complete = persps.size === 3;
-          return (
-            <div key={song.id} style={{
-              display: "flex", alignItems: "center", gap: 10,
-              padding: "10px 8px",
-              background: complete ? `linear-gradient(135deg, rgba(200,184,138,0.06), rgba(200,184,138,0.02))` : "transparent",
-              borderBottom: `1px solid ${C.textDim}0D`,
-            }}>
-              <div style={{ fontSize: 10, fontFamily: MONO, color: C.textDim, width: 18, textAlign: "right" }}>{song.num}</div>
-              <MusicIcon size={12} color={complete ? C.accent : C.textDim} />
-              <div style={{ flex: 1, fontSize: 13, fontFamily: SANS, fontWeight: 500, color: complete ? C.cream : C.textSec }}>{song.title}</div>
-              <div style={{ fontSize: 11, fontFamily: SANS, color: C.textDim }}>{sc.length}</div>
-              <div style={{
-                ...skeuo.badge, padding: "3px 8px",
-                fontSize: 9, fontFamily: MONO, letterSpacing: 1,
-                color: complete ? C.accent : C.textDim, width: "auto", textAlign: "center",
-              }}>
-                {complete ? "DONE" : `${persps.size}/3`}
-              </div>
+      {/* Social Links */}
+      <div style={{ padding: "0 16px" }}>
+        <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 10 }}>SOCIAL LINKS</div>
+        {[
+          { icon: "\u{1F4F7}", label: "Instagram", value: instagram, set: setInstagram, prefix: "@" },
+          { icon: "\u{1D54F}", label: "X / Twitter", value: twitter, set: setTwitter, prefix: "@" },
+          { icon: "\u{1F3B5}", label: "TikTok", value: tiktok, set: setTiktok, prefix: "@" },
+        ].map((s) => (
+          <div key={s.label} style={{ ...skeuo, borderRadius: 12, padding: "12px 16px", marginBottom: 8, display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ fontSize: 20 }}>{s.icon}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginBottom: 2 }}>{s.label}</div>
+              {editing ? (
+                <input
+                  value={s.value}
+                  onChange={(e) => s.set(e.target.value)}
+                  placeholder={s.prefix + "username"}
+                  style={{
+                    background: "transparent", border: "none", borderBottom: "1px solid " + C.textDim,
+                    color: C.text, fontFamily: SANS, fontSize: 15, width: "100%", padding: "2px 0",
+                  }}
+                />
+              ) : (
+                <div style={{ fontFamily: SANS, fontSize: 15 }}>{s.value || "Not set"}</div>
+              )}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
 
-      <div style={{ padding: "24px 22px 36px", zIndex: 1 }}>
-        <Divider style={{ marginBottom: 20 }} />
+      {/* Bottom Menu */}
+      <div style={{ padding: "20px 16px 0" }}>
         {["Notifications", "Trade Offers", "Help & Support", "Sign Out"].map((item) => (
-          <div key={item} onClick={() => { if (item === "Sign Out") { supabase.auth.signOut(); window.location.reload(); } else { alert(item + " — coming soon!"); } }} style={{ cursor: "pointer",
-            padding: "13px 14px", marginBottom: 6,
-            ...skeuo.card,
-            fontSize: 14, fontFamily: SANS, position: "relative", overflow: "hidden",
-            color: item === "Sign Out" ? C.rose : C.textSec, cursor: "pointer",
-          }}>
-            <div style={skeuo.gloss} />
-            <span style={{ position: "relative", zIndex: 1 }}>{item}</span>
-          </div>
+          <div
+            key={item}
+            onClick={() => {
+              if (item === "Sign Out") { supabase.auth.signOut(); window.location.reload(); }
+              else { alert(item + " \u2014 coming soon!"); }
+            }}
+            style={{
+              ...skeuo, borderRadius: 12, padding: "14px 16px", marginBottom: 8,
+              fontFamily: SANS, fontSize: 15, cursor: "pointer",
+              color: item === "Sign Out" ? "#e74c3c" : C.text,
+            }}
+          >{item}</div>
         ))}
       </div>
     </div>
