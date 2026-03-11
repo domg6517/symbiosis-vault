@@ -337,7 +337,6 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
           </div>
         </div>
       )}
-      )}
     </div>
   );
 }
