@@ -14,8 +14,9 @@ export default function ScanScreen({ session, onBack, onScanned }) {
   const [manualMode, setManualMode] = useState(false);
 
 
-  const linkCard = async () => {
-    if (!chipId.trim()) {
+  const linkCard = async (id) => {
+    const cid = (id || chipId).trim();
+    if (!cid) {
       setError("Enter a chip ID");
       return;
     }
@@ -31,7 +32,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
       const res = await fetch("/api/cards/link", {
         method: "POST",
         headers,
-        body: JSON.stringify({ chipId: chipId.trim() }),
+        body: JSON.stringify({ chipId: cid }),
       });
 
       const data = await res.json();
@@ -74,12 +75,28 @@ export default function ScanScreen({ session, onBack, onScanned }) {
     <>
     <style dangerouslySetInnerHTML={{ __html: `
       @keyframes scanPulse {
-        0%, 100% { transform: scale(1); opacity: 0.8; }
-        50% { transform: scale(1.15); opacity: 1; }
+        0%, 100% { transform: scale(1); opacity: 0.7; }
+        50% { transform: scale(1.12); opacity: 1; }
       }
       @keyframes scanRing {
-        0% { transform: scale(1); opacity: 0.6; }
-        100% { transform: scale(2.2); opacity: 0; }
+        0% { transform: scale(1); opacity: 0.5; }
+        100% { transform: scale(2.5); opacity: 0; }
+      }
+      @keyframes scanGlow {
+        0%, 100% { box-shadow: 0 0 20px rgba(200,184,138,0.1); }
+        50% { box-shadow: 0 0 50px rgba(200,184,138,0.35), 0 0 80px rgba(200,184,138,0.15); }
+      }
+      @keyframes scanSweep {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes scanBounce {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
       }
     ` }} />
     <div style={{
@@ -100,6 +117,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
             border: `1.5px solid ${scanning ? C.accent + "44" : C.textDim + "22"}`,
             display: "flex", alignItems: "center", justifyContent: "center",
             position: "relative", transition: "all 0.5s ease",
+            animation: scanning ? "scanGlow 2s ease-in-out infinite, scanBounce 3s ease-in-out infinite" : "none",
             boxShadow: scanning
               ? `0 1px 0 rgba(255,255,255,0.04) inset, 0 -1px 0 rgba(0,0,0,0.3) inset, 0 4px 16px rgba(0,0,0,0.4), 0 0 40px ${C.accentDim}`
               : skeuo.inset.boxShadow,
@@ -111,6 +129,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
               </>
             )}
             {scanning && (<div style={{ position: "absolute", inset: -8, borderRadius: "50%", border: `1px solid ${C.accent}18`, animation: "scanPulse 1.5s ease-in-out infinite" }} />)}
+              {scanning && (<div style={{ position: "absolute", width: 160, height: 160, borderRadius: "50%", border: "1px dashed " + C.accent + "33", animation: "scanSweep 4s linear infinite" }} />)}
             <NfcIcon size={36} color={scanning ? C.accent : C.textDim} />
           </div>
 
