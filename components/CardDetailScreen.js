@@ -62,25 +62,41 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
             position: "relative", overflow: "hidden",
             boxShadow: "0 2px 6px rgba(0,0,0,0.4) inset",
           }}>
-            <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse at 35% 40%, rgba(200,184,138,0.06), transparent 55%)` }} />
-            <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.35) 100%)" }} />
-            <div style={{
-              position: "absolute", inset: 0, display: "flex", flexDirection: "column",
-              alignItems: "center", justifyContent: "center", zIndex: 1,
-            }}>
-              <div style={{ fontSize: 9, letterSpacing: 4, color: C.creamDark, fontFamily: MONO, marginBottom: 8, opacity: 0.6 }}>
-                {isBooster ? `B${song?.num}` : song?.num}
-              </div>
-              <div style={{ fontSize: 34, fontWeight: 300, color: C.cream, fontFamily: SERIF, letterSpacing: 2, textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}>{perspLabel}</div>
-              <div style={{ fontSize: 9, letterSpacing: 3, color: C.creamDark, fontFamily: MONO, marginTop: 8, opacity: 0.5 }}>{song?.title.toUpperCase()}</div>
-            </div>
-            {card.rarity === "rare" && (
-              <div style={{ position: "absolute", top: 6, right: 8, fontSize: 8, fontFamily: MONO, color: C.purple, letterSpacing: 1 }}>RARE</div>
+            {card.imageUrl ? (
+              <>
+                <img src={card.imageUrl} alt={`${card.perspective} \u2014 ${song?.title}`} style={{
+                  width: "100%", height: "100%", objectFit: "cover", display: "block",
+                }} />
+                {card.rarity === "rare" && (
+                  <div style={{ position: "absolute", top: 6, right: 8, fontSize: 8, fontFamily: MONO, color: C.purple, letterSpacing: 1, textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}>RARE</div>
+                )}
+                {isBooster && (
+                  <div style={{ position: "absolute", bottom: 6, left: 8, fontSize: 7, fontFamily: MONO, color: C.booster, letterSpacing: 1, textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}>BOOSTER</div>
+                )}
+              </>
+            ) : (
+              <>
+                <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse at 35% 40%, rgba(200,184,138,0.06), transparent 55%)` }} />
+                <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.35) 100%)" }} />
+                <div style={{
+                  position: "absolute", inset: 0, display: "flex", flexDirection: "column",
+                  alignItems: "center", justifyContent: "center", zIndex: 1,
+                }}>
+                  <div style={{ fontSize: 9, letterSpacing: 4, color: C.creamDark, fontFamily: MONO, marginBottom: 8, opacity: 0.6 }}>
+                    {isBooster ? `B${song?.num}` : song?.num}
+                  </div>
+                  <div style={{ fontSize: 34, fontWeight: 300, color: C.cream, fontFamily: SERIF, letterSpacing: 2, textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}>{perspLabel}</div>
+                  <div style={{ fontSize: 9, letterSpacing: 3, color: C.creamDark, fontFamily: MONO, marginTop: 8, opacity: 0.5 }}>{song?.title.toUpperCase()}</div>
+                </div>
+                {card.rarity === "rare" && (
+                  <div style={{ position: "absolute", top: 6, right: 8, fontSize: 8, fontFamily: MONO, color: C.purple, letterSpacing: 1 }}>RARE</div>
+                )}
+                {isBooster && (
+                  <div style={{ position: "absolute", bottom: 6, left: 8, fontSize: 7, fontFamily: MONO, color: C.booster, letterSpacing: 1 }}>BOOSTER</div>
+                )}
+                <div style={{ position: "absolute", top: 6, left: 8, fontSize: 7, fontFamily: MONO, color: C.creamDark, opacity: 0.2 }}>{card.chipId}</div>
+              </>
             )}
-            {isBooster && (
-              <div style={{ position: "absolute", bottom: 6, left: 8, fontSize: 7, fontFamily: MONO, color: C.booster, letterSpacing: 1 }}>BOOSTER</div>
-            )}
-            <div style={{ position: "absolute", top: 6, left: 8, fontSize: 7, fontFamily: MONO, color: C.creamDark, opacity: 0.2 }}>{card.chipId}</div>
           </div>
           <div style={{ textAlign: "center", paddingTop: 8 }}>
             <div style={{ fontSize: 14, fontFamily: SERIF, fontStyle: "italic", color: "#3A3530" }}>{card.perspective}</div>
@@ -91,7 +107,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
       <div style={{ padding: "0 22px", zIndex: 1 }}>
         <div style={{ fontSize: 20, fontFamily: SERIF, fontWeight: 300, color: C.cream, marginBottom: 3, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>{song?.title}</div>
         <div style={{ fontSize: 12, fontFamily: SANS, color: C.textSec, marginBottom: 16 }}>
-          {card.perspective} · {card.rarity === "rare" ? "Rare" : "Common"} · {card.chipId}
+          {card.perspective} \u00b7 {card.rarity === "rare" ? "Rare" : "Common"} \u00b7 {card.chipId}
         </div>
 
         {/* Unlock */}
@@ -104,7 +120,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           <MusicIcon />
           <div style={{ flex: 1, position: "relative", zIndex: 1 }}>
             <div style={{ fontSize: 9, color: C.accent, fontFamily: MONO, letterSpacing: 2 }}>UNLOCKED</div>
-            <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>{song?.title} — {card.perspective}</div>
+            <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>{song?.title} \u2014 {card.perspective}</div>
           </div>
           <div style={{ ...skeuo.btnGhost, padding: "7px 14px", color: C.accent, fontSize: 9, fontFamily: MONO, letterSpacing: 2, cursor: "pointer", position: "relative", zIndex: 1 }}>PLAY</div>
         </div>
@@ -137,7 +153,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
         }}>
           {complete && <div style={skeuo.gloss} />}
           <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 2, color: complete ? C.accent : C.textDim, position: "relative", zIndex: 1 }}>
-            {complete ? "✦ ALL 3 PERSPECTIVES — BONUS UNLOCKED" : `${uniquePerspectives} OF 3 — COLLECT ALL TO UNLOCK BONUS`}
+            {complete ? "\u2726 ALL 3 PERSPECTIVES \u2014 BONUS UNLOCKED" : `${uniquePerspectives} OF 3 \u2014 COLLECT ALL TO UNLOCK BONUS`}
           </div>
         </div>
 
@@ -155,7 +171,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
               <div style={{ fontSize: 13, fontFamily: SANS, fontWeight: 500, color: C.textSec }}>Disconnect for trade</div>
               <div style={{ fontSize: 11, fontFamily: SANS, color: C.textDim, marginTop: 2 }}>Unlink this card so someone else can claim it</div>
             </div>
-            <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>›</div>
+            <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>\u203a</div>
           </div>
         ) : (
           <div style={{ padding: "16px", ...skeuo.card, border: `1px solid ${C.rose}33`, marginBottom: 20, position: "relative", overflow: "hidden" }}>
