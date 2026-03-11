@@ -35,7 +35,7 @@ function PasswordGate({ onUnlock }) {
     <div style={{
       width: "100%", height: "100%", display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center", padding: 32,
-      background: `radial-gradient(ellipse at 50% 30%, #1A1816 0%, ${C.bg} 70%)`,
+      background: "#000",
     }}>
       <div style={{
         fontSize: 11, letterSpacing: 4, color: C.textDim, textTransform: "uppercase",
