@@ -10,6 +10,7 @@ import CollectionScreen from "../components/CollectionScreen";
 import CardDetailScreen from "../components/CardDetailScreen";
 import ScanScreen from "../components/ScanScreen";
 import ProfileScreen from "../components/ProfileScreen";
+import LeaderboardScreen from "../components/LeaderboardScreen";
 
 const SITE_PASSWORD = "symbiosis2026";
 
@@ -183,6 +184,9 @@ export default function SymbiosisVault() {
       {screen === "profile" && (
         <ProfileScreen ownedCards={ownedCards} onBack={() => setScreen("collection")} />
       )}
+        {screen === "leaderboard" && (
+          <LeaderboardScreen onBack={() => setScreen("collection")} />
+        )}
     </div>
   );
 }
