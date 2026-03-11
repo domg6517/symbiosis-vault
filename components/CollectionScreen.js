@@ -37,7 +37,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
       <div style={{ padding: "18px 20px 0", zIndex: 1 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <img src="/vault-logo.png" style={{ width: 48, height: 48, borderRadius: 10, marginBottom: 8, display: "block" }} alt="" />
+            <div style={{ width: 34, height: 34, ...skeuo.card, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 8, marginBottom: 8, overflow: "hidden" }}><img src="/vault-logo.png" style={{ width: 34, height: 34, borderRadius: 8, display: "block" }} alt="" /></div>
             <div style={{ fontSize: 9, letterSpacing: 4, color: C.textDim, fontFamily: MONO }}>{"SYMBIOSIS VAULT"}</div>
             <div style={{ fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 4, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Collection</div>
           </div>
@@ -80,9 +80,9 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
           overflowX: "auto", scrollbarWidth: "none",
         }}>
           {[
-            { key: "singles", label: "DROP 1", count: "?" },
-            { key: "boosters", label: "DROP 2", count: "?" },
-            { key: "ultra", label: "SPECIALS", count: "?" },
+            { key: "singles", label: "I", count: "" },
+            { key: "boosters", label: "II", count: "" },
+            { key: "ultra", label: "III", count: "" },
           ].map((tab) => (
             <button key={tab.key} onClick={() => setView(tab.key)} style={{
               padding: "8px 16px",
