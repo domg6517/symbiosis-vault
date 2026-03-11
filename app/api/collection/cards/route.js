@@ -18,7 +18,7 @@ export async function GET(request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Fetch user's linked cards with full details
+    // Fetch user's linked cards with full details including content
     const { data: userCards, error } = await supabase
       .from("user_cards")
       .select(`
@@ -39,6 +39,10 @@ export async function GET(request) {
           perspective:perspectives (
             id,
             name
+          ),
+          content:card_content (
+            content_type,
+            file_url
           )
         )
       `)
@@ -50,17 +54,24 @@ export async function GET(request) {
     }
 
     // Transform to match frontend expected format
-    const cards = userCards.map((uc) => ({
-      chipId: uc.card_template.chip_id,
-      songId: uc.card_template.song.id,
-      songTitle: uc.card_template.song.title,
-      songNum: uc.card_template.song.song_number,
-      perspective: uc.card_template.perspective.name,
-      rarity: uc.card_template.rarity,
-      linked: uc.linked,
-      type: uc.card_template.type,
-      linkedAt: uc.linked_at,
-    }));
+    const cards = userCards.map((uc) => {
+      const content = uc.card_template.content || [];
+      const imageContent = content.find((c) => c.content_type === "image");
+      const audioContent = content.find((c) => c.content_type === "audio");
+      return {
+        chipId: uc.card_template.chip_id,
+        songId: uc.card_template.song.id,
+        songTitle: uc.card_template.song.title,
+        songNum: uc.card_template.song.song_number,
+        perspective: uc.card_template.perspective.name,
+        rarity: uc.card_template.rarity,
+        linked: uc.linked,
+        type: uc.card_template.type,
+        linkedAt: uc.linked_at,
+        imageUrl: imageContent?.file_url || null,
+        audioUrl: audioContent?.file_url || null,
+      };
+    });
 
     return NextResponse.json({ cards });
   } catch (err) {
