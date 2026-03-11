@@ -78,7 +78,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           <div style={{ width: "100%", height: 180, background: isBooster ? `linear-gradient(140deg, #141C17, #1A221D)` : `linear-gradient(140deg, #1A1714, #201D17)`, position: "relative", overflow: "hidden", boxShadow: "0 2px 6px rgba(0,0,0,0.4) inset" }}>
             {card.imageUrl ? (
               <>
-                <img src={card.imageUrl} alt={`${card.perspective} \u2014 ${song?.title}`} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                <img src={card.imageUrl} alt={`${card.perspective} — ${song?.title}`} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                 {card.rarity === "rare" && (
                   <div style={{ position: "absolute", top: 6, right: 8, fontSize: 8, fontFamily: MONO, color: C.purple, letterSpacing: 1, textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}>RARE</div>
                 )}
@@ -114,7 +114,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
       <div style={{ padding: "0 22px", zIndex: 1 }}>
         <div style={{ fontSize: 20, fontFamily: SERIF, fontWeight: 300, color: C.cream, marginBottom: 3, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>{song?.title}</div>
         <div style={{ fontSize: 12, fontFamily: SANS, color: C.textSec, marginBottom: 16 }}>
-          {card.perspective} \u00b7 {card.rarity === "rare" ? "Rare" : "Common"} \u00b7 {card.chipId}
+          {card.perspective} · {card.rarity === "rare" ? "Rare" : "Common"} · {card.chipId}
         </div>
 
         {/* Unlock / Audio Player */}
@@ -134,7 +134,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
               {card.audioUrl ? "UNLOCKED" : "NO AUDIO"}
             </div>
             <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>
-              {song?.title} \u2014 {card.perspective}
+              {song?.title} — {card.perspective}
             </div>
           </div>
           <div style={{
@@ -168,7 +168,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
         <div style={{ padding: "11px 14px", textAlign: "center", ...(complete ? skeuo.card : skeuo.inset), position: "relative", overflow: "hidden", marginBottom: 20 }}>
           {complete && <div style={skeuo.gloss} />}
           <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 2, color: complete ? C.accent : C.textDim, position: "relative", zIndex: 1 }}>
-            {complete ? "\u2726 ALL 3 PERSPECTIVES \u2014 BONUS UNLOCKED" : `${uniquePerspectives} OF 3 \u2014 COLLECT ALL TO UNLOCK BONUS`}
+            {complete ? "✦ ALL 3 PERSPECTIVES — BONUS UNLOCKED" : `${uniquePerspectives} OF 3 — COLLECT ALL TO UNLOCK BONUS`}
           </div>
         </div>
 
@@ -182,7 +182,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
               <div style={{ fontSize: 13, fontFamily: SANS, fontWeight: 500, color: C.textSec }}>Disconnect for trade</div>
               <div style={{ fontSize: 11, fontFamily: SANS, color: C.textDim, marginTop: 2 }}>Unlink this card so someone else can claim it</div>
             </div>
-            <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>\u203a</div>
+            <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>›</div>
           </div>
         ) : (
           <div style={{ padding: "16px", ...skeuo.card, border: `1px solid ${C.rose}33`, marginBottom: 20, position: "relative", overflow: "hidden" }}>
