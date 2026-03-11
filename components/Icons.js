@@ -7,12 +7,13 @@ export const ChevronLeft = () => (
 
 export const NfcIcon = ({ size = 24, color = C.text }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M6 18.5V16a2 2 0 012-2h1.5a1.5 1.5 0 001.5-1.5v0A1.5 1.5 0 009.5 11H9a3 3 0 00-3 3v4.5" />
-    <path d="M12 8.5a3.5 3.5 0 013.5 3.5" />
-    <path d="M12 5a7 7 0 017 7" />
-    <path d="M12 12v0" strokeWidth="2" />
+    <rect x="2" y="6" width="12" height="15" rx="2" />
+    <path d="M6 18h4" />
+    <path d="M16 3a6 6 0 010 12" />
+    <path d="M16 6a3 3 0 010 6" />
+    <circle cx="16" cy="9" r="0.5" fill={color} />
   </svg>
-);
+)
 
 export const MusicIcon = ({ size = 15, color = C.accent }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5">
