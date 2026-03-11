@@ -157,7 +157,7 @@ export default function SymbiosisVault() {
   return (
     <div style={{
       width: "100%", height: "100dvh",
-      background: C.bg, fontFamily: SANS,
+      background: "#000", fontFamily: SANS,
       overflow: "hidden", position: "relative",
       paddingTop: "env(safe-area-inset-top)",
       paddingBottom: "env(safe-area-inset-bottom)",
