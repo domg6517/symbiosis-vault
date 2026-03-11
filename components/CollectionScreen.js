@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
-import { FilmGrain, NfcIcon, CheckIcon, LockSmall, StarIcon } from "./Icons";
+import { FilmGrain, NfcIcon, CheckIcon, LockSmall, StarIcon, TrophyIcon, ProfileIcon } from "./Icons";
 import { SINGLES, BOOSTERS, PERSPECTIVES, generateUltraRares } from "./data";
 import { SongRow } from "./SharedComponents";
 
@@ -46,16 +46,16 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             width: 34, height: 34,
             ...skeuo.card,
             display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", fontSize: 13, fontFamily: SERIF, color: C.textSec,
+            cursor: "pointer",
             borderRadius: 8,
-          }}>D</div>
+          }}><ProfileIcon size={16} color={C.textSec} /></div>
           <div onClick={onLeaderboard} style={{
             width: 34, height: 34,
             ...skeuo.card,
             display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", fontSize: 16,
+            cursor: "pointer",
             borderRadius: 8,
-          }}>🏆</div>
+          }}><TrophyIcon size={16} color={C.textSec} /></div>
         </div>
 
         {/* Stats badges */}
