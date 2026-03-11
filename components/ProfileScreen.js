@@ -170,15 +170,38 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
         ))}
       </div>
 
+            {/* Install App */}
+      <div style={{ padding: "16px 16px 0" }}>
+        <div onClick={() => setShowInstall(true)} style={{
+          ...skeuo, borderRadius: 14, padding: "16px 20px",
+          display: "flex", alignItems: "center", gap: 14,
+          cursor: "pointer",
+          border: "1px solid " + C.accent + "22",
+          background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)",
+        }}>
+          <div style={{
+            width: 36, height: 36, borderRadius: 10,
+            ...skeuo,
+            border: "1px solid " + C.accent + "33",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 18,
+          }}>{String.fromCodePoint(0x1F4F1)}</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Install App</div>
+            <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Add to your home screen</div>
+          </div>
+          <div style={{ fontFamily: MONO, fontSize: 10, color: C.accent, letterSpacing: 1 }}>SETUP</div>
+        </div>
+      </div>
+
       {/* Bottom Menu */}
       <div style={{ padding: "20px 16px 0" }}>
-        {["Install App", "Notifications", "Trade Offers", "Report a Bug", "Help & Support", "Sign Out"].map((item) => (
+        {["Notifications", "Trade Offers", "Report a Bug", "Help & Support", "Sign Out"].map((item) => (
           <div
             key={item}
             onClick={() => {
               if (item === "Sign Out") { supabase.auth.signOut(); window.location.reload(); }
-              else if (item === "Install App") { setShowInstall(true); }
-              else if (item === "Report a Bug") { window.open("mailto:info@jackandjack.store?subject=Symbiosis%20Vault%20Bug%20Report", "_self"); }
+                            else if (item === "Report a Bug") { window.open("mailto:info@jackandjack.store?subject=Symbiosis%20Vault%20Bug%20Report", "_self"); }
               else { alert(item + " \u2014 coming soon!"); }
             }}
             style={{
@@ -193,6 +216,9 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
       {showInstall && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.9)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, backdropFilter: "blur(12px)" }} onClick={() => setShowInstall(false)}>
           <div onClick={(e) => e.stopPropagation()} style={{ ...skeuo, borderRadius: 20, padding: "28px 24px", maxWidth: 340, width: "100%", maxHeight: "80vh", overflow: "auto", border: "1px solid " + C.accent + "33", boxShadow: "0 0 40px rgba(0,0,0,0.5), 0 0 80px " + C.accent + "11, inset 0 1px 0 rgba(255,255,255,0.06)" }}>
+            <div onClick={() => setShowInstall(false)} style={{ ...skeuo, width: 34, height: 34, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", border: "1px solid " + C.accent + "22", marginBottom: 16 }}>
+              <span style={{ fontSize: 16, color: C.accent }}>{"\u2190"}</span>
+            </div>
             <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700, marginBottom: 4, textAlign: "center", color: C.cream, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Install Symbiosis Vault</div>
             <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, textAlign: "center", marginBottom: 20 }}>Add to your home screen for the full experience</div>
             <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.accent, marginBottom: 12, borderBottom: "1px solid " + C.accent + "22", paddingBottom: 8 }}>iPHONE / iPAD</div>
@@ -225,12 +251,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
                 <div style={{ fontSize: 18 }}>{s.icon}</div>
               </div>
             ))}
-            <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
-              <div onClick={() => setShowInstall(false)} style={{ ...skeuo, borderRadius: 12, width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", border: "1px solid " + C.accent + "22" }}>
-                <span style={{ fontSize: 18, color: C.accent }}>{"\u2190"}</span>
-              </div>
-              <div onClick={() => setShowInstall(false)} style={{ ...skeuo, borderRadius: 12, flex: 1, padding: "12px 0", textAlign: "center", fontFamily: MONO, fontSize: 11, letterSpacing: 2, color: C.accent, cursor: "pointer", border: "1px solid " + C.accent + "22" }}>GOT IT</div>
-            </div>
+            <div onClick={() => setShowInstall(false)} style={{ ...skeuo, borderRadius: 12, padding: "12px 0", textAlign: "center", fontFamily: MONO, fontSize: 11, letterSpacing: 2, color: C.accent, cursor: "pointer", marginTop: 16, border: "1px solid " + C.accent + "22" }}>GOT IT</div>
             <style>{`@keyframes fadeSlideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
           </div>
         </div>
