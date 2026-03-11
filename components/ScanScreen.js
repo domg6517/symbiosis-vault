@@ -9,6 +9,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
   const [cardResult, setCardResult] = useState(null);
   const [error, setError] = useState("");
   const [isSetComplete, setIsSetComplete] = useState(false);
+  const [hasNfc] = useState(() => typeof window !== "undefined" && "NDEFReader" in window);
 
   const linkCard = async (chipId) => {
     if (!chipId) return;
@@ -37,19 +38,9 @@ export default function ScanScreen({ session, onBack, onScanned }) {
     }
   };
 
-  const startScan = async () => {
+  const startNfcScan = async () => {
     setScanning(true);
     setError("");
-
-    if (typeof window === "undefined" || !("NDEFReader" in window)) {
-      // NFC not supported - show scanning animation briefly then error
-      setTimeout(() => {
-        setScanning(false);
-        setError("NFC not supported on this device or browser. Try Chrome on Android.");
-      }, 3000);
-      return;
-    }
-
     try {
       const ndef = new NDEFReader();
       await ndef.scan();
@@ -66,49 +57,25 @@ export default function ScanScreen({ session, onBack, onScanned }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes scanPulse {
-          0%, 100% { transform: scale(1); opacity: 0.7; }
-          50% { transform: scale(1.12); opacity: 1; }
-        }
-        @keyframes scanRing {
-          0% { transform: scale(1); opacity: 0.5; }
-          100% { transform: scale(2.5); opacity: 0; }
-        }
-        @keyframes scanGlow {
-          0%, 100% { box-shadow: 0 0 20px rgba(200,184,138,0.1); }
-          50% { box-shadow: 0 0 50px rgba(200,184,138,0.35), 0 0 80px rgba(200,184,138,0.15); }
-        }
-        @keyframes scanSweep {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scanBounce {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
+        @keyframes scanPulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.12); opacity: 1; } }
+        @keyframes scanRing { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(2.5); opacity: 0; } }
+        @keyframes scanGlow { 0%, 100% { box-shadow: 0 0 20px rgba(200,184,138,0.1); } 50% { box-shadow: 0 0 50px rgba(200,184,138,0.35), 0 0 80px rgba(200,184,138,0.15); } }
+        @keyframes scanSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scanBounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes gentlePulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
       ` }} />
       <div style={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
+        height: "100%", display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
         background: `radial-gradient(ellipse at 50% 40%, #151312, ${C.bg})`,
-        position: "relative",
-        overflow: "hidden",
+        position: "relative", overflow: "hidden",
       }}>
         <FilmGrain opacity={0.04} />
-        <div
-          onClick={onBack}
-          style={{
-            position: "absolute", top: 14, left: 14,
-            cursor: "pointer", padding: 4, zIndex: 2,
-          }}
-        >
+        <div onClick={onBack} style={{
+          position: "absolute", top: 14, left: 14,
+          cursor: "pointer", padding: 4, zIndex: 2,
+        }}>
           <ChevronLeft />
         </div>
 
@@ -121,8 +88,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
               borderRadius: "50%",
               border: `1.5px solid ${scanning ? C.accent + "44" : C.textDim + "22"}`,
               display: "flex", alignItems: "center", justifyContent: "center",
-              position: "relative",
-              transition: "all 0.5s ease",
+              position: "relative", transition: "all 0.5s ease",
               animation: scanning ? "scanGlow 2s ease-in-out infinite, scanBounce 3s ease-in-out infinite" : "none",
               boxShadow: scanning
                 ? `0 1px 0 rgba(255,255,255,0.04) inset, 0 -1px 0 rgba(0,0,0,0.3) inset, 0 4px 16px rgba(0,0,0,0.4), 0 0 40px ${C.accentDim}`
@@ -130,31 +96,15 @@ export default function ScanScreen({ session, onBack, onScanned }) {
             }}>
               {scanning && (
                 <>
-                  <div style={{
-                    position: "absolute", width: 80, height: 80, borderRadius: "50%",
-                    border: "2px solid " + C.accent,
-                    animation: "scanRing 1.5s ease-out infinite",
-                  }} />
-                  <div style={{
-                    position: "absolute", width: 80, height: 80, borderRadius: "50%",
-                    border: "2px solid " + C.accent,
-                    animation: "scanRing 1.5s ease-out infinite 0.5s",
-                  }} />
+                  <div style={{ position: "absolute", width: 80, height: 80, borderRadius: "50%", border: "2px solid " + C.accent, animation: "scanRing 1.5s ease-out infinite" }} />
+                  <div style={{ position: "absolute", width: 80, height: 80, borderRadius: "50%", border: "2px solid " + C.accent, animation: "scanRing 1.5s ease-out infinite 0.5s" }} />
                 </>
               )}
               {scanning && (
-                <div style={{
-                  position: "absolute", inset: -8, borderRadius: "50%",
-                  border: `1px solid ${C.accent}18`,
-                  animation: "scanPulse 1.5s ease-in-out infinite",
-                }} />
+                <div style={{ position: "absolute", inset: -8, borderRadius: "50%", border: `1px solid ${C.accent}18`, animation: "scanPulse 1.5s ease-in-out infinite" }} />
               )}
               {scanning && (
-                <div style={{
-                  position: "absolute", width: 160, height: 160, borderRadius: "50%",
-                  border: "1px dashed " + C.accent + "33",
-                  animation: "scanSweep 4s linear infinite",
-                }} />
+                <div style={{ position: "absolute", width: 160, height: 160, borderRadius: "50%", border: "1px dashed " + C.accent + "33", animation: "scanSweep 4s linear infinite" }} />
               )}
               <NfcIcon size={36} color={scanning ? C.accent : C.textDim} />
             </div>
@@ -168,10 +118,24 @@ export default function ScanScreen({ session, onBack, onScanned }) {
                 {scanning ? "Scanning..." : "Scan a card"}
               </div>
               <div style={{
-                fontSize: 13, color: C.textSec, fontFamily: SANS, marginTop: 8, lineHeight: 1.5,
+                fontSize: 13, color: C.textSec, fontFamily: SANS,
+                marginTop: 8, lineHeight: 1.5, maxWidth: 260, padding: "0 20px",
               }}>
-                {scanning ? "Hold your phone near the NFC chip" : "Tap below to start scanning"}
+                {scanning
+                  ? "Hold your phone near the NFC chip"
+                  : hasNfc
+                    ? "Tap below to start scanning"
+                    : "Hold your phone against the card"}
               </div>
+              {!scanning && !hasNfc && (
+                <div style={{
+                  fontSize: 11, color: C.textDim, fontFamily: SANS,
+                  marginTop: 12, lineHeight: 1.6, maxWidth: 280, padding: "0 20px",
+                  animation: "gentlePulse 3s ease-in-out infinite",
+                }}>
+                  Your phone will automatically detect the card and open it here
+                </div>
+              )}
             </div>
 
             {/* Error */}
@@ -183,17 +147,14 @@ export default function ScanScreen({ session, onBack, onScanned }) {
               }}>{error}</div>
             )}
 
-            {/* Scan button */}
-            {!scanning && (
+            {/* Scan button - only show on Android/NFC-capable browsers */}
+            {!scanning && hasNfc && (
               <div style={{ textAlign: "center", marginTop: 32 }}>
-                <button
-                  onClick={startScan}
-                  style={{
-                    ...skeuo.btnGhost, color: C.accent, fontSize: 11,
-                    fontFamily: MONO, letterSpacing: 3, cursor: "pointer",
-                    padding: "14px 32px",
-                  }}
-                >SCAN CARD</button>
+                <button onClick={startNfcScan} style={{
+                  ...skeuo.btnGhost, color: C.accent, fontSize: 11,
+                  fontFamily: MONO, letterSpacing: 3, cursor: "pointer",
+                  padding: "14px 32px",
+                }}>SCAN CARD</button>
               </div>
             )}
           </>
@@ -214,7 +175,8 @@ export default function ScanScreen({ session, onBack, onScanned }) {
             {cardResult && (
               <>
                 <div style={{
-                  fontSize: 15, color: C.accent, fontFamily: SERIF, fontStyle: "italic",
+                  fontSize: 15, color: C.accent, fontFamily: SERIF,
+                  fontStyle: "italic",
                 }}>{cardResult.songTitle} &mdash; {cardResult.perspective}</div>
                 <div style={{
                   fontSize: 9, color: C.textDim, fontFamily: MONO,
@@ -234,14 +196,11 @@ export default function ScanScreen({ session, onBack, onScanned }) {
                 }}>SET COMPLETE &mdash; ULTRA RARE UNLOCKED</div>
               </div>
             )}
-            <button
-              onClick={onScanned}
-              style={{
-                marginTop: 32, padding: "13px 40px", ...skeuo.btnGold,
-                color: C.bg, fontSize: 10, fontFamily: MONO, fontWeight: 600,
-                letterSpacing: 3, cursor: "pointer",
-              }}
-            >VIEW COLLECTION</button>
+            <button onClick={onScanned} style={{
+              marginTop: 32, padding: "13px 40px", ...skeuo.btnGold,
+              color: C.bg, fontSize: 10, fontFamily: MONO, fontWeight: 600,
+              letterSpacing: 3, cursor: "pointer",
+            }}>VIEW COLLECTION</button>
           </div>
         )}
       </div>
