@@ -41,13 +41,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             <div style={{ fontSize: 9, letterSpacing: 4, color: C.textDim, fontFamily: MONO }}>{"SYMBIOSIS VAULT"}</div>
             <div style={{ fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 4, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Collection</div>
           </div>
-          <div onClick={onLeaderboard} style={{
-            width: 34, height: 34,
-            ...skeuo.card,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", fontSize: 16,
-            borderRadius: 8,
-          }}>🏆</div>
+          <div style={{ flex: 1 }} />
           <div onClick={onProfile} style={{
             width: 34, height: 34,
             ...skeuo.card,
@@ -55,6 +49,13 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             cursor: "pointer", fontSize: 13, fontFamily: SERIF, color: C.textSec,
             borderRadius: 8,
           }}>D</div>
+          <div onClick={onLeaderboard} style={{
+            width: 34, height: 34,
+            ...skeuo.card,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", fontSize: 16,
+            borderRadius: 8,
+          }}>🏆</div>
         </div>
 
         {/* Stats badges */}
