@@ -51,9 +51,9 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
   };
 
   return (
-    <div style={{ minHeight: "100dvh", background: C.bg, color: C.text, padding: "0 0 100px" }}>
+    <div style={{ minHeight: "100dvh", background: C.bg, color: C.text, padding: "0 0 20px" }}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", padding: "18px 16px 10px", gap: 12 }}>
+      <div style={{ display: "flex", alignItems: "center", padding: "14px 16px 6px", gap: 12 }}>
         <div
           onClick={onBack}
           style={{
@@ -75,12 +75,12 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
       </div>
 
       {/* PFP + Name */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "20px 0" }}>
-        <div style={{ position: "relative", marginBottom: 16 }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "12px 0" }}>
+        <div style={{ position: "relative", marginBottom: 10 }}>
           <div
             onClick={() => editing && fileRef.current?.click()}
             style={{
-              width: 90, height: 90, borderRadius: "50%",
+              width: 72, height: 72, borderRadius: "50%",
               ...skeuo, overflow: "hidden",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 36, fontFamily: SERIF, cursor: editing ? "pointer" : "default",
@@ -112,25 +112,25 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
             style={{
               background: "transparent", border: "1px solid " + C.textDim,
               borderRadius: 8, padding: "8px 16px", color: C.text,
-              fontFamily: SERIF, fontSize: 20, textAlign: "center", width: 200,
+              fontFamily: SERIF, fontSize: 18, textAlign: "center", width: 200,
             }}
           />
         ) : (
-          <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700 }}>{displayName}</div>
+          <div style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 700 }}>{displayName}</div>
         )}
-        <div style={{ fontFamily: MONO, fontSize: 11, color: C.textDim, marginTop: 6, letterSpacing: 1 }}>
+        <div style={{ fontFamily: MONO, fontSize: 11, color: C.textDim, marginTop: 4, letterSpacing: 1 }}>
           {email.toUpperCase()}
         </div>
       </div>
 
       {/* Stats */}
-      <div style={{ display: "flex", justifyContent: "center", gap: 20, padding: "0 16px 20px" }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: 20, padding: "0 16px 10px" }}>
         {[
           { label: "CARDS", value: linked },
           { label: "SONGS", value: new Set(ownedCards.filter((c) => c.linked).map((c) => c.songId)).size },
         ].map((s) => (
-          <div key={s.label} style={{ ...skeuo, borderRadius: 14, padding: "14px 28px", textAlign: "center" }}>
-            <div style={{ fontFamily: SERIF, fontSize: 24, fontWeight: 700 }}>{s.value}</div>
+          <div key={s.label} style={{ ...skeuo, borderRadius: 14, padding: "10px 24px", textAlign: "center" }}>
+            <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700 }}>{s.value}</div>
             <div style={{ fontFamily: MONO, fontSize: 10, color: C.textDim, letterSpacing: 2, marginTop: 4 }}>{s.label}</div>
           </div>
         ))}
@@ -138,16 +138,16 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
 
       {/* Social Links */}
       <div style={{ padding: "0 16px" }}>
-        <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 10 }}>SOCIAL LINKS</div>
+        <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 6 }}>SOCIAL LINKS</div>
         {[
           { icon: "\u{1F4F7}", label: "Instagram", value: instagram, set: setInstagram, prefix: "@", url: "https://instagram.com/" },
           { icon: "\u{1D54F}", label: "X / Twitter", value: twitter, set: setTwitter, prefix: "@", url: "https://x.com/" },
           { icon: "\u{1F3B5}", label: "TikTok", value: tiktok, set: setTiktok, prefix: "@", url: "https://tiktok.com/@" },
         ].map((s) => (
-          <div key={s.label} style={{ ...skeuo, borderRadius: 12, padding: "12px 16px", marginBottom: 8, display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ fontSize: 20 }}>{s.icon}</div>
+          <div key={s.label} style={{ ...skeuo, borderRadius: 12, padding: "9px 14px", marginBottom: 5, display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ fontSize: 16 }}>{s.icon}</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginBottom: 2 }}>{s.label}</div>
+              <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 1 }}>{s.label}</div>
               {editing ? (
                 <input
                   value={s.value}
@@ -160,9 +160,9 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
                 />
               ) : (
                 s.value ? (
-                <a href={s.url + s.value.replace(/^@/, "")} target="_blank" rel="noopener noreferrer" style={{ fontFamily: SANS, fontSize: 15, color: C.accent, textDecoration: "none" }}>{s.prefix + s.value.replace(/^@/, "")}</a>
+                <a href={s.url + s.value.replace(/^@/, "")} target="_blank" rel="noopener noreferrer" style={{ fontFamily: SANS, fontSize: 14, color: C.accent, textDecoration: "none" }}>{s.prefix + s.value.replace(/^@/, "")}</a>
               ) : (
-                <div style={{ fontFamily: SANS, fontSize: 15, color: C.textDim }}>Not set</div>
+                <div style={{ fontFamily: SANS, fontSize: 14, color: C.textDim }}>Not set</div>
               )
               )}
             </div>
@@ -195,7 +195,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
       </div>
 
       {/* Bottom Menu */}
-      <div style={{ padding: "20px 16px 0" }}>
+      <div style={{ padding: "10px 16px 0" }}>
         {["Notifications", "Trade Offers", "Report a Bug", "Help & Support", "Sign Out"].map((item) => (
           <div
             key={item}
