@@ -14,23 +14,11 @@ import LeaderboardScreen from "../components/LeaderboardScreen";
 import CollectorProfileScreen from "../components/CollectorProfileScreen";
 
 export default function SymbiosisVault() {
-  const [screen, setScreen] = useState("loading");
+  const [screen, setScreen] = useState("splash");
   const [selectedCard, setSelectedCard] = useState(null);
   const [selectedCollector, setSelectedCollector] = useState(null);
   const [ownedCards, setOwnedCards] = useState([]);
   const { session, loading, isAuthenticated, isSupabaseConfigured } = useAuth();
-
-  // Route to correct screen based on auth state
-  useEffect(() => {
-    if (loading) return;
-    if (isAuthenticated) {
-      // Already signed in - go straight to collection
-      setScreen((prev) => prev === "loading" || prev === "splash" || prev === "signup" ? "collection" : prev);
-    } else {
-      // Not signed in - show splash
-      setScreen("splash");
-    }
-  }, [loading, isAuthenticated]);
 
   // Check for pending NFC chip to link (from /link page before sign-in)
   useEffect(() => {
@@ -73,6 +61,25 @@ export default function SymbiosisVault() {
     if (isAuthenticated) fetchCards();
   }, [fetchCards, isAuthenticated]);
 
+  // When ENTER is clicked on splash, go to collection if authed, signup if not
+  const handleSplashEnter = () => {
+    if (loading) {
+      // Auth still loading — show signup, the useEffect below will redirect
+      setScreen("signup");
+    } else if (isAuthenticated) {
+      setScreen("collection");
+    } else {
+      setScreen("signup");
+    }
+  };
+
+  // If auth finishes loading while on signup and user is already authed, go to collection
+  useEffect(() => {
+    if (!loading && isAuthenticated && screen === "signup") {
+      setScreen("collection");
+    }
+  }, [loading, isAuthenticated, screen]);
+
   const handleDisconnect = async (chipId) => {
     if (session?.access_token) {
       try {
@@ -90,7 +97,9 @@ export default function SymbiosisVault() {
       }
     } else {
       setOwnedCards((prev) =>
-        prev.map((c) => c.chipId === chipId ? { ...c, linked: false } : c)
+        prev.map((c) =>
+          c.chipId === chipId ? { ...c, linked: false } : c
+        )
       );
     }
     setTimeout(() => setScreen("collection"), 500);
@@ -101,42 +110,37 @@ export default function SymbiosisVault() {
     setScreen("collection");
   };
 
-  // Loading state while checking auth
-  if (screen === "loading") {
-    return (
-      <div style={{
-        width: "100%", height: "100dvh", background: "#000",
-        display: "flex", alignItems: "center", justifyContent: "center",
-      }} />
-    );
-  }
-
   return (
-    <div style={{
-      width: "100%", height: "100dvh", background: "#000",
-      fontFamily: SANS, overflow: "hidden", position: "relative",
-      paddingTop: "env(safe-area-inset-top)",
-      paddingBottom: "env(safe-area-inset-bottom)",
-    }}>
-
+    <div
+      style={{
+        width: "100%",
+        height: "100dvh",
+        background: "#000",
+        fontFamily: SANS,
+        overflow: "hidden",
+        position: "relative",
+        paddingTop: "env(safe-area-inset-top)",
+        paddingBottom: "env(safe-area-inset-bottom)",
+      }}
+    >
       {screen === "splash" && (
-        <SplashScreen onEnter={() => setScreen("signup")} />
+        <SplashScreen onEnter={handleSplashEnter} />
       )}
-
       {screen === "signup" && (
         <SignupScreen onSignup={() => setScreen("collection")} />
       )}
-
       {screen === "collection" && (
         <CollectionScreen
           ownedCards={ownedCards}
-          onCardClick={(card) => { setSelectedCard(card); setScreen("detail"); }}
+          onCardClick={(card) => {
+            setSelectedCard(card);
+            setScreen("detail");
+          }}
           onScan={() => setScreen("scan")}
           onLeaderboard={() => setScreen("leaderboard")}
           onProfile={() => setScreen("profile")}
         />
       )}
-
       {screen === "detail" && selectedCard && (
         <CardDetailScreen
           card={selectedCard}
@@ -145,7 +149,6 @@ export default function SymbiosisVault() {
           onDisconnect={handleDisconnect}
         />
       )}
-
       {screen === "scan" && (
         <ScanScreen
           session={session}
@@ -153,7 +156,6 @@ export default function SymbiosisVault() {
           onScanned={handleCardLinked}
         />
       )}
-
       {screen === "profile" && (
         <ProfileScreen
           ownedCards={ownedCards}
@@ -161,7 +163,6 @@ export default function SymbiosisVault() {
           session={session}
         />
       )}
-
       {screen === "leaderboard" && (
         <LeaderboardScreen
           onBack={() => setScreen("collection")}
@@ -171,7 +172,6 @@ export default function SymbiosisVault() {
           }}
         />
       )}
-
       {screen === "collectorProfile" && selectedCollector && (
         <CollectorProfileScreen
           collector={selectedCollector}
