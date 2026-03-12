@@ -15,7 +15,7 @@ import CollectorProfileScreen from "../components/CollectorProfileScreen";
 import TermsModal from "../components/TermsModal";
 
 export default function SymbiosisVault() {
-  const [screen, setScreen] = useState("splash");
+  const [screen, setScreen] = useState("loading");
   const [selectedCard, setSelectedCard] = useState(null);
   const [selectedCollector, setSelectedCollector] = useState(null);
   const [ownedCards, setOwnedCards] = useState([]);
@@ -26,9 +26,9 @@ export default function SymbiosisVault() {
   useEffect(() => {
     if (!isAuthenticated || !session?.access_token) return;
     try {
-      const pendingChip = localStorage.getItem("pendingChip");
+      const pendingChip = localStorage.getItem("pendingChipId");
       if (!pendingChip) return;
-      localStorage.removeItem("pendingChip");
+      localStorage.removeItem("pendingChipId");
       fetch("/api/cards/link", {
         method: "POST",
         headers: {
@@ -75,10 +75,18 @@ export default function SymbiosisVault() {
     }
   };
 
-  // If auth finishes loading while on signup and user is already authed, go to collection
+  // Route based on auth state when loading finishes
   useEffect(() => {
-    if (!loading && isAuthenticated && screen === "signup") {
+    if (loading) return;
+    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    const fromScan = params?.get("from") === "scan";
+    if (isAuthenticated && (screen === "loading" || screen === "signup" || (fromScan && screen === "splash"))) {
       setScreen("collection");
+      if (fromScan && window.history?.replaceState) {
+        window.history.replaceState({}, "", "/");
+      }
+    } else if (!isAuthenticated && screen === "loading") {
+      setScreen(fromScan ? "signup" : "splash");
     }
   }, [loading, isAuthenticated, screen]);
 
@@ -138,6 +146,10 @@ export default function SymbiosisVault() {
     >
       {isAuthenticated && !termsAccepted && (
         <TermsModal onAccept={() => setTermsAccepted(true)} />
+      )}
+
+      {screen === "loading" && (
+        <div style={{ position: "fixed", inset: 0, background: "#000", zIndex: 9999 }} />
       )}
 
       {screen === "splash" && (
