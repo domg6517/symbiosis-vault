@@ -22,16 +22,28 @@ export default function ScanLinkPage() {
     handleScan();
   }, [chipId]);
 
+  // Auto-redirect to home after successful link
+  useEffect(() => {
+    if (status === "success" || status === "already") {
+      const timer = setTimeout(() => {
+        if (typeof window !== "undefined") window.location.href = "/";
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
+
   async function handleScan() {
     try {
       const { supabase } = await import("../../../lib/supabase");
       if (!supabase) { setStatus("error"); setError("App not configured"); return; }
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         if (typeof window !== "undefined") localStorage.setItem("pendingChipId", chipId);
         setStatus("login");
         return;
       }
+
       setStatus("linking");
       const res = await fetch("/api/cards/link", {
         method: "POST",
@@ -39,6 +51,7 @@ export default function ScanLinkPage() {
         body: JSON.stringify({ chipId }),
       });
       const data = await res.json();
+
       if (res.ok) { setCardInfo(data.card); setStatus("success"); }
       else if (res.status === 409) { setCardInfo(data.card); setStatus("already"); }
       else if (res.status === 404) { setStatus("error"); setError("Card not recognized"); }
@@ -84,6 +97,7 @@ export default function ScanLinkPage() {
             <div style={{ fontFamily: MONO, fontSize: 10, color: C.textDim, letterSpacing: 2, marginTop: 4, textTransform: "uppercase" }}>{cardInfo.rarity} {cardInfo.type}</div>
             <div style={{ fontFamily: MONO, fontSize: 9, color: C.textDim, letterSpacing: 1, marginTop: 8, opacity: 0.5 }}>TEST DROP 1</div>
           </>)}
+          <div style={{ fontFamily: MONO, fontSize: 9, color: C.textDim, letterSpacing: 1, marginTop: 16, opacity: 0.4 }}>Redirecting to vault...</div>
           <Btn onClick={goToApp} label="OPEN VAULT" />
         </div>
       )}
@@ -98,6 +112,7 @@ export default function ScanLinkPage() {
           <div style={{ fontFamily: SERIF, fontSize: 22, color: C.cream, marginTop: 20 }}>Already Collected</div>
           {cardInfo && (<div style={{ fontFamily: SANS, fontSize: 14, color: C.accent, marginTop: 8 }}>{cardInfo.perspective} &middot; {cardInfo.rarity}</div>)}
           <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6 }}>This card is already in your vault</div>
+          <div style={{ fontFamily: MONO, fontSize: 9, color: C.textDim, letterSpacing: 1, marginTop: 16, opacity: 0.4 }}>Redirecting to vault...</div>
           <Btn onClick={goToApp} label="OPEN VAULT" />
         </div>
       )}
