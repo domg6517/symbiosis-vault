@@ -55,7 +55,7 @@ export default function SignupScreen({ onSignup }) {
         </div>
         <Divider style={{ margin: "20px 0" }} />
         <div style={{ fontSize: 14, color: C.textSec, fontFamily: SANS, lineHeight: 1.6 }}>
-          200 polaroids per drop. 10 singles.<br />22 boosters. Collect, trade, and unlock.
+          [REDACTED] polaroids per drop. [REDACTED] singles.<br />[REDACTED] boosters. Collect, trade, and unlock.
         </div>
 
         <div style={{ marginTop: 32 }}>

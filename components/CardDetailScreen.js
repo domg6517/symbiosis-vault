@@ -107,7 +107,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
       <div style={{ padding: "0 22px", zIndex: 1 }}>
         <div style={{ fontSize: 20, fontFamily: SERIF, fontWeight: 300, color: C.cream, marginBottom: 3, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Test Drop 1</div>
         <div style={{ fontSize: 12, fontFamily: SANS, color: C.textSec, marginBottom: 16 }}>
-          {card.perspective} \u00B7 {isRare ? "Rare" : "Common"} \u00B7 {card.chipId}
+          {card.perspective} · {isRare ? "Rare" : "Common"} · {card.chipId}
         </div>
 
         {/* Unlock */}
@@ -120,7 +120,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           <MusicIcon />
           <div style={{ flex: 1, position: "relative", zIndex: 1 }}>
             <div style={{ fontSize: 9, color: C.accent, fontFamily: MONO, letterSpacing: 2 }}>UNLOCKED</div>
-            <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>Redacted \u2014 {card.perspective}</div>
+            <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>Redacted — {card.perspective}</div>
           </div>
           <div style={{ ...skeuo.btnGhost, padding: "7px 14px", color: C.accent, fontSize: 9, fontFamily: MONO, letterSpacing: 2, cursor: "pointer", position: "relative", zIndex: 1 }}>PLAY</div>
         </div>
@@ -153,7 +153,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
         }}>
           {complete && <div style={skeuo.gloss} />}
           <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 2, color: complete ? C.accent : C.textDim, position: "relative", zIndex: 1 }}>
-            {complete ? "\u2726 ALL 3 PERSPECTIVES \u2014 BONUS UNLOCKED" : `${uniquePerspectives} OF 3 \u2014 COLLECT ALL TO UNLOCK BONUS`}
+            {complete ? "✦ ALL 3 PERSPECTIVES — BONUS UNLOCKED" : `${uniquePerspectives} OF 3 — COLLECT ALL TO UNLOCK BONUS`}
           </div>
         </div>
 
@@ -192,7 +192,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
               <div style={{ fontSize: 13, fontFamily: SANS, fontWeight: 500, color: C.textSec }}>Disconnect for trade</div>
               <div style={{ fontSize: 11, fontFamily: SANS, color: C.textDim, marginTop: 2 }}>Unlink this card so someone else can claim it</div>
             </div>
-            <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>\u203A</div>
+            <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>›</div>
           </div>
         ) : (
           <div style={{ padding: "16px", ...skeuo.card, border: `1px solid ${C.rose}33`, marginBottom: 20, position: "relative", overflow: "hidden" }}>

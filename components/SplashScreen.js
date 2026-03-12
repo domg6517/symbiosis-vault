@@ -199,7 +199,7 @@ export default function SplashScreen({ onEnter }) {
           fontWeight: 300, lineHeight: 1.7, textAlign: "center",
           opacity: step >= 2 ? 1 : 0, transition: "opacity 0.8s ease 0.5s",
         }}>
-          10 singles. 22 boosters. 3 perspectives.<br />Scan. Collect. Trade. Unlock.
+          [REDACTED] singles. [REDACTED] boosters. [REDACTED] perspectives.<br />Scan. Collect. Trade. Unlock.
         </div>
       </div>
 
