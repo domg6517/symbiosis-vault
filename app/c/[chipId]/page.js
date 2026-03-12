@@ -52,8 +52,17 @@ export default function ScanLinkPage() {
       });
       const data = await res.json();
 
-      if (res.ok) { setCardInfo(data.card); setStatus("success"); }
-      else if (res.status === 409) { setCardInfo(data.card); setStatus("already"); }
+      if (res.ok) { setCardInfo(data.card); setStatus("success");
+
+      // Haptic feedback on success
+      if (typeof window !== "undefined" && window.navigator?.vibrate) {
+        window.navigator.vibrate([100, 50, 100]);
+      } }
+      else if (res.status === 409) { setCardInfo(data.card); setStatus("already");
+      // Light haptic for already collected
+      if (typeof window !== "undefined" && window.navigator?.vibrate) {
+        window.navigator.vibrate(50);
+      } }
       else if (res.status === 404) { setStatus("error"); setError("Card not recognized"); }
       else { setStatus("error"); setError(data.error || "Something went wrong"); }
     } catch (err) { setStatus("error"); setError("Connection error"); }
