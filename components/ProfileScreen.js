@@ -51,7 +51,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
   };
 
   return (
-    <div style={{ minHeight: "100dvh", background: C.bg, color: C.text, padding: "0 0 20px" }}>
+    <div style={{ height: "100%", overflowY: "auto", WebkitOverflowScrolling: "touch", background: C.bg, color: C.text, padding: "0 0 20px" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", padding: "14px 16px 6px", gap: 12 }}>
         <div
