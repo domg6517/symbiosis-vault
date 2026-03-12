@@ -88,6 +88,23 @@ export async function POST(request) {
       console.error("Badge award error:", badgeErr);
     }
 
+
+    // Log activity to feed
+    try {
+      const displayName = user.email ? user.email.split("@")[0] : "Collector";
+      await supabase.from("activity_feed").insert({
+        user_id: user.id,
+        event_type: "card_linked",
+        card_chip_id: cardTemplate.chip_id,
+        card_perspective: cardTemplate.perspective.name,
+        card_rarity: cardTemplate.rarity,
+        card_type: cardTemplate.type,
+        display_name: displayName,
+      });
+    } catch (activityErr) {
+      console.error("Activity log error:", activityErr);
+    }
+
     // Check if this completes a set (all 3 perspectives for this song)
     const { data: songCards } = await supabase
       .from("user_cards")
