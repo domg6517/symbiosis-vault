@@ -50,7 +50,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
       {/* Stats */}
       <div style={{ display: "flex", justifyContent: "center", gap: 20, padding: "0 16px 20px" }}>
         {[
-          { label: "CARDS", value: collector.totalCards || 0 },
+          { label: "RANK", value: collector.rank ? "#" + collector.rank : "\u2014" }, { label: "CARDS", value: collector.totalCards || 0 },
           { label: "SONGS", value: collector.uniqueSongs || 0 },
         ].map((s) => (
           <div key={s.label} style={{ ...skeuo, borderRadius: 14, padding: "14px 28px", textAlign: "center" }}>
