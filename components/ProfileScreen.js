@@ -4,7 +4,7 @@ import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { supabase } from "../lib/supabase";
 export default function ProfileScreen({ ownedCards, onBack, session }) {
   const [editing, setEditing] = useState(false);
-  const [displayName, setDisplayName] = usState(
+  const [displayName, setDisplayName] = useState(
     session?.user?.user_metadata?.display_name || "Collector"
   );
   const [instagram, setInstagram] = useState(
