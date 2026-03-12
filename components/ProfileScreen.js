@@ -2,10 +2,9 @@
 import { useState, useRef } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { supabase } from "../lib/supabase";
-
 export default function ProfileScreen({ ownedCards, onBack, session }) {
   const [editing, setEditing] = useState(false);
-  const [displayName, setDisplayName] = useState(
+  const [displayName, setDisplayName] = usState(
     session?.user?.user_metadata?.display_name || "Collector"
   );
   const [instagram, setInstagram] = useState(
@@ -51,7 +50,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
   };
 
   return (
-    <div style={{ height: "100%", overflowY: "auto", WebkitOverflowScrolling: "touch", background: C.bg, color: C.text, padding: "0 0 20px" }}>
+    <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", background: C.bg, color: C.text, padding: "0 0 20px" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", padding: "14px 16px 6px", gap: 12 }}>
         <div
