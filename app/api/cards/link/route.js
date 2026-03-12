@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
   try {
     const supabase = createServerClient();
-
     const authHeader = request.headers.get("authorization");
     if (!authHeader) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -12,28 +11,20 @@ export async function POST(request) {
 
     const token = authHeader.replace("Bearer ", "");
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { chipId } = await request.json();
-
     if (!chipId) {
-      return NextResponse.json(
-        { error: "chipId is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "chipId is required" }, { status: 400 });
     }
 
     // Find the card template by chip ID
     const { data: cardTemplate, error: findError } = await supabase
       .from("card_templates")
       .select(`
-        id,
-        chip_id,
-        rarity,
-        type,
+        id, chip_id, rarity, type,
         song:songs (id, title, song_number, type),
         perspective:perspectives (id, name)
       `)
@@ -76,6 +67,27 @@ export async function POST(request) {
       });
     }
 
+    // Award OG TESTER badge for any Test Drop 1 card scan
+    try {
+      const { data: badge } = await supabase
+        .from("badges")
+        .select("id")
+        .eq("slug", "og-tester")
+        .single();
+
+      if (badge) {
+        await supabase
+          .from("user_badges")
+          .upsert(
+            { user_id: user.id, badge_id: badge.id },
+            { onConflict: "user_id,badge_id" }
+          );
+      }
+    } catch (badgeErr) {
+      // Badge award is non-critical, don't fail the link
+      console.error("Badge award error:", badgeErr);
+    }
+
     // Check if this completes a set (all 3 perspectives for this song)
     const { data: songCards } = await supabase
       .from("user_cards")
@@ -94,9 +106,7 @@ export async function POST(request) {
 
     // If all 3 perspectives collected, unlock ultra rare
     if (songPerspectives.size >= 3 && cardTemplate.type === "single") {
-      // Find the ultra rare for this song + perspective
       const ultraRareId = `UR-${cardTemplate.song.song_number}-${cardTemplate.perspective.id}`;
-
       const { data: ur } = await supabase
         .from("ultra_rares")
         .select("id")
@@ -104,7 +114,6 @@ export async function POST(request) {
         .single();
 
       if (ur) {
-        // Check if not already owned
         const { data: existingUr } = await supabase
           .from("user_ultra_rares")
           .select("id")
