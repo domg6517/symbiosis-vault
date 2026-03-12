@@ -26,7 +26,7 @@ export default function ScanLinkPage() {
   useEffect(() => {
     if (status === "success" || status === "already") {
       const timer = setTimeout(() => {
-        if (typeof window !== "undefined") window.location.href = "/";
+        if (typeof window !== "undefined") window.location.href = "/?from=scan";
       }, 2000);
       return () => clearTimeout(timer);
     }
@@ -68,7 +68,7 @@ export default function ScanLinkPage() {
     } catch (err) { setStatus("error"); setError("Connection error"); }
   }
 
-  const goToApp = () => { if (typeof window !== "undefined") window.location.href = "/"; };
+  const goToApp = () => { if (typeof window !== "undefined") window.location.href = "/?from=scan"; };
 
   const Spinner = () => (
     <div style={{ width: 48, height: 48, borderRadius: "50%", border: `2px solid ${C.accent}22`, borderTopColor: C.accent, animation: "spin 1s linear infinite" }} />
