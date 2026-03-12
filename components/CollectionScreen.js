@@ -4,10 +4,11 @@ import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { FilmGrain, NfcIcon, CheckIcon, LockSmall, StarIcon, TrophyIcon, ProfileIcon } from "./Icons";
 import { SINGLES, BOOSTERS, PERSPECTIVES, generateUltraRares } from "./data";
 import { SongRow } from "./SharedComponents";
+import ActivityFeed from "./ActivityFeed";
 
 const ULTRA_RARES = generateUltraRares();
 
-export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLeaderboard, onProfile }) {
+export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLeaderboard, onProfile, session }) {
   const [view, setView] = useState("singles");
 
   const linked = ownedCards.filter((c) => c.linked);
@@ -83,6 +84,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             { key: "singles", label: "I", count: "" },
             { key: "boosters", label: "II", count: "" },
             { key: "ultra", label: "III", count: "" },
+            { key: "feed", label: "FEED", count: "" },
           ].map((tab) => (
             <button key={tab.key} onClick={() => setView(tab.key)} style={{
               padding: "8px 16px",
