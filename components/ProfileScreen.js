@@ -171,9 +171,9 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
       </div>
 
             {/* Install App */}
-      <div style={{ padding: "16px 16px 0" }}>
+      <div style={{ padding: "10px 16px 0" }}>
         <div onClick={() => setShowInstall(true)} style={{
-          ...skeuo, borderRadius: 14, padding: "16px 20px",
+          ...skeuo, borderRadius: 14, padding: "12px 16px",
           display: "flex", alignItems: "center", gap: 14,
           cursor: "pointer",
           border: "1px solid " + C.accent + "22",
@@ -194,9 +194,37 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
         </div>
       </div>
 
+      {/* Notifications */}
+      <div style={{ padding: "8px 16px 0" }}>
+        <div style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}>
+          <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Notifications</div>
+            <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Alerts & updates</div>
+          </div>
+          <div style={{ fontFamily: MONO, fontSize: 9, color: C.accent, letterSpacing: 1, opacity: 0.7 }}>SOON</div>
+        </div>
+      </div>
+
+      {/* Trade Offers */}
+      <div style={{ padding: "8px 16px 0" }}>
+        <div style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}>
+          <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9" /><path d="M3 11V9a4 4 0 014-4h14" /><polyline points="7 23 3 19 7 15" /><path d="M21 13v2a4 4 0 01-4 4H3" /></svg>
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Trade Offers</div>
+            <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Swap cards with others</div>
+          </div>
+          <div style={{ fontFamily: MONO, fontSize: 9, color: C.accent, letterSpacing: 1, opacity: 0.7 }}>SOON</div>
+        </div>
+      </div>
+
       {/* Bottom Menu */}
       <div style={{ padding: "10px 16px 0" }}>
-        {["Notifications", "Trade Offers", "Report a Bug", "Help & Support", "Sign Out"].map((item) => (
+        {["Report a Bug", "Help & Support", "Sign Out"].map((item) => (
           <div
             key={item}
             onClick={() => {
