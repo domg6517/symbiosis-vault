@@ -12,12 +12,14 @@ import ScanScreen from "../components/ScanScreen";
 import ProfileScreen from "../components/ProfileScreen";
 import LeaderboardScreen from "../components/LeaderboardScreen";
 import CollectorProfileScreen from "../components/CollectorProfileScreen";
+import TermsModal from "../components/TermsModal";
 
 export default function SymbiosisVault() {
   const [screen, setScreen] = useState("splash");
   const [selectedCard, setSelectedCard] = useState(null);
   const [selectedCollector, setSelectedCollector] = useState(null);
   const [ownedCards, setOwnedCards] = useState([]);
+  const [termsAccepted, setTermsAccepted] = useState(true);
   const { session, loading, isAuthenticated, isSupabaseConfigured } = useAuth();
 
   // Check for pending NFC chip to link (from /link page before sign-in)
@@ -80,6 +82,17 @@ export default function SymbiosisVault() {
     }
   }, [loading, isAuthenticated, screen]);
 
+
+  // Check if user has accepted terms
+  useEffect(() => {
+    try {
+      const accepted = localStorage.getItem("termsAccepted");
+      setTermsAccepted(accepted === "true");
+    } catch (e) {
+      setTermsAccepted(false);
+    }
+  }, []);
+
   const handleDisconnect = async (chipId) => {
     if (session?.access_token) {
       try {
@@ -123,6 +136,10 @@ export default function SymbiosisVault() {
         paddingBottom: "env(safe-area-inset-bottom)",
       }}
     >
+      {isAuthenticated && !termsAccepted && (
+        <TermsModal onAccept={() => setTermsAccepted(true)} />
+      )}
+
       {screen === "splash" && (
         <SplashScreen onEnter={handleSplashEnter} />
       )}
