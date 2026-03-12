@@ -61,7 +61,10 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
       .upload(path, file, { upsert: true });
     if (!error) {
       const { data } = supabase.storage.from("avatars").getPublicUrl(path);
-      setPfpUrl(data.publicUrl + "?t=" + Date.now());
+      const newUrl = data.publicUrl + "?t=" + Date.now();
+      setPfpUrl(newUrl);
+      // Auto-save pfp to user metadata immediately
+      await supabase.auth.updateUser({ data: { pfp_url: newUrl } });
     }
   };
 

@@ -81,7 +81,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
                 <div style={{
-                  fontSize: 42, fontWeight: 900, color: "#1A1A1A",
+                  fontSize: 26, fontWeight: 700, color: "#1A1A1A",
                   fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
                   letterSpacing: -1, textTransform: "uppercase",
                   userSelect: "none",
