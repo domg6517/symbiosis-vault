@@ -105,6 +105,67 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
 
       {/* Content */}
       <div style={{ flex: 1, overflow: "auto", zIndex: 1 }}>
+        {/* Empty State with How It Works Video */}
+        {linked.length === 0 && (
+          <div style={{ padding: "20px 20px 40px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            {/* Video Placeholder */}
+            <div style={{
+              width: "100%", maxWidth: 340, aspectRatio: "16/9", borderRadius: 16,
+              ...skeuo.card, overflow: "hidden", position: "relative",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              border: "1px solid " + C.accent + "22",
+              background: "linear-gradient(180deg, #1A1816, #0F0E0D)",
+            }}>
+              <div style={skeuo.gloss} />
+              {/* Play button circle */}
+              <div style={{
+                width: 56, height: 56, borderRadius: "50%",
+                border: "2px solid " + C.accent + "66",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                background: "rgba(228,188,74,0.08)",
+                position: "relative", zIndex: 1,
+              }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill={C.accent} stroke="none">
+                  <polygon points="6,3 20,12 6,21" />
+                </svg>
+              </div>
+              {/* Label */}
+              <div style={{
+                position: "absolute", bottom: 12, left: 0, right: 0, textAlign: "center", zIndex: 1,
+              }}>
+                <div style={{ fontFamily: MONO, fontSize: 8, letterSpacing: 3, color: C.accent, opacity: 0.7 }}>HOW IT WORKS</div>
+                <div style={{ fontFamily: SANS, fontSize: 9, color: C.textDim, marginTop: 3 }}>Video coming soon</div>
+              </div>
+            </div>
+
+            {/* Empty vault message */}
+            <div style={{ textAlign: "center", marginTop: 24 }}>
+              <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: C.cream }}>Your vault is empty</div>
+              <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 8, lineHeight: 1.5, maxWidth: 260 }}>
+                Scan the NFC chip on the back of any Symbiosis polaroid to add it to your collection.
+              </div>
+            </div>
+
+            {/* Scan CTA */}
+            <div onClick={onScan} style={{
+              ...skeuo.card, marginTop: 24, padding: "14px 32px", borderRadius: 14,
+              border: "1px solid " + C.accent + "33", cursor: "pointer",
+              background: "linear-gradient(180deg, rgba(228,188,74,0.1), transparent)",
+              display: "flex", alignItems: "center", gap: 10,
+            }}>
+              <NfcIcon size={16} color={C.accent} />
+              <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: 2, color: C.accent, fontWeight: 600 }}>SCAN YOUR FIRST CARD</span>
+            </div>
+
+            {/* Get More Cards */}
+            <a href="https://discord.gg/SbSWCkumk6" target="_blank" rel="noopener noreferrer" style={{
+              marginTop: 14, fontFamily: MONO, fontSize: 9, letterSpacing: 2, color: C.textDim,
+              textDecoration: "none", padding: "10px 20px", borderRadius: 10,
+              border: "1px solid rgba(255,255,255,0.06)",
+            }}>GET MORE CARDS</a>
+          </div>
+        )}
+
         {view === "singles" && (
           <div>
             <div style={{
@@ -187,6 +248,8 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             </div>
           </div>
         )}
+
+        {view === "feed" && <ActivityFeed session={session} />}
 
         {view === "ultra" && (
           <div style={{ padding: "14px 20px" }}>
