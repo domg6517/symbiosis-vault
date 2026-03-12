@@ -156,6 +156,7 @@ export default function SymbiosisVault() {
           onScan={() => setScreen("scan")}
           onLeaderboard={() => setScreen("leaderboard")}
           onProfile={() => setScreen("profile")}
+            session={session}
         />
       )}
       {screen === "detail" && selectedCard && (
