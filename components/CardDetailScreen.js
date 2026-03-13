@@ -123,13 +123,13 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
             <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>Redacted — {card.perspective}</div>
           </div>
           <div onClick={() => {
-                if (song?.audioUrl) {
+                if (card.audioUrl) {
                   if (playing) {
                     audioRef.current?.pause();
                     setPlaying(false);
                   } else {
                     if (!audioRef.current) {
-                      audioRef.current = new Audio(song.audioUrl);
+                      audioRef.current = new Audio(card.audioUrl);
                       audioRef.current.onended = () => setPlaying(false);
                     }
                     audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
@@ -138,7 +138,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
                   setPlaying(true);
                   setTimeout(() => setPlaying(false), 1500);
                 }
-              }} style={{ ...skeuo.btnGhost, padding: "7px 14px", color: playing ? C.textDim : C.accent, fontSize: 9, fontFamily: MONO, letterSpacing: 2, cursor: "pointer", position: "relative", zIndex: 1 }}>{playing ? (song?.audioUrl ? "PAUSE" : "SOON") : "PLAY"}</div>
+              }} style={{ ...skeuo.btnGhost, padding: "7px 14px", color: playing ? C.textDim : C.accent, fontSize: 9, fontFamily: MONO, letterSpacing: 2, cursor: "pointer", position: "relative", zIndex: 1 }}>{playing ? (card.audioUrl ? "PAUSE" : "SOON") : "PLAY"}</div>
         </div>
 
         {/* Completion */}
