@@ -108,36 +108,6 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
         {/* Empty State with How It Works Video */}
         {linked.length === 0 && (
           <div style={{ padding: "20px 20px 40px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-            {/* Video Placeholder */}
-            <div style={{
-              width: "100%", maxWidth: 340, aspectRatio: "16/9", borderRadius: 16,
-              ...skeuo.card, overflow: "hidden", position: "relative",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              border: "1px solid " + C.accent + "22",
-              background: "linear-gradient(180deg, #1A1816, #0F0E0D)",
-            }}>
-              <div style={skeuo.gloss} />
-              {/* Play button circle */}
-              <div style={{
-                width: 56, height: 56, borderRadius: "50%",
-                border: "2px solid " + C.accent + "66",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                background: "rgba(228,188,74,0.08)",
-                position: "relative", zIndex: 1,
-              }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill={C.accent} stroke="none">
-                  <polygon points="6,3 20,12 6,21" />
-                </svg>
-              </div>
-              {/* Label */}
-              <div style={{
-                position: "absolute", bottom: 12, left: 0, right: 0, textAlign: "center", zIndex: 1,
-              }}>
-                <div style={{ fontFamily: MONO, fontSize: 8, letterSpacing: 3, color: C.accent, opacity: 0.7 }}>HOW IT WORKS</div>
-                <div style={{ fontFamily: SANS, fontSize: 9, color: C.textDim, marginTop: 3 }}>Video coming soon</div>
-              </div>
-            </div>
-
             {/* Empty vault message */}
             <div style={{ textAlign: "center", marginTop: 24 }}>
               <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: C.cream }}>Your vault is empty</div>

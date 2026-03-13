@@ -263,7 +263,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
 
       {/* Bottom Menu */}
       <div style={{ padding: "10px 16px 0" }}>
-        {["Report a Bug", "Help & Support", "Sign Out"].map((item) => (
+        {["Report a Bug", "Help & Support", "How It Works", "Sign Out"].map((item) => (
           <div
             key={item}
             onClick={() => {
