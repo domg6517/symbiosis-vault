@@ -60,7 +60,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
       .from("avatars")
       .upload(path, file, { upsert: true });
     if (!error) {
-      const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+      const { data } = supabase.storage.from("card-media").getPublicUrl("avatars/" + path);
       const newUrl = data.publicUrl + "?t=" + Date.now();
       setPfpUrl(newUrl);
       // Auto-save pfp to user metadata immediately
@@ -263,21 +263,53 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
 
       {/* Bottom Menu */}
       <div style={{ padding: "10px 16px 0" }}>
-        {["Report a Bug", "Help & Support", "How It Works", "Sign Out"].map((item) => (
-          <div
-            key={item}
-            onClick={() => {
-              if (item === "Sign Out") { supabase.auth.signOut(); window.location.reload(); }
-                            else if (item === "Report a Bug") { window.open("mailto:info@jackandjack.store?subject=Symbiosis%20Vault%20Bug%20Report", "_self"); }
-              else { alert(item + " \u2014 coming soon!"); }
-            }}
-            style={{
-              ...skeuo, borderRadius: 12, padding: "14px 16px", marginBottom: 8,
-              fontFamily: SANS, fontSize: 15, cursor: "pointer",
-              color: item === "Sign Out" ? "#e74c3c" : C.text,
-            }}
-          >{item}</div>
-        ))}
+        <div onClick={() => window.open("mailto:info@jackandjack.store?subject=Symbiosis%20Vault%20Bug%20Report", "_self")}
+            style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
+              border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Report a Bug</div>
+              <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Let us know what happened</div>
+            </div>
+            <div style={{ fontSize: 18, color: C.textDim }}>›</div>
+          </div>
+          <div onClick={() => alert("Help & Support \u2014 coming soon!")}
+            style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
+              border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Help & Support</div>
+              <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Get answers to questions</div>
+            </div>
+            <div style={{ fontSize: 18, color: C.textDim }}>›</div>
+          </div>
+          <div onClick={() => alert("How It Works \u2014 coming soon!")}
+            style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
+              border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>How It Works</div>
+              <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Learn about collecting</div>
+            </div>
+            <div style={{ fontSize: 18, color: C.textDim }}>›</div>
+          </div>
+          <div onClick={() => { supabase.auth.signOut(); window.location.reload(); }}
+            style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
+              border: "1px solid rgba(231,76,60,0.2)", background: "linear-gradient(180deg, rgba(231,76,60,0.04), transparent)" }}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid rgba(231,76,60,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500, color: "#e74c3c" }}>Sign Out</div>
+              <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Log out of your vault</div>
+            </div>
+          </div>
       </div>
 
       {showInstall && (
