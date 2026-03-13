@@ -1,70 +1,91 @@
 import { createServerClient } from "../../../lib/supabase";
 import { NextResponse } from "next/server";
 
+const RARITY_POINTS = {
+  common: 1,
+  rare: 2,
+  super_rare: 5,
+};
+
 export async function GET(request) {
   const supabase = createServerClient(request);
 
-  // Fetch all linked cards
+  // Fetch all linked cards with rarity from card_templates
   const { data: cards, error } = await supabase
     .from("user_cards")
-    .select("user_id, song_id, chip_id, perspective, linked_at");
+    .select("user_id, linked, card_template:card_templates (chip_id, song_id, rarity, perspective:perspectives (name))");
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // Only linked cards
+  const linkedCards = (cards || []).filter((c) => c.linked);
+
   // Group by user_id
   const userMap = {};
-  (cards || []).forEach((row) => {
-    if (!userMap[row.user_id]) {
-      userMap[row.user_id] = { totalCards: 0, uniqueSongs: new Set(), cards: [] };
+  linkedCards.forEach((row) => {
+    const uid = row.user_id;
+    if (!userMap[uid]) {
+      userMap[uid] = { totalCards: 0, points: 0, uniqueSongs: new Set(), cards: [] };
     }
-    userMap[row.user_id].totalCards++;
-    userMap[row.user_id].uniqueSongs.add(row.song_id);
-    userMap[row.user_id].cards.push({
-      song_id: row.song_id,
-      perspective: row.perspective,
-      chip_id: row.chip_id,
+    const rarity = row.card_template?.rarity || "common";
+    const pts = RARITY_POINTS[rarity] || 1;
+    userMap[uid].totalCards++;
+    userMap[uid].points += pts;
+    userMap[uid].uniqueSongs.add(row.card_template?.song_id);
+    userMap[uid].cards.push({
+      song_id: row.card_template?.song_id,
+      perspective: row.card_template?.perspective?.name,
+      chip_id: row.card_template?.chip_id,
+      rarity,
     });
   });
 
-  // Fetch user metadata for all users in the leaderboard
+  // Fetch user metadata + profile usernames
   const userIds = Object.keys(userMap);
   const userMeta = {};
+  const profileMap = {};
 
-  // Use Supabase admin to get user details
+  // Get profiles for usernames
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, username")
+      .in("id", userIds);
+    if (profiles) {
+      profiles.forEach((p) => { profileMap[p.id] = p.username; });
+    }
+  }
+
   for (const uid of userIds) {
     try {
       const { data } = await supabase.auth.admin.getUserById(uid);
       if (data?.user?.user_metadata) {
         userMeta[uid] = data.user.user_metadata;
       }
-    } catch (e) {
-      // Fallback if admin API not available
-    }
+    } catch (e) {}
   }
 
-  // Build leaderboard sorted by total cards
+  // Build leaderboard sorted by POINTS (not just total cards)
   const leaderboard = Object.entries(userMap)
     .map(([uid, info]) => ({
       rank: 0,
       user_id: uid,
-      display: userMeta[uid]?.display_name || "Collector " + uid.substring(0, 6).toUpperCase(),
+      display: userMeta[uid]?.display_name || profileMap[uid] || "Collector " + uid.substring(0, 6).toUpperCase(),
       display_name: userMeta[uid]?.display_name || "",
       pfp_url: userMeta[uid]?.pfp_url || "",
       instagram: userMeta[uid]?.instagram || "",
       twitter: userMeta[uid]?.twitter || "",
       tiktok: userMeta[uid]?.tiktok || "",
       totalCards: info.totalCards,
+      points: info.points,
       uniqueSongs: info.uniqueSongs.size,
       cards: info.cards,
     }))
-    .sort((a, b) => b.totalCards - a.totalCards || b.uniqueSongs - a.uniqueSongs);
+    .sort((a, b) => b.points - a.points || b.totalCards - a.totalCards || b.uniqueSongs - a.uniqueSongs);
 
-  // Assign ranks
-  leaderboard.forEach((entry, i) => {
-    entry.rank = i + 1;
-  });
+  leaderboard.forEach((entry, i) => { entry.rank = i + 1; });
 
   return NextResponse.json({ leaderboard });
 }
