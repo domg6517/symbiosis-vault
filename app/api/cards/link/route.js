@@ -91,7 +91,16 @@ export async function POST(request) {
 
     // Log activity to feed
     try {
-      const displayName = user.email ? user.email.split("@")[0] : "Collector";
+      // Use profile username instead of email prefix
+      let displayName = "Collector";
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", user.id)
+        .single();
+      if (profile?.username) {
+        displayName = profile.username;
+      }
       await supabase.from("activity_feed").insert({
         user_id: user.id,
         event_type: "card_linked",
