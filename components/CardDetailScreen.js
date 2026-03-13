@@ -169,7 +169,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
         }}>
           {complete && <div style={skeuo.gloss} />}
           <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 2, color: complete ? C.accent : C.textDim, position: "relative", zIndex: 1 }}>
-            {complete ? "✦ ALL 3 PERSPECTIVES — BONUS UNLOCKED" : `${uniquePerspectives} OF 3 — COLLECT ALL TO UNLOCK BONUS`}
+            {complete ? "✦ ALL 3 PERSPECTIVES — BADGE UNLOCKED" : `${uniquePerspectives} OF 3 — COLLECT ALL TO UNLOCK BONUS`}
           </div>
         </div>
 
