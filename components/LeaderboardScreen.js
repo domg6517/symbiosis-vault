@@ -90,8 +90,7 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
                   fontFamily: MONO, fontSize: 11, color: C.textDim,
                   marginTop: 3, letterSpacing: 1,
                 }}>
-                  {entry.totalCards} CARD{entry.totalCards !== 1 ? "S" : ""} ·{" "}
-                  {entry.uniqueSongs} SONG{entry.uniqueSongs !== 1 ? "S" : ""}
+                  {entry.points || entry.totalCards} PTS · {entry.totalCards} CARD{entry.totalCards !== 1 ? "S" : ""}
                 </div>
               </div>
 
