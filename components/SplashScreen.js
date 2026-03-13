@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { C, SERIF, SANS, MONO } from "./design";
 import { Divider } from "./Icons";
 
-// âââ ANIMATED PRISMATIC BACKGROUND (canvas fallback) âââââ
+// ─── ANIMATED PRISMATIC BACKGROUND (canvas fallback) ─────
 const PrismaticCanvas = ({ width = 390, height = 844 }) => {
   const canvasRef = useRef(null);
   useEffect(() => {
@@ -110,7 +110,7 @@ const PrismaticCanvas = ({ width = 390, height = 844 }) => {
   return <canvas ref={canvasRef} style={{position:"absolute",inset:0,width:"100%",height:"100%",zIndex:0}} />;
 };
 
-// âââ SPLASH SCREEN âââââââââââââââââââââââââ
+// ─── SPLASH SCREEN ─────────────────────────
 export default function SplashScreen({ onEnter }) {
   const [step, setStep] = useState(0);
   const [videoFailed, setVideoFailed] = useState(false);
@@ -127,6 +127,8 @@ export default function SplashScreen({ onEnter }) {
       display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center",
       background: "#000", overflow: "hidden", zIndex: 50,
+      opacity: step >= 1 ? 1 : 0,
+      transition: "opacity 0.6s ease",
     }}>
       {/* Animated prismatic background (always renders as base layer) */}
       <PrismaticCanvas />
@@ -199,7 +201,7 @@ export default function SplashScreen({ onEnter }) {
           fontWeight: 300, lineHeight: 1.7, textAlign: "center",
           opacity: step >= 2 ? 1 : 0, transition: "opacity 0.8s ease 0.5s",
         }}>
-          [REDACTED] singles. [REDACTED] boosters. [REDACTED] perspectives.<br />Scan. Collect. Trade. Unlock.
+          10 singles. 22 boosters. 3 perspectives.<br />Scan. Collect. Trade. Unlock.
         </div>
       </div>
 
@@ -238,7 +240,7 @@ export default function SplashScreen({ onEnter }) {
         fontSize: 8, fontFamily: SANS, fontWeight: 400,
         color: "rgba(255,255,255,0.10)", letterSpacing: 3,
         opacity: step >= 1 ? 1 : 0, transition: "opacity 1.5s ease",
-      }}>NFC COLLECTIBLE SERIES Â· EST. 2026</div>
+      }}>NFC COLLECTIBLE SERIES · EST. 2026</div>
     </div>
   );
 }
