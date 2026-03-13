@@ -65,14 +65,8 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             <span style={{ color: C.accent, fontFamily: MONO, fontWeight: 600, fontSize: 12 }}>{linked.length}</span>
             <span style={{ color: C.textDim, fontSize: 10, fontFamily: MONO }}>linked</span>
           </div>
-          <div style={{ ...skeuo.badge, padding: "5px 12px", display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ color: C.teal, fontFamily: MONO, fontWeight: 600, fontSize: 12 }}>{completeSingles}</span>
-            <span style={{ color: C.textDim, fontSize: 10, fontFamily: MONO }}>linked</span>
-          </div>
-          <div style={{ ...skeuo.badge, padding: "5px 12px", display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ color: C.booster, fontFamily: MONO, fontWeight: 600, fontSize: 12 }}>{completeBoosters}</span>
-            <span style={{ color: C.textDim, fontSize: 10, fontFamily: MONO }}>linked</span>
-          </div>
+  
+  
         </div>
 
         {/* Tabs */}
@@ -147,7 +141,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>G</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J&J</div>
-                <div style={{ flex: 1, textAlign: "left", paddingLeft: 8, fontSize: 8, color: C.textDim + "66" }}>DUPES</div>
+                
               </div>
               <div style={{ width: 32, flexShrink: 0 }} />
             </div>
@@ -160,17 +154,6 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                 isLast={idx === SINGLES.length - 1}
               />
             ))}
-
-            <div style={{ margin: "16px 16px 20px", padding: "16px", ...skeuo.card, position: "relative", overflow: "hidden", textAlign: "center" }}>
-              <div style={skeuo.gloss} />
-              <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 3, color: completeSingles >= 10 ? C.accent : C.textDim, position: "relative", zIndex: 1 }}>
-                {completeSingles === 10 ? "ALL COLLECTED" : `${completeSingles} COLLECTED`}
-              </div>
-              <div style={{ marginTop: 8, height: 4, ...skeuo.inset, overflow: "hidden", borderRadius: 4, position: "relative", zIndex: 1 }}>
-                <div style={{ width: `${(completeSingles / 10) * 100}%`, height: "100%", ...skeuo.btnGold, borderRadius: 4, transition: "width 0.5s ease" }} />
-              </div>
-              <div style={{ fontSize: 10, fontFamily: MONO, color: C.textDim, marginTop: 6, position: "relative", zIndex: 1 }}>{completeSingles} linked</div>
-            </div>
           </div>
         )}
 
@@ -192,7 +175,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>G</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J&J</div>
-                <div style={{ flex: 1, textAlign: "left", paddingLeft: 8, fontSize: 8, color: C.textDim + "66" }}>DUPES</div>
+                
               </div>
               <div style={{ width: 32, flexShrink: 0 }} />
             </div>
@@ -205,17 +188,6 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                 isBooster isLast={idx === BOOSTERS.length - 1}
               />
             ))}
-
-            <div style={{ margin: "16px 16px 20px", padding: "16px", ...skeuo.card, position: "relative", overflow: "hidden", textAlign: "center" }}>
-              <div style={skeuo.gloss} />
-              <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 3, color: C.textDim, position: "relative", zIndex: 1 }}>
-                {completeBoosters} COLLECTED
-              </div>
-              <div style={{ marginTop: 8, height: 4, ...skeuo.inset, overflow: "hidden", borderRadius: 4, position: "relative", zIndex: 1 }}>
-                <div style={{ width: `${(completeBoosters / 22) * 100}%`, height: "100%", background: `linear-gradient(180deg, #8AAE98, #6B8E7B, #5A7D6A)`, boxShadow: "0 1px 0 rgba(255,255,255,0.2) inset", borderRadius: 4, transition: "width 0.5s ease" }} />
-              </div>
-              <div style={{ fontSize: 10, fontFamily: MONO, color: C.textDim, marginTop: 6, position: "relative", zIndex: 1 }}>{completeBoosters} linked</div>
-            </div>
           </div>
         )}
 
