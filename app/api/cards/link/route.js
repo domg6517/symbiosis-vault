@@ -159,6 +159,27 @@ export async function POST(request) {
       }
     }
 
+    // Award OG Tester Set badge if all 3 perspectives collected
+    if (songPerspectives.size >= 3) {
+      try {
+        const { data: setBadge } = await supabase
+          .from("badges")
+          .select("id")
+          .eq("slug", "og-tester-set")
+          .single();
+        if (setBadge) {
+          await supabase
+            .from("user_badges")
+            .upsert(
+              { user_id: user.id, badge_id: setBadge.id },
+              { onConflict: "user_id,badge_id" }
+            );
+        }
+      } catch (badgeErr) {
+        console.error("Set badge award error:", badgeErr);
+      }
+    }
+
     return NextResponse.json({
       message: "Card linked successfully!",
       card: formatCard(cardTemplate),
