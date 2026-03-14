@@ -128,6 +128,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       const uploadData = await uploadRes.json();
       if (uploadRes.ok && uploadData.url) {
         setPfpUrl(uploadData.url);
+      }
     } catch (err) {
       console.error("Upload error:", err);
     }
@@ -579,7 +580,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             <div style={{ marginBottom: 20 }}>
               <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>HOW DO I COLLECT?</div>
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6 }}>
-                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ tap it with your phone and the card is yours. Build your collection before the window closes.
+                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ tap it with your phone and the card is yours. Build your collection before the window closes.
               </div>
             </div>
 
