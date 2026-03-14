@@ -356,7 +356,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             </div>
             <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
           </div>
-          <div onClick={() => () => setShowFAQ(true)}
+          <div onClick={() => setShowFAQ(true)}
             style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
               border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}>
             <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -377,7 +377,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
               <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Permanently remove your vault</div>
             </div>
           </div>
-          <div onClick={() => { supabase.auth.signOut(); window.location.reload(); }}
+          <div onClick={async () => { await supabase.auth.signOut(); }}
             style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
               border: "1px solid rgba(231,76,60,0.2)", background: "linear-gradient(180deg, rgba(231,76,60,0.04), transparent)" }}>
             <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid rgba(231,76,60,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
