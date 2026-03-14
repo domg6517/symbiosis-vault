@@ -26,6 +26,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
   const [cropPreview, setCropPreview] = useState(null);
   const [cropFile, setCropFile] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [usernameError, setUsernameError] = useState("");
 
   const linked = ownedCards.filter((c) => c.linked).length;
 
@@ -47,9 +48,26 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
 
   const handleSave = async () => {
     setSaving(true);
-    await supabase.auth.updateUser({
-      data: { display_name: displayName, instagram, twitter, tiktok, pfp_url: pfpUrl },
-    });
+    setUsernameError("");
+    var trimmed = displayName.trim();
+    if (!trimmed) { setSaving(false); return; }
+    var { data: existing } = await supabase
+      .from("profiles")
+      .select("id")
+      .ilike("username", trimmed)
+      .neq("id", session.user.id)
+      .maybeSingle();
+    if (existing) {
+      setUsernameError("Username already taken");
+      setSaving(false);
+      return;
+    }
+    await supabase.auth.updateUser({ data: { display_name: trimmed } });
+    await supabase.from("profiles").upsert({
+      id: session.user.id,
+      username: trimmed,
+      email: session.user.email
+    }, { onConflict: "id" });
     setSaving(false);
     setEditing(false);
   };
@@ -169,12 +187,13 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
         {editing ? (
           <input
             value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
+            onChange={(e) => setDisplayName(e.target.value); setUsernameError("")}
             style={{
               background: "transparent", border: "1px solid " + C.textDim,
               borderRadius: 8, padding: "8px 16px", color: C.text,
               fontFamily: SERIF, fontSize: 18, textAlign: "center", width: 200,
             }}
+      {usernameError && <div style={{ color: "#e74c3c", fontFamily: MONO, fontSize: 10, letterSpacing: 1, textAlign: "center", marginTop: 4 }}>{usernameError}</div>}
           />
         ) : (
           <div style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 700 }}>{displayName}</div>
