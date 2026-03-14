@@ -56,10 +56,11 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
   const handlePfpChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    console.log("PFP file selected:", file.name, file.size);
     setCropFile(file);
-    const reader = new FileReader();
-    reader.onload = (ev) => setCropPreview(ev.target.result);
-    reader.readAsDataURL(file);
+    const url = URL.createObjectURL(file);
+    console.log("Preview URL created:", url);
+    setCropPreview(url);
   };
 
   const handleCropConfirm = async () => {
@@ -76,12 +77,14 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
       setPfpUrl(newUrl);
       await supabase.auth.updateUser({ data: { pfp_url: newUrl } });
     }
+    if (cropPreview) URL.revokeObjectURL(cropPreview);
     setCropPreview(null);
     setCropFile(null);
     setSaving(false);
   };
 
   const handleCropCancel = () => {
+    if (cropPreview) URL.revokeObjectURL(cropPreview);
     setCropPreview(null);
     setCropFile(null);
   };
