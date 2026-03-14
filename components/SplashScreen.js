@@ -240,7 +240,7 @@ export default function SplashScreen({ onEnter }) {
         fontSize: 8, fontFamily: SANS, fontWeight: 400,
         color: "rgba(255,255,255,0.10)", letterSpacing: 3,
         opacity: step >= 1 ? 1 : 0, transition: "opacity 1.5s ease",
-      }}>COLLECTION SERIES A Â· EST. 2026</div>
+      }}>COLLECTION SERIES A {String.fromCharCode(183)} EST. 2026</div>
     </div>
   );
 }
