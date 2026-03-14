@@ -66,8 +66,8 @@ export default function PrivacyPolicy({ visible, onClose }) {
 
         {/* 1 */}
         <h2 style={sectionTitle}>1. Information We Collect</h2>
-        <p style={para}><span style={bold}>Account Information:</span> Email address, username, and password (securely hashed — we never store plaintext passwords).</p>
-        <p style={para}><span style={bold}>Profile Data (Optional):</span> Profile photo, biography, and social media handles (Instagram, TikTok, X) — only if you choose to add them.</p>
+        <p style={para}><span style={bold}>Account Information:</span> Email address, username, and password (securely hashed â we never store plaintext passwords).</p>
+        <p style={para}><span style={bold}>Profile Data (Optional):</span> Profile photo, biography, and social media handles (Instagram, TikTok, X) â only if you choose to add them.</p>
         <p style={para}><span style={bold}>Collection Data:</span> NFC chip IDs of scanned polaroid cards, timestamps of scans, and your card inventory and collection statistics.</p>
         <p style={para}><span style={bold}>Device & Technical Data:</span> Device type, operating system, NFC capability status, and basic diagnostic information necessary for NFC functionality.</p>
         <p style={{ ...para, marginBottom: 24 }}><span style={bold}>Activity Data:</span> App usage patterns (features accessed, activity feed events) to improve your experience. This data is never shared externally.</p>
@@ -102,13 +102,13 @@ export default function PrivacyPolicy({ visible, onClose }) {
         <p style={para}>You have the right to: access your personal data; rectify inaccurate data; request erasure ("right to be forgotten"); restrict processing; data portability; object to processing; and lodge complaints with your local data protection authority.</p>
         <p style={{ ...para, color: C.accent, marginTop: 12 }}><span style={bold}>For California Residents (CCPA):</span></p>
         <p style={para}>You have the right to: know what personal information is collected; know whether your data is sold or disclosed (we do neither); delete your personal information; opt-out of data sales (we do not sell data); and non-discrimination for exercising your rights.</p>
-        <p style={{ ...para, marginBottom: 24 }}>To exercise any of these rights, email <span style={{ color: C.accent, fontFamily: MONO, fontSize: 12 }}>privacy@jackxjack.com</span> with "Privacy Request" in the subject line. We will verify your identity and respond within 30 days.</p>
+        <p style={{ ...para, marginBottom: 24 }}>To exercise any of these rights, email <span style={{ color: C.accent, fontFamily: MONO, fontSize: 12 }}>info@jackandjack.store</span> with "Privacy Request" in the subject line. We will verify your identity and respond within 30 days.</p>
 
         {/* 6 */}
         <h2 style={sectionTitle}>6. Children's Privacy</h2>
         <p style={para}>Symbiosis Vault requires users to be 16 years of age or older. We do not knowingly collect information from children under 13.</p>
         <p style={para}>Users aged 13-15 must obtain verifiable parental or guardian consent before using this app.</p>
-        <p style={{ ...para, marginBottom: 24 }}>If a parent or guardian believes their child has created an account without consent, please contact <span style={{ color: C.accent, fontFamily: MONO, fontSize: 12 }}>privacy@jackxjack.com</span> and we will promptly investigate and delete the account if appropriate.</p>
+        <p style={{ ...para, marginBottom: 24 }}>If a parent or guardian believes their child has created an account without consent, please contact <span style={{ color: C.accent, fontFamily: MONO, fontSize: 12 }}>info@jackandjack.store</span> and we will promptly investigate and delete the account if appropriate.</p>
 
         {/* 7 */}
         <h2 style={sectionTitle}>7. Data Retention & Deletion</h2>
@@ -141,7 +141,7 @@ export default function PrivacyPolicy({ visible, onClose }) {
           marginBottom: 8,
           letterSpacing: 0.5,
         }}>
-          privacy@jackxjack.com
+          info@jackandjack.store
         </div>
         <p style={{ ...para, marginBottom: 24 }}>Jack & Jack LLC {String.fromCharCode(183)} California, USA</p>
 
