@@ -144,21 +144,13 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
       
       {/* Badges */}
       {badges.length > 0 && (
-        <div style={{ padding: "0 16px 10px" }}>
-          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 6 }}>BADGES</div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            {badges.map((b) => (
-              <div key={b.badge.slug} style={{ ...skeuo, borderRadius: 10, padding: "8px 14px", display: "flex", alignItems: "center", gap: 8, border: "1px solid " + C.accent + "33", background: "linear-gradient(180deg, rgba(228,188,74,0.06), transparent)" }}>
-                <div style={{ width: 28, height: 28, borderRadius: 7, ...skeuo, border: "1px solid " + C.accent + "44", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-                </div>
-                <div>
-                  <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, fontWeight: 600 }}>{b.badge.label}</div>
-                  <div style={{ fontFamily: SANS, fontSize: 10, color: C.textDim, marginTop: 1 }}>{b.badge.description}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 8, padding: "4px 16px 14px" }}>
+          {badges.map((b) => (
+            <div key={b.badge.slug} style={{ ...skeuo, borderRadius: 20, padding: "6px 14px", display: "flex", alignItems: "center", gap: 6, border: "1px solid " + C.accent + "33", background: "linear-gradient(180deg, rgba(228,188,74,0.06), transparent)" }}>
+              <span style={{ fontSize: 14 }}>{b.badge.icon}</span>
+              <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 1.5, color: C.accent, fontWeight: 600 }}>{b.badge.label.toUpperCase()}</span>
+            </div>
+          ))}
         </div>
       )}
 
