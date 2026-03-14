@@ -18,6 +18,16 @@ export default function TermsModal({ onAccept }) {
       localStorage.setItem("termsAcceptedAt", new Date().toISOString());
       localStorage.setItem("termsVersion", "2.0");
     } catch (e) {}
+
+    // Log acceptance server-side (fire and forget)
+    try {
+      fetch("/api/terms/accept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ version: "2.0" }),
+      }).catch(() => {});
+    } catch (e) {}
+
     onAccept();
   };
 
