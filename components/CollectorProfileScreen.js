@@ -40,7 +40,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer", fontSize: 18,
           }}
-        >\u2190</div>
+        >{String.fromCodePoint(0x2190)}</div>
         <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700 }}>Collector</div>
       </div>
 
@@ -115,7 +115,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
                   <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginBottom: 2 }}>{s.label}</div>
                   <div style={{ fontFamily: SANS, fontSize: 15 }}>@{s.value.replace("@", "")}</div>
                 </div>
-                <div style={{ fontSize: 14, color: C.textDim }}>\u2197</div>
+                <div style={{ fontSize: 14, color: C.textDim }}>{String.fromCodePoint(0x2197)}</div>
               </div>
             ))}
         </div>
