@@ -2,6 +2,13 @@
 import { useState, useRef, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { supabase } from "../lib/supabase";
+// Strip anything that isn't a valid social media username character
+function sanitizeHandle(val) {
+  if (!val) return "";
+  // Remove @ prefix, then strip anything that isn't alphanumeric, underscore, period, or hyphen
+  return val.replace(/^@/, "").replace(/[^a-zA-Z0-9_.-]/g, "").slice(0, 30);
+}
+
 export default function ProfileScreen({ ownedCards, onBack, session, onAccountDeleted }) {
   const [editing, setEditing] = useState(false);
   const [displayName, setDisplayName] = useState(
@@ -271,7 +278,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
               {editing ? (
                 <input
                   value={s.value}
-                  onChange={(e) => s.set(e.target.value)}
+                  onChange={(e) => s.set(sanitizeHandle(e.target.value))}
                   placeholder={s.prefix + "username"}
                   style={{
                     background: "transparent", border: "none", borderBottom: "1px solid " + C.textDim,
