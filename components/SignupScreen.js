@@ -12,6 +12,8 @@ export default function SignupScreen({ onSignup }) {
   const [isSignIn, setIsSignIn] = useState(false);
   const [error, setError] = useState("");
   const [usernameError, setUsernameError] = useState("");
+  const [usernameAvailable, setUsernameAvailable] = useState(null);
+  const [checkingUsername, setCheckingUsername] = useState(false);
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [confirmationSent, setConfirmationSent] = useState(false);
@@ -28,6 +30,40 @@ export default function SignupScreen({ onSignup }) {
     const t = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
     return () => clearTimeout(t);
   }, [resendCooldown]);
+
+  // Live username availability check (debounced)
+  useEffect(() => {
+    const trimmed = username.trim();
+    if (!trimmed || trimmed.length < 2 || isSignIn) {
+      setUsernameAvailable(null);
+      setUsernameError("");
+      return;
+    }
+    if (!/^[a-zA-Z0-9_.-]+$/.test(trimmed)) {
+      setUsernameAvailable(null);
+      setUsernameError("Letters, numbers, _ . - only");
+      return;
+    }
+    setCheckingUsername(true);
+    setUsernameError("");
+    const timer = setTimeout(async () => {
+      try {
+        const { data: existing } = await supabase
+          .from("profiles").select("id").ilike("username", trimmed).maybeSingle();
+        if (existing) {
+          setUsernameAvailable(false);
+          setUsernameError("Username taken");
+        } else {
+          setUsernameAvailable(true);
+          setUsernameError("");
+        }
+      } catch (e) {
+        setUsernameAvailable(null);
+      }
+      setCheckingUsername(false);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [username, isSignIn]);
 
   async function handleSubmit() {
     if (!isSupabaseConfigured) {
@@ -201,9 +237,7 @@ export default function SignupScreen({ onSignup }) {
           marginTop: 16, lineHeight: 1.25, textShadow: "0 1px 3px rgba(0,0,0,0.4)",
         }}>{isSignIn ? "Welcome\nback." : "Start your\ncollection."}</div>
         <Divider style={{ margin: "20px 0" }} />
-        <div style={{ fontSize: 14, color: C.textSec, fontFamily: SANS, lineHeight: 1.6 }}>
-          XX singles. XX [redacted]. 3 perspectives.<br />Scan. Collect. Trade. Unlock.
-        </div>
+        
 
         {/* Username field - signup only */}
         {!isSignIn && (
@@ -216,8 +250,19 @@ export default function SignupScreen({ onSignup }) {
                 style={{ width: "100%", padding: "14px 12px", background: "transparent", border: "none", color: C.cream, fontSize: 16, fontFamily: SANS, outline: "none", boxSizing: "border-box", caretColor: C.accent }}
               />
             </div>
-            {usernameError && (
-              <div style={{ marginTop: 6, fontSize: 12, color: "#B07272", fontFamily: SANS }}>{usernameError}</div>
+            {/* Username availability indicator */}
+            {username.trim().length >= 2 && (
+              <div style={{ marginTop: 8, fontSize: 12, fontFamily: MONO, letterSpacing: 0.5, display: "flex", alignItems: "center", gap: 6 }}>
+                {checkingUsername ? (
+                  <span style={{ color: C.textDim }}>checking...</span>
+                ) : usernameAvailable === true ? (
+                  <span style={{ color: "#6B8F71" }}>\u2713 available</span>
+                ) : usernameAvailable === false ? (
+                  <span style={{ color: "#B07272" }}>\u2717 taken</span>
+                ) : usernameError ? (
+                  <span style={{ color: "#B07272" }}>{usernameError}</span>
+                ) : null}
+              </div>
             )}
           </div>
         )}
