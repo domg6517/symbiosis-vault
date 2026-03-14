@@ -18,6 +18,7 @@ export default function SymbiosisVault() {
   const [screen, setScreen] = useState("loading");
   const [selectedCard, setSelectedCard] = useState(null);
   const [selectedCollector, setSelectedCollector] = useState(null);
+  const [prevScreen, setPrevScreen] = useState("collection");
   const [ownedCards, setOwnedCards] = useState([]);
   const [termsAccepted, setTermsAccepted] = useState(true);
   const { session, loading, isAuthenticated, isSupabaseConfigured } = useAuth();
@@ -168,10 +169,6 @@ export default function SymbiosisVault() {
           onScan={() => setScreen("scan")}
           onLeaderboard={() => setScreen("leaderboard")}
           onProfile={() => setScreen("profile")}
-            onViewCollector={(c) => {
-              setSelectedCollector({ display_name: c.display_name, display: c.display_name, user_id: c.user_id });
-              setScreen("collectorProfile");
-            }}
             session={session}
         />
       )}
@@ -209,7 +206,7 @@ export default function SymbiosisVault() {
       {screen === "collectorProfile" && selectedCollector && (
         <CollectorProfileScreen
           collector={selectedCollector}
-          onBack={() => setScreen("leaderboard")}
+          onBack={() => setScreen(prevScreen)}
         />
       )}
     </div>
