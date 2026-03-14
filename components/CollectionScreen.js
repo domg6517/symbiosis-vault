@@ -8,7 +8,7 @@ import ActivityFeed from "./ActivityFeed";
 
 const ULTRA_RARES = generateUltraRares();
 
-export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLeaderboard, onProfile, session }) {
+export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLeaderboard, onProfile, onViewCollector, session }) {
   const [view, setView] = useState("singles");
 
   const linked = ownedCards.filter((c) => c.linked);
@@ -191,7 +191,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
           </div>
         )}
 
-        {view === "feed" && <ActivityFeed session={session} />}
+        {view === "feed" && <ActivityFeed session={session} onViewCollector={onViewCollector} />}
 
         {view === "ultra" && (
           <div style={{ padding: "14px 20px" }}>
