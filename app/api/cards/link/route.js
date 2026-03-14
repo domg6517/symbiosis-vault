@@ -19,6 +19,14 @@ export async function POST(request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Enforce email verification
+    if (!user.email_confirmed_at) {
+      return NextResponse.json(
+        { error: "Please verify your email before linking cards." },
+        { status: 403 }
+      );
+    }
+
     const { allowed } = rateLimit("link:" + user.id, 10, 60000);
     if (!allowed) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
