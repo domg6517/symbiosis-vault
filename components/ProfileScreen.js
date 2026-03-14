@@ -185,6 +185,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
         </div>
 
         {editing ? (
+            <>
           <input
             value={displayName}
             onChange={(e) => { setDisplayName(e.target.value); setUsernameError(""); }}
@@ -193,8 +194,9 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
               borderRadius: 8, padding: "8px 16px", color: C.text,
               fontFamily: SERIF, fontSize: 18, textAlign: "center", width: 200,
             }}
-      {usernameError && <div style={{ color: "#e74c3c", fontFamily: MONO, fontSize: 10, letterSpacing: 1, textAlign: "center", marginTop: 4 }}>{usernameError}</div>}
           />
+            {usernameError ? <div style={{ color: "#e74c3c", fontFamily: MONO, fontSize: 10, letterSpacing: 1, textAlign: "center", marginTop: 4 }}>{usernameError}</div> : null}
+            </>
         ) : (
           <div style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 700 }}>{displayName}</div>
         )}
