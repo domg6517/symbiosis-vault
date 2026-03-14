@@ -10,6 +10,10 @@ const ULTRA_RARES = generateUltraRares();
 
 export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLeaderboard, onProfile, onViewCollector, session }) {
   const [view, setView] = useState("singles");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState(false);
 
   const linked = ownedCards.filter((c) => c.linked);
   const singleCards = linked.filter((c) => c.type === "single");
@@ -27,6 +31,21 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
 
   const ownedUltraCount = ULTRA_RARES.filter((ur) => ur.owned).length;
 
+  
+  async function handleSearch(q) {
+    setSearchQuery(q);
+    if (!q.trim()) { setSearchResults([]); return; }
+    setSearching(true);
+    try {
+      const res = await fetch("/api/users/search?q=" + encodeURIComponent(q.trim()));
+      const data = await res.json();
+      if (data.users) setSearchResults(data.users);
+    } catch (e) {
+      console.error("Search error:", e);
+    }
+    setSearching(false);
+  }
+
   return (
     <div style={{
       height: "100%", display: "flex", flexDirection: "column",
@@ -43,6 +62,14 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             <div style={{ fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 4, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Collection</div>
           </div>
           <div style={{ flex: 1 }} />
+          <div onClick={() => setSearchOpen(true)} style={{
+            width: 34, height: 34,
+            ...skeuo.card,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", borderRadius: 8, marginRight: 6,
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.textSec} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
           <div onClick={onProfile} style={{
             width: 34, height: 34,
             ...skeuo.card,
@@ -291,6 +318,44 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
           fontSize: 9, fontFamily: MONO, letterSpacing: 2, color: C.textDim, cursor: "pointer",
         }}>PROFILE</div>
       </div>
+    
+      {/* Search Users Modal */}
+      {searchOpen && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 100, display: "flex", flexDirection: "column" }}>
+          <div style={{ padding: "60px 20px 16px", display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ flex: 1, ...skeuo.inset, padding: 2 }}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                placeholder="Search collectors..."
+                autoFocus
+                autoCapitalize="none"
+                autoCorrect="off"
+                style={{ width: "100%", padding: "12px", background: "transparent", border: "none", color: C.cream, fontSize: 15, fontFamily: SANS, outline: "none", boxSizing: "border-box", caretColor: C.accent }}
+              />
+            </div>
+            <div onClick={() => { setSearchOpen(false); setSearchQuery(""); setSearchResults([]); }} style={{ fontSize: 12, fontFamily: MONO, color: C.textDim, cursor: "pointer", padding: "8px 12px", letterSpacing: 1 }}>CLOSE</div>
+          </div>
+          <div style={{ flex: 1, overflow: "auto", padding: "0 20px" }}>
+            {searching && <div style={{ textAlign: "center", padding: 20, fontSize: 11, fontFamily: MONO, color: C.textDim, letterSpacing: 2 }}>SEARCHING...</div>}
+            {!searching && searchQuery && searchResults.length === 0 && (
+              <div style={{ textAlign: "center", padding: 30, fontSize: 13, fontFamily: SANS, color: C.textDim }}>No collectors found</div>
+            )}
+            {searchResults.map((user) => (
+              <div key={user.user_id} onClick={() => { setSearchOpen(false); setSearchQuery(""); setSearchResults([]); onViewCollector(user); }} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 0", borderBottom: "1px solid " + C.border, cursor: "pointer" }}>
+                <div style={{ width: 36, height: 36, borderRadius: "50%", ...skeuo.inset, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: C.accent, fontFamily: SERIF, fontWeight: 600 }}>
+                  {(user.display_name || "?")[0].toUpperCase()}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 14, fontFamily: SANS, color: C.cream, fontWeight: 500 }}>{user.display_name}</div>
+                </div>
+                <div style={{ fontSize: 10, fontFamily: MONO, color: C.textDim, letterSpacing: 1 }}>VIEW</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
