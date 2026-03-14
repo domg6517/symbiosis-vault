@@ -14,9 +14,9 @@ function timeAgo(date) {
 }
 
 const EVENT_ICONS = {
-  card_linked: "✦",
-  card_unlinked: "↻",
-  user_joined: "★",
+  card_linked: "â¦",
+  card_unlinked: "â»",
+  user_joined: "â",
 };
 
 const EVENT_COLORS = {
@@ -56,12 +56,19 @@ function formatEventAction(item) {
 export default function ActivityFeed({ session, onViewCollector }) {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchActivity();
-    const interval = setInterval(fetchActivity, 30000);
+    const interval = setInterval(fetchActivity, 10000);
     return () => clearInterval(interval);
   }, [session]);
+
+  async function handleRefresh() {
+    setRefreshing(true);
+    await fetchActivity();
+    setRefreshing(false);
+  }
 
   async function fetchActivity() {
     try {
@@ -92,7 +99,7 @@ export default function ActivityFeed({ session, onViewCollector }) {
   if (events.length === 0) {
     return (
       <div style={{ padding: "40px 20px", textAlign: "center" }}>
-        <div style={{ fontSize: 28, marginBottom: 12 }}>📡</div>
+        <div style={{ fontSize: 28, marginBottom: 12 }}>ð¡</div>
         <div style={{ fontSize: 14, fontFamily: SANS, color: C.textSec, marginBottom: 6 }}>
           No activity yet
         </div>
@@ -105,11 +112,19 @@ export default function ActivityFeed({ session, onViewCollector }) {
 
   return (
     <div style={{ padding: "8px 16px 20px" }}>
-      <div style={{
-        fontSize: 9, fontFamily: MONO, letterSpacing: 3, color: C.textDim,
-        padding: "8px 0 12px", textTransform: "uppercase",
-      }}>
-        Live Activity
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0 12px" }}>
+        <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 3, color: C.textDim, textTransform: "uppercase" }}>
+          Live Activity
+        </div>
+        <div onClick={handleRefresh} style={{
+          fontSize: 9, fontFamily: MONO, letterSpacing: 1,
+          color: refreshing ? C.textDim : C.accent, cursor: "pointer",
+          padding: "4px 10px", borderRadius: 6,
+          border: "1px solid " + (refreshing ? "rgba(255,255,255,0.06)" : C.accent + "44"),
+          transition: "all 0.2s ease", opacity: refreshing ? 0.5 : 1,
+        }}>
+          {refreshing ? "REFRESHING..." : "REFRESH \u21BB"}
+        </div>
       </div>
       {events.map((item, i) => (
         <div key={item.id || i} style={{
@@ -124,7 +139,7 @@ export default function ActivityFeed({ session, onViewCollector }) {
             fontSize: 14, flexShrink: 0,
             color: EVENT_COLORS[item.event_type] || C.textDim,
           }}>
-            {EVENT_ICONS[item.event_type] || "✦"}
+            {EVENT_ICONS[item.event_type] || "â¦"}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
