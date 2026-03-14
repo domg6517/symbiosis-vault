@@ -28,6 +28,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [zoomLevel, setZoomLevel] = useState(1);
   const [usernameError, setUsernameError] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showFAQ, setShowFAQ] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
 
@@ -355,27 +356,15 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             </div>
             <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
           </div>
-          <div onClick={() => alert("Help & Support \u2014 coming soon!")}
+          <div onClick={() => () => setShowFAQ(true)}
             style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
               border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}>
             <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Help & Support</div>
+              <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>FAQ</div>
               <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Get answers to questions</div>
-            </div>
-            <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
-          </div>
-          <div onClick={() => alert("How It Works \u2014 coming soon!")}
-            style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
-              border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}>
-            <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>How It Works</div>
-              <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Learn about collecting</div>
             </div>
             <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
           </div>
@@ -542,6 +531,47 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           <div style={{ marginTop: 16, display: "flex", gap: 16 }}>
             <button onClick={handleCropCancel} style={{ ...skeuo, padding: "10px 28px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.05)", color: C.cream, fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, cursor: "pointer" }}>CANCEL</button>
             <button onClick={handleCropConfirm} disabled={saving} style={{ ...skeuo, padding: "10px 28px", borderRadius: 12, border: "1px solid " + C.accent, background: "linear-gradient(180deg, rgba(228,188,74,0.15), rgba(228,188,74,0.05))", color: C.accent, fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, cursor: "pointer", opacity: saving ? 0.5 : 1 }}>{saving ? "SAVING..." : "CONFIRM"}</button>
+          </div>
+        </div>
+      )}
+
+      {showFAQ && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div onClick={() => setShowFAQ(false)} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.7)" }} />
+          <div style={{ position: "relative", width: "92%", maxWidth: 380, maxHeight: "80vh", overflow: "auto", ...skeuo, borderRadius: 20, padding: "28px 22px", border: "1px solid " + C.accent + "33" }}>
+            <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>FAQ</div>
+            <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.textDim, textAlign: "center", marginBottom: 20 }}>FREQUENTLY ASKED QUESTIONS</div>
+
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>HOW DO I COLLECT?</div>
+              <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6 }}>
+                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip — tap it with your phone and the card is yours. Build your collection before the window closes.
+              </div>
+            </div>
+
+            <div style={{ height: 1, background: "rgba(168,168,184,0.1)", margin: "0 0 20px" }} />
+
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>LEADERBOARD SCORING</div>
+              <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6 }}>
+                Every card you collect earns points toward your rank. Common cards are worth 1 point, Rare cards earn 2 points, and Ultra Rares are worth 5 points. The more you collect, the higher you climb.
+              </div>
+            </div>
+
+            <div style={{ height: 1, background: "rgba(168,168,184,0.1)", margin: "0 0 20px" }} />
+
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>STILL HAVE QUESTIONS?</div>
+              <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6, marginBottom: 12 }}>
+                We're here to help. Reach out and we'll get back to you.
+              </div>
+              <div onClick={() => window.open("mailto:info@jackandjack.store")} style={{ ...skeuo, borderRadius: 12, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer", border: "1px solid " + C.accent + "33", background: "linear-gradient(145deg, rgba(228,188,74,0.08), rgba(228,188,74,0.02))" }}>
+                <span style={{ fontSize: 14 }}>{String.fromCodePoint(0x2709)}</span>
+                <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: 1, color: C.accent, fontWeight: 600 }}>info@jackandjack.store</span>
+              </div>
+            </div>
+
+            <button onClick={() => setShowFAQ(false)} style={{ width: "100%", padding: "13px", ...skeuo, borderRadius: 12, border: "1px solid rgba(168,168,184,0.15)", color: C.cream, fontSize: 11, fontFamily: MONO, fontWeight: 600, letterSpacing: 3, cursor: "pointer", background: "transparent" }}>CLOSE</button>
           </div>
         </div>
       )}
