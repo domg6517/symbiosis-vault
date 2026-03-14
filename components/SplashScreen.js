@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { C, SERIF, SANS, MONO } from "./design";
 import { Divider } from "./Icons";
 
-// ─── ANIMATED PRISMATIC BACKGROUND (canvas fallback) ─────
+// âââ ANIMATED PRISMATIC BACKGROUND (canvas fallback) âââââ
 const PrismaticCanvas = ({ width = 390, height = 844 }) => {
   const canvasRef = useRef(null);
   useEffect(() => {
@@ -110,7 +110,7 @@ const PrismaticCanvas = ({ width = 390, height = 844 }) => {
   return <canvas ref={canvasRef} style={{position:"absolute",inset:0,width:"100%",height:"100%",zIndex:0}} />;
 };
 
-// ─── SPLASH SCREEN ─────────────────────────
+// âââ SPLASH SCREEN âââââââââââââââââââââââââ
 export default function SplashScreen({ onEnter }) {
   const [step, setStep] = useState(0);
   const [videoFailed, setVideoFailed] = useState(false);
@@ -201,7 +201,7 @@ export default function SplashScreen({ onEnter }) {
           fontWeight: 300, lineHeight: 1.7, textAlign: "center",
           opacity: step >= 2 ? 1 : 0, transition: "opacity 0.8s ease 0.5s",
         }}>
-          10 singles. 22 boosters. 3 perspectives.<br />Scan. Collect. Trade. Unlock.
+          XX singles. XX [redacted]. 3 perspectives.<br />Scan. Collect. Trade. Unlock.
         </div>
       </div>
 
@@ -240,7 +240,7 @@ export default function SplashScreen({ onEnter }) {
         fontSize: 8, fontFamily: SANS, fontWeight: 400,
         color: "rgba(255,255,255,0.10)", letterSpacing: 3,
         opacity: step >= 1 ? 1 : 0, transition: "opacity 1.5s ease",
-      }}>NFC COLLECTIBLE SERIES · EST. 2026</div>
+      }}>NFC COLLECTIBLE SERIES Â· EST. 2026</div>
     </div>
   );
 }
