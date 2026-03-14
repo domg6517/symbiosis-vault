@@ -87,7 +87,7 @@ export async function POST(request) {
     // Also update profile table
     await supabase
       .from("profiles")
-      .update({ pfp_url: publicUrl })
+      .update({ avatar_url: publicUrl })
       .eq("id", user.id);
 
     return NextResponse.json({ url: publicUrl });
