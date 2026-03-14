@@ -47,6 +47,15 @@ export async function POST(request) {
       .single();
 
     if (findError || !cardTemplate) {
+      // Track failed chip lookups per IP to prevent brute-force chip ID guessing
+      const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+      const { allowed: ipAllowed } = rateLimit("chip-miss:" + ip, 5, 300000);
+      if (!ipAllowed) {
+        return NextResponse.json(
+          { error: "Too many invalid attempts. Please try again later." },
+          { status: 429 }
+        );
+      }
       return NextResponse.json(
         { error: "Card not found. This NFC chip is not registered." },
         { status: 404 }
