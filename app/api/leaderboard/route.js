@@ -74,7 +74,7 @@ export async function GET(request) {
   if (userIds.length > 0) {
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, username, pfp_url, instagram, twitter, tiktok")
+      .select("id, username, avatar_url, instagram, twitter, tiktok")
       .in("id", userIds);
 
     if (profiles) {
@@ -93,7 +93,7 @@ export async function GET(request) {
         user_id: uid,
         display: p.username || "Collector " + uid.substring(0, 6).toUpperCase(),
         display_name: p.username || "",
-        pfp_url: p.pfp_url || "",
+        pfp_url: p.avatar_url || "",
         instagram: p.instagram || "",
         twitter: p.twitter || "",
         tiktok: p.tiktok || "",
