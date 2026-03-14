@@ -39,7 +39,21 @@ function formatEvent(item) {
   }
 }
 
-export default function ActivityFeed({ session }) {
+function formatEventAction(item) {
+  switch (item.event_type) {
+    case "card_linked":
+      return "scanned a " + (item.card_rarity || "") + " card";
+    case "card_unlinked":
+      return "released a card for trade";
+    case "user_joined":
+      return "joined the Vault";
+    default:
+      return "did something";
+  }
+}
+
+
+export default function ActivityFeed({ session, onViewCollector }) {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -117,7 +131,7 @@ export default function ActivityFeed({ session }) {
               fontSize: 13, fontFamily: SANS, color: C.cream,
               lineHeight: 1.4,
             }}>
-              {formatEvent(item)}
+              <span onClick={() => onViewCollector && onViewCollector({ user_id: item.user_id, display_name: item.display_name })} style={{ color: C.accent, cursor: "pointer", fontWeight: 600 }}>{item.display_name || "A collector"}</span>{" "}{formatEventAction(item)}
             </div>
             {item.card_perspective && (
               <div style={{
