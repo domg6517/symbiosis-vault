@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { supabase } from "../lib/supabase";
-export default function ProfileScreen({ ownedCards, onBack, session }) {
+export default function ProfileScreen({ ownedCards, onBack, session, onAccountDeleted }) {
   const [editing, setEditing] = useState(false);
   const [displayName, setDisplayName] = useState(
     session?.user?.user_metadata?.display_name || "Collector"
@@ -139,7 +139,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
         setDeleting(false);
         return;
       }
-      window.location.reload();
+      if (onAccountDeleted) onAccountDeleted();
     } catch (err) {
       setDeleteError("Something went wrong. Please try again.");
       setDeleting(false);
