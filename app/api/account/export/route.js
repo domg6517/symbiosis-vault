@@ -1,6 +1,7 @@
 import { createServerClient } from "../../../../lib/supabase";
 import { NextResponse } from "next/server";
 import { rateLimit } from "../../../../lib/rateLimit";
+import { logAuditEvent } from "../../../../lib/auditLog";
 
 export async function POST(request) {
   try {
@@ -26,6 +27,13 @@ export async function POST(request) {
     }
 
     const userId = user.id;
+
+    // Audit log
+    logAuditEvent("data_export_requested", {
+      user_id: userId,
+      email: user.email,
+      ip: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown",
+    });
 
     // Log the export request
     await supabase.from("data_export_requests").insert({
