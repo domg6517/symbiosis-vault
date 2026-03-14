@@ -57,8 +57,8 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
     const ext = file.name.split(".").pop();
     const path = session.user.id + "/pfp." + ext;
     const { error } = await supabase.storage
-      .from("avatars")
-      .upload(path, file, { upsert: true });
+      .from("card-media")
+      .upload("avatars/" + path, file, { upsert: true });
     if (!error) {
       const { data } = supabase.storage.from("card-media").getPublicUrl("avatars/" + path);
       const newUrl = data.publicUrl + "?t=" + Date.now();
@@ -79,7 +79,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer", fontSize: 18,
           }}
-        >←</div>
+        >â</div>
         <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700 }}>Profile</div>
         <div style={{ flex: 1 }} />
         <div
@@ -118,7 +118,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
               background: C.accent, color: "#000",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 14, cursor: "pointer",
-            }} onClick={() => fileRef.current?.click()}>{"✏"}</div>
+            }} onClick={() => fileRef.current?.click()}>{"â"}</div>
           )}
           <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handlePfpChange} />
         </div>
@@ -265,7 +265,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
               <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Report a Bug</div>
               <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Let us know what happened</div>
             </div>
-            <div style={{ fontSize: 18, color: C.textDim }}>›</div>
+            <div style={{ fontSize: 18, color: C.textDim }}>âº</div>
           </div>
           <div onClick={() => alert("Help & Support \u2014 coming soon!")}
             style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
@@ -277,7 +277,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
               <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Help & Support</div>
               <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Get answers to questions</div>
             </div>
-            <div style={{ fontSize: 18, color: C.textDim }}>›</div>
+            <div style={{ fontSize: 18, color: C.textDim }}>âº</div>
           </div>
           <div onClick={() => alert("How It Works \u2014 coming soon!")}
             style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
@@ -289,7 +289,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
               <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>How It Works</div>
               <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Learn about collecting</div>
             </div>
-            <div style={{ fontSize: 18, color: C.textDim }}>›</div>
+            <div style={{ fontSize: 18, color: C.textDim }}>âº</div>
           </div>
           <div onClick={() => { supabase.auth.signOut(); window.location.reload(); }}
             style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
