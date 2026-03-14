@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import "./globals.css";
 import { C, SANS, SERIF, MONO, skeuo } from "../components/design";
 import { generateOwnedCards } from "../components/data";
@@ -22,6 +22,36 @@ export default function SymbiosisVault() {
   const [ownedCards, setOwnedCards] = useState([]);
   const [termsAccepted, setTermsAccepted] = useState(true);
   const { session, loading, isAuthenticated, isSupabaseConfigured } = useAuth();
+
+  // Track whether we're navigating via popstate to avoid double pushState
+  const isPopNavRef = useRef(false);
+
+  // Browser back button / swipe navigation
+  useEffect(() => {
+    const handlePopState = (e) => {
+      const state = e.state;
+      if (state && state.screen) {
+        isPopNavRef.current = true;
+        setScreen(state.screen);
+        if (state.selectedCard) setSelectedCard(state.selectedCard);
+        if (state.selectedCollector) setSelectedCollector(state.selectedCollector);
+        if (state.prevScreen) setPrevScreen(state.prevScreen);
+        setTimeout(() => { isPopNavRef.current = false; }, 0);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  // Navigate to a screen and push browser history
+  const navigateTo = useCallback((newScreen, extras = {}) => {
+    setScreen(newScreen);
+    if (extras.selectedCard !== undefined) setSelectedCard(extras.selectedCard);
+    if (extras.selectedCollector !== undefined) setSelectedCollector(extras.selectedCollector);
+    if (extras.prevScreen !== undefined) setPrevScreen(extras.prevScreen);
+    window.history.pushState({ screen: newScreen, ...extras }, "", "");
+  }, []);
 
   // Check for pending NFC chip to link (from /link page before sign-in)
   useEffect(() => {
@@ -68,11 +98,11 @@ export default function SymbiosisVault() {
   const handleSplashEnter = () => {
     if (loading) {
       // Auth still loading â show signup, the useEffect below will redirect
-      setScreen("signup");
+      navigateTo("signup");
     } else if (isAuthenticated) {
-      setScreen("collection");
+      navigateTo("collection");
     } else {
-      setScreen("signup");
+      navigateTo("signup");
     }
   };
 
@@ -83,11 +113,11 @@ export default function SymbiosisVault() {
     const fromScan = params?.get("from") === "scan";
     if (isAuthenticated && (screen === "loading" || screen === "signup" || (fromScan && screen === "splash"))) {
       setScreen("collection");
-      if (fromScan && window.history?.replaceState) {
-        window.history.replaceState({}, "", "/");
-      }
+      window.history.replaceState({ screen: "collection" }, "", fromScan ? "/" : undefined);
     } else if (!isAuthenticated && screen === "loading") {
-      setScreen(fromScan ? "signup" : "splash");
+      const initScreen = fromScan ? "signup" : "splash";
+      setScreen(initScreen);
+      window.history.replaceState({ screen: initScreen }, "", "");
     }
   }, [loading, isAuthenticated, screen]);
 
@@ -124,12 +154,12 @@ export default function SymbiosisVault() {
         )
       );
     }
-    setTimeout(() => setScreen("collection"), 500);
+    setTimeout(() => navigateTo("collection"), 500);
   };
 
   const handleCardLinked = () => {
     fetchCards();
-    setScreen("collection");
+    navigateTo("collection");
   };
 
   return (
@@ -157,22 +187,19 @@ export default function SymbiosisVault() {
         <SplashScreen onEnter={handleSplashEnter} />
       )}
       {screen === "signup" && (
-        <SignupScreen onSignup={() => setScreen("collection")} />
+        <SignupScreen onSignup={() => navigateTo("collection")} />
       )}
       {screen === "collection" && (
         <CollectionScreen
           ownedCards={ownedCards}
           onCardClick={(card) => {
-            setSelectedCard(card);
-            setScreen("detail");
+            navigateTo("detail", { selectedCard: card });
           }}
-          onScan={() => setScreen("scan")}
-          onLeaderboard={() => setScreen("leaderboard")}
-          onProfile={() => setScreen("profile")}
+          onScan={() => navigateTo("scan")}
+          onLeaderboard={() => navigateTo("leaderboard")}
+          onProfile={() => navigateTo("profile")}
             onViewCollector={(c) => {
-              setSelectedCollector(c);
-              setPrevScreen("collection");
-              setScreen("collectorProfile");
+              navigateTo("collectorProfile", { selectedCollector: c, prevScreen: "collection" });
             }}
             session={session}
         />
@@ -181,37 +208,36 @@ export default function SymbiosisVault() {
         <CardDetailScreen
           card={selectedCard}
           ownedCards={ownedCards}
-          onBack={() => setScreen("collection")}
+          onBack={() => navigateTo("collection")}
           onDisconnect={handleDisconnect}
         />
       )}
       {screen === "scan" && (
         <ScanScreen
           session={session}
-          onBack={() => setScreen("collection")}
+          onBack={() => navigateTo("collection")}
           onScanned={handleCardLinked}
         />
       )}
       {screen === "profile" && (
         <ProfileScreen
           ownedCards={ownedCards}
-          onBack={() => setScreen("collection")}
+          onBack={() => navigateTo("collection")}
           session={session}
         />
       )}
       {screen === "leaderboard" && (
         <LeaderboardScreen
-          onBack={() => setScreen("collection")}
+          onBack={() => navigateTo("collection")}
           onViewCollector={(c) => {
-            setSelectedCollector(c);
-            setScreen("collectorProfile");
+            navigateTo("collectorProfile", { selectedCollector: c, prevScreen: "leaderboard" });
           }}
         />
       )}
       {screen === "collectorProfile" && selectedCollector && (
         <CollectorProfileScreen
           collector={selectedCollector}
-          onBack={() => setScreen(prevScreen)}
+          onBack={() => navigateTo(prevScreen)}
         />
       )}
     </div>
