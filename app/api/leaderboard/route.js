@@ -1,5 +1,6 @@
 import { createServerClient } from "../../../lib/supabase";
 import { NextResponse } from "next/server";
+import { rateLimit, getClientIP } from "../../../lib/rateLimit";
 
 const RARITY_POINTS = {
   common: 1,
@@ -19,6 +20,11 @@ export async function GET(request) {
   const { data: { user }, error: authError } = await supabase.auth.getUser(token);
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { allowed } = rateLimit("lb:" + user.id, 5, 60000);
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
 
