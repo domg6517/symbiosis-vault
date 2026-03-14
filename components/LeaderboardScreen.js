@@ -1,13 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
+import { useAuth } from "./AuthContext";
 
 export default function LeaderboardScreen({ onBack, onViewCollector }) {
   const [leaders, setLeaders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { session } = useAuth();
 
   useEffect(() => {
-    fetch("/api/leaderboard")
+    fetch("/api/leaderboard", { headers: session?.access_token ? { Authorization: "Bearer " + session.access_token } : {} })
       .then((r) => r.json())
       .then((d) => {
         setLeaders(d.leaderboard || []);
