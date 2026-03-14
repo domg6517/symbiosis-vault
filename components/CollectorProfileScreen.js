@@ -1,8 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
+import { useAuth } from "./AuthContext";
 
 export default function CollectorProfileScreen({ collector, onBack }) {
+  const { session } = useAuth();
   if (!collector) return null;
 
   const [profileData, setProfileData] = useState(null);
@@ -12,7 +14,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
     if (!collector.user_id) return;
     async function fetchProfile() {
       try {
-        const res = await fetch("/api/users/profile?userId=" + collector.user_id);
+        const res = await fetch("/api/users/profile?userId=" + collector.user_id, { headers: session?.access_token ? { Authorization: "Bearer " + session.access_token } : {} });
         const data = await res.json();
         if (res.ok) setProfileData(data);
       } catch (e) {
