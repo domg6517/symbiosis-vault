@@ -11,14 +11,16 @@ export async function POST(request) {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { chipId } = await request.json();
-
     if (!chipId) {
       return NextResponse.json(
         { error: "chipId is required" },
@@ -26,10 +28,16 @@ export async function POST(request) {
       );
     }
 
-    // Find card template
+    // Find card template with perspective info for activity logging
     const { data: cardTemplate } = await supabase
       .from("card_templates")
-      .select("id")
+      .select(`
+        id,
+        chip_id,
+        rarity,
+        type,
+        perspective:perspectives (id, name)
+      `)
       .eq("chip_id", chipId)
       .single();
 
@@ -49,6 +57,39 @@ export async function POST(request) {
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Recalculate all badges for this user (may revoke badges they no longer qualify for)
+    try {
+      await supabase.rpc("recalculate_badges", { p_user_id: user.id });
+    } catch (badgeErr) {
+      console.error("Badge recalculation error:", badgeErr);
+    }
+
+    // Log activity to feed
+    try {
+      let displayName = "Collector";
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.username) {
+        displayName = profile.username;
+      }
+
+      await supabase.from("activity_feed").insert({
+        user_id: user.id,
+        event_type: "card_unlinked",
+        card_chip_id: cardTemplate.chip_id,
+        card_perspective: cardTemplate.perspective?.name || null,
+        card_rarity: cardTemplate.rarity,
+        card_type: cardTemplate.type,
+        display_name: displayName,
+      });
+    } catch (activityErr) {
+      console.error("Activity log error:", activityErr);
     }
 
     return NextResponse.json({
