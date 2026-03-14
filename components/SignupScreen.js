@@ -202,7 +202,7 @@ export default function SignupScreen({ onSignup }) {
         }}>{isSignIn ? "Welcome\nback." : "Start your\ncollection."}</div>
         <Divider style={{ margin: "20px 0" }} />
         <div style={{ fontSize: 14, color: C.textSec, fontFamily: SANS, lineHeight: 1.6 }}>
-          200 polaroids per drop. 10 singles.<br />22 boosters. Collect, trade, and unlock.
+          XX singles. XX [redacted]. 3 perspectives.<br />Scan. Collect. Trade. Unlock.
         </div>
 
         {/* Username field - signup only */}
