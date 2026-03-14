@@ -3,6 +3,11 @@ import { useState, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { useAuth } from "./AuthContext";
 
+function sanitizeHandle(val) {
+  if (!val) return "";
+  return val.replace(/^@/, "").replace(/[^a-zA-Z0-9_.-]/g, "").slice(0, 30);
+}
+
 export default function CollectorProfileScreen({ collector, onBack }) {
   const { session } = useAuth();
   if (!collector) return null;
@@ -28,9 +33,9 @@ export default function CollectorProfileScreen({ collector, onBack }) {
 
   const pfpUrl = profileData?.pfp_url || collector.pfp_url || "";
   const name = profileData?.username || collector.display_name || collector.display || "Collector";
-  const ig = profileData?.instagram || collector.instagram || "";
-  const tw = profileData?.twitter || collector.twitter || "";
-  const tk = profileData?.tiktok || collector.tiktok || "";
+  const ig = sanitizeHandle(profileData?.instagram || collector.instagram || "");
+  const tw = sanitizeHandle(profileData?.twitter || collector.twitter || "");
+  const tk = sanitizeHandle(profileData?.tiktok || collector.tiktok || "");
   const badges = profileData?.badges || [];
 
   return (
