@@ -18,6 +18,8 @@ export default function SignupScreen({ onSignup }) {
   const [show, setShow] = useState(false);
   const [confirmationSent, setConfirmationSent] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [birthDate, setBirthDate] = useState("");
+  const [ageError, setAgeError] = useState("");
   const { signUp, signIn, isSupabaseConfigured } = useAuth();
 
   useEffect(() => {
@@ -80,6 +82,27 @@ export default function SignupScreen({ onSignup }) {
     }
     if (!email) { setError("Email is required"); return; }
     if (!password || password.length < 6) { setError("Password must be at least 6 characters"); return; }
+
+    // Age gate - 16+ required
+    if (!isSignIn) {
+      if (!birthDate) {
+        setError("Date of birth is required");
+        return;
+      }
+      const dob = new Date(birthDate);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const monthDiff = today.getMonth() - dob.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      if (age < 16) {
+        setAgeError("You must be 16 or older to use Symbiosis Vault");
+        setError("You must be 16 or older to use Symbiosis Vault");
+        return;
+      }
+      setAgeError("");
+    }
 
     // Username validation for signup only
     if (!isSignIn) {
@@ -217,7 +240,7 @@ export default function SignupScreen({ onSignup }) {
             <span style={{ color: C.accent, cursor: "pointer" }} onClick={() => {
               setConfirmationSent(false);
               setIsSignIn(false);
-              setEmail(""); setPassword(""); setUsername(""); setError("");
+              setEmail(""); setPassword(""); setUsername(""); setBirthDate(""); setAgeError(""); setError("");
             }}>Start over</span>
           </div>
         </div>
@@ -317,7 +340,7 @@ export default function SignupScreen({ onSignup }) {
         <div style={{ textAlign: "center", marginTop: 18, fontSize: 13, color: C.textDim, fontFamily: SANS }}>
           {isSignIn ? "New collector? " : "Already collecting? "}
           <span style={{ color: C.accent, cursor: "pointer" }}
-            onClick={() => { setIsSignIn(!isSignIn); setError(""); setUsernameError(""); }}>
+            onClick={() => { setIsSignIn(!isSignIn); setError(""); setUsernameError(""); setAgeError(""); setBirthDate(""); }}>
             {isSignIn ? "Create vault" : "Sign in"}
           </span>
         </div>
