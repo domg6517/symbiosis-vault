@@ -27,6 +27,9 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
   const [cropFile, setCropFile] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [usernameError, setUsernameError] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   const linked = ownedCards.filter((c) => c.linked).length;
 
@@ -120,6 +123,27 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
     setCropPreview(null);
     setCropFile(null);
     setSaving(false);
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    setDeleteError("");
+    try {
+      const res = await fetch("/api/account/delete", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + session.access_token },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setDeleteError(data.error || "Failed to delete account");
+        setDeleting(false);
+        return;
+      }
+      window.location.reload();
+    } catch (err) {
+      setDeleteError("Something went wrong. Please try again.");
+      setDeleting(false);
+    }
   };
 
   const handleCropCancel = () => {
@@ -355,6 +379,15 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
             </div>
             <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
           </div>
+          <div onClick={() => setShowDeleteConfirm(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid rgba(231,76,60,0.25)", background: "linear-gradient(180deg, rgba(228,188,74,0.04), rgba(231,76,60,0.04))" }}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid rgba(231,76,60,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500, color: "#e74c3c" }}>Delete Account</div>
+              <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Permanently remove your vault</div>
+            </div>
+          </div>
           <div onClick={() => { supabase.auth.signOut(); window.location.reload(); }}
             style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
               border: "1px solid rgba(231,76,60,0.2)", background: "linear-gradient(180deg, rgba(231,76,60,0.04), transparent)" }}>
@@ -509,6 +542,21 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
           <div style={{ marginTop: 16, display: "flex", gap: 16 }}>
             <button onClick={handleCropCancel} style={{ ...skeuo, padding: "10px 28px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.05)", color: C.cream, fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, cursor: "pointer" }}>CANCEL</button>
             <button onClick={handleCropConfirm} disabled={saving} style={{ ...skeuo, padding: "10px 28px", borderRadius: 12, border: "1px solid " + C.accent, background: "linear-gradient(180deg, rgba(228,188,74,0.15), rgba(228,188,74,0.05))", color: C.accent, fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, cursor: "pointer", opacity: saving ? 0.5 : 1 }}>{saving ? "SAVING..." : "CONFIRM"}</button>
+          </div>
+        </div>
+      )}
+
+      {showDeleteConfirm && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, backdropFilter: "blur(14px)" }} onClick={() => { if (!deleting) { setShowDeleteConfirm(false); setDeleteError(""); } }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ ...skeuo, borderRadius: 22, padding: "28px 24px", maxWidth: 340, width: "100%", border: "1px solid rgba(231,76,60,0.3)", boxShadow: "0 0 60px rgba(0,0,0,0.6), 0 0 40px rgba(231,76,60,0.08)", textAlign: "center" }}>
+            <div style={{ width: 56, height: 56, borderRadius: "50%", border: "2px solid rgba(231,76,60,0.4)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", background: "rgba(231,76,60,0.08)" }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+            </div>
+            <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700, color: "#e74c3c", marginBottom: 8 }}>Delete Account?</div>
+            <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, lineHeight: 1.6, marginBottom: 20 }}>This will permanently delete your vault, all linked cards, badges, and activity history. This cannot be undone.</div>
+            {deleteError ? <div style={{ fontFamily: SANS, fontSize: 12, color: "#e74c3c", marginBottom: 12 }}>{deleteError}</div> : null}
+            <button onClick={handleDeleteAccount} disabled={deleting} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "1px solid rgba(231,76,60,0.5)", background: "linear-gradient(180deg, rgba(231,76,60,0.15), rgba(231,76,60,0.05))", color: "#e74c3c", fontFamily: MONO, fontSize: 11, letterSpacing: 2, fontWeight: 700, cursor: deleting ? "wait" : "pointer", opacity: deleting ? 0.6 : 1, marginBottom: 10 }}>{deleting ? "DELETING..." : "DELETE FOREVER"}</button>
+            <button onClick={() => { setShowDeleteConfirm(false); setDeleteError(""); }} disabled={deleting} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "1px solid rgba(228,188,74,0.2)", background: "transparent", color: "#e4bc4a", fontFamily: MONO, fontSize: 11, letterSpacing: 2, fontWeight: 600, cursor: "pointer", opacity: deleting ? 0.4 : 1 }}>CANCEL</button>
           </div>
         </div>
       )}
