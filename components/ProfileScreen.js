@@ -23,6 +23,8 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
   const [saving, setSaving] = useState(false);
   const [showInstall, setShowInstall] = useState(false);
   const [badges, setBadges] = useState([]);
+  const [cropPreview, setCropPreview] = useState(null);
+  const [cropFile, setCropFile] = useState(null);
 
   const linked = ownedCards.filter((c) => c.linked).length;
 
@@ -51,21 +53,37 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
     setEditing(false);
   };
 
-  const handlePfpChange = async (e) => {
+  const handlePfpChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const ext = file.name.split(".").pop();
+    setCropFile(file);
+    const reader = new FileReader();
+    reader.onload = (ev) => setCropPreview(ev.target.result);
+    reader.readAsDataURL(file);
+  };
+
+  const handleCropConfirm = async () => {
+    if (!cropFile) return;
+    setSaving(true);
+    const ext = cropFile.name.split(".").pop();
     const path = session.user.id + "/pfp." + ext;
     const { error } = await supabase.storage
       .from("card-media")
-      .upload("avatars/" + path, file, { upsert: true });
+      .upload("avatars/" + path, cropFile, { upsert: true });
     if (!error) {
       const { data } = supabase.storage.from("card-media").getPublicUrl("avatars/" + path);
       const newUrl = data.publicUrl + "?t=" + Date.now();
       setPfpUrl(newUrl);
-      // Auto-save pfp to user metadata immediately
       await supabase.auth.updateUser({ data: { pfp_url: newUrl } });
     }
+    setCropPreview(null);
+    setCropFile(null);
+    setSaving(false);
+  };
+
+  const handleCropCancel = () => {
+    setCropPreview(null);
+    setCropFile(null);
   };
 
   return (
@@ -428,6 +446,19 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
           </div>
         </div>
       )}
-    </div>
+    
+      {cropPreview && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.85)", zIndex: 9999, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24 }}>
+          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 16, textTransform: "uppercase" }}>Preview Your Photo</div>
+          <div style={{ width: 180, height: 180, borderRadius: "50%", overflow: "hidden", border: "3px solid " + C.accent, boxShadow: "0 0 30px rgba(228,188,74,0.3)" }}>
+            <img src={cropPreview} alt="Preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          </div>
+          <div style={{ marginTop: 24, display: "flex", gap: 16 }}>
+            <button onClick={handleCropCancel} style={{ ...skeuo, padding: "10px 28px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.05)", color: C.cream, fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, cursor: "pointer" }}>CANCEL</button>
+            <button onClick={handleCropConfirm} disabled={saving} style={{ ...skeuo, padding: "10px 28px", borderRadius: 12, border: "1px solid " + C.accent, background: "linear-gradient(180deg, rgba(228,188,74,0.15), rgba(228,188,74,0.05))", color: C.accent, fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, cursor: "pointer", opacity: saving ? 0.5 : 1 }}>{saving ? "SAVING..." : "CONFIRM"}</button>
+          </div>
+        </div>
+      )}
+</div>
   );
 }
