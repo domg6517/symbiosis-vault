@@ -139,7 +139,7 @@ export default function TermsModal({ onAccept }) {
           </Section>
 
           <Section title="8. Your Data Rights">
-            Regardless of your location, you have the right to: access the personal data we hold about you; request correction of inaccurate data; request deletion of your data and account; receive a copy of your data in a portable format; withdraw consent to data processing at any time; lodge a complaint with your local data protection authority (EU/EEA users). To exercise these rights, contact privacy@jackxjack.com.
+            Regardless of your location, you have the right to: access the personal data we hold about you; request correction of inaccurate data; request deletion of your data and account; receive a copy of your data in a portable format; withdraw consent to data processing at any time; lodge a complaint with your local data protection authority (EU/EEA users). To exercise these rights, contact info@jackandjack.store.
           </Section>
 
           <Section title="9. No Warranties">
@@ -175,7 +175,7 @@ export default function TermsModal({ onAccept }) {
           </Section>
 
           <Section title="17. Contact">
-            For questions about these terms: info@jackandjack.store. For privacy-related inquiries: privacy@jackxjack.com. Jack & Jack LLC, California, USA.
+            For questions about these terms: info@jackandjack.store. For privacy-related inquiries: info@jackandjack.store. Jack & Jack LLC, California, USA.
           </Section>
 
           <p
