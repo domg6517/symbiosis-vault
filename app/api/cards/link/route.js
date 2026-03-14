@@ -67,27 +67,12 @@ export async function POST(request) {
       });
     }
 
-    // Award OG TESTER badge for any Test Drop 1 card scan
+    // Recalculate all badges for this user
     try {
-      const { data: badge } = await supabase
-        .from("badges")
-        .select("id")
-        .eq("slug", "og-tester")
-        .single();
-
-      if (badge) {
-        await supabase
-          .from("user_badges")
-          .upsert(
-            { user_id: user.id, badge_id: badge.id },
-            { onConflict: "user_id,badge_id" }
-          );
-      }
+      await supabase.rpc("recalculate_badges", { p_user_id: user.id });
     } catch (badgeErr) {
-      // Badge award is non-critical, don't fail the link
-      console.error("Badge award error:", badgeErr);
+      console.error("Badge recalculation error:", badgeErr);
     }
-
 
     // Log activity to feed
     try {
@@ -159,28 +144,7 @@ export async function POST(request) {
       }
     }
 
-    // Award OG Tester Set badge if all 3 perspectives collected
-    if (songPerspectives.size >= 3) {
-      try {
-        const { data: setBadge } = await supabase
-          .from("badges")
-          .select("id")
-          .eq("slug", "og-tester-set")
-          .single();
-        if (setBadge) {
-          await supabase
-            .from("user_badges")
-            .upsert(
-              { user_id: user.id, badge_id: setBadge.id },
-              { onConflict: "user_id,badge_id" }
-            );
-        }
-      } catch (badgeErr) {
-        console.error("Set badge award error:", badgeErr);
-      }
-    }
-
-    return NextResponse.json({
+        return NextResponse.json({
       message: "Card linked successfully!",
       card: formatCard(cardTemplate),
       setComplete: songPerspectives.size >= 3,
