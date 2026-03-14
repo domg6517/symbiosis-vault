@@ -97,7 +97,7 @@ export default function SymbiosisVault() {
   // When ENTER is clicked on splash, go to collection if authed, signup if not
   const handleSplashEnter = () => {
     if (loading) {
-      // Auth still loading â show signup, the useEffect below will redirect
+      // Auth still loading Ã¢ÂÂ show signup, the useEffect below will redirect
       navigateTo("signup");
     } else if (isAuthenticated) {
       navigateTo("collection");
@@ -118,6 +118,9 @@ export default function SymbiosisVault() {
       const initScreen = fromScan ? "signup" : "splash";
       setScreen(initScreen);
       window.history.replaceState({ screen: initScreen }, "", "");
+    } else if (!isAuthenticated && screen !== "splash" && screen !== "signup" && screen !== "loading") {
+      setScreen("splash");
+      window.history.replaceState({ screen: "splash" }, "", "/");
     }
   }, [loading, isAuthenticated, screen]);
 
