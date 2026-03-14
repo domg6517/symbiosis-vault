@@ -37,7 +37,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
     if (!q.trim()) { setSearchResults([]); return; }
     setSearching(true);
     try {
-      const res = await fetch("/api/users/search?q=" + encodeURIComponent(q.trim()));
+      const res = await fetch("/api/users/search?q=" + encodeURIComponent(q.trim()), { headers: session?.access_token ? { Authorization: "Bearer " + session.access_token } : {} });
       const data = await res.json();
       if (data.users) setSearchResults(data.users);
     } catch (e) {
