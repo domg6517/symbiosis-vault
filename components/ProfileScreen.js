@@ -115,17 +115,18 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
         ctx.drawImage(img, cx, cy, size, size, 0, 0, 512, 512);
         uploadBlob = await new Promise(function(r) { canvas.toBlob(r, "image/jpeg", 0.9); });
       }
-      var ext = zoomLevel > 1 ? "jpg" : cropFile.name.split(".").pop();
-      var path = session.user.id + "/pfp." + ext;
-      var { error } = await supabase.storage
-        .from("card-media")
-        .upload("avatars/" + path, uploadBlob, { upsert: true, contentType: zoomLevel > 1 ? "image/jpeg" : cropFile.type });
-    if (!error) {
-      const { data } = supabase.storage.from("card-media").getPublicUrl("avatars/" + path);
-      const newUrl = data.publicUrl + "?t=" + Date.now();
-      setPfpUrl(newUrl);
-      await supabase.auth.updateUser({ data: { pfp_url: newUrl } });
-    }
+      // Upload via server-side validated API route
+      const formData = new FormData();
+      formData.append("file", uploadBlob, "pfp." + (zoomLevel > 1 ? "jpg" : cropFile.name.split(".").pop()));
+      
+      const uploadRes = await fetch("/api/account/pfp", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + session.access_token },
+        body: formData,
+      });
+      const uploadData = await uploadRes.json();
+      if (uploadRes.ok && uploadData.url) {
+        setPfpUrl(uploadData.url);
     } catch (err) {
       console.error("Upload error:", err);
     }
@@ -556,7 +557,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             <div style={{ marginBottom: 20 }}>
               <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>HOW DO I COLLECT?</div>
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6 }}>
-                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip Ã¢ÂÂ tap it with your phone and the card is yours. Build your collection before the window closes.
+                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip ÃÂ¢ÃÂÃÂ tap it with your phone and the card is yours. Build your collection before the window closes.
               </div>
             </div>
 
