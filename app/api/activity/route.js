@@ -1,5 +1,6 @@
 import { createServerClient } from "../../../lib/supabase";
 import { NextResponse } from "next/server";
+import { rateLimit } from "../../../lib/rateLimit";
 
 export async function GET(request) {
   try {
@@ -15,6 +16,11 @@ export async function GET(request) {
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+    const { allowed } = rateLimit("act:" + user.id, 15, 60000);
+    if (!allowed) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
 
     const { data, error } = await supabase
       .from("activity_feed")
