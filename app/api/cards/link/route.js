@@ -1,6 +1,7 @@
 import { createServerClient } from "../../../../lib/supabase";
 import { NextResponse } from "next/server";
 import { rateLimit } from "../../../../lib/rateLimit";
+import { logAuditEvent } from "../../../../lib/auditLog";
 
 export async function POST(request) {
   try {
