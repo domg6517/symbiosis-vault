@@ -187,7 +187,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
         {editing ? (
           <input
             value={displayName}
-            onChange={(e) => setDisplayName(e.target.value); setUsernameError("")}
+            onChange={(e) => { setDisplayName(e.target.value); setUsernameError(""); }}
             style={{
               background: "transparent", border: "1px solid " + C.textDim,
               borderRadius: 8, padding: "8px 16px", color: C.text,
