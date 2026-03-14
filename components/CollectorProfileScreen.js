@@ -1,8 +1,27 @@
 "use client";
+import { useState, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
+import { supabase } from "../lib/supabase";
 
 export default function CollectorProfileScreen({ collector, onBack }) {
   if (!collector) return null;
+
+  const [badges, setBadges] = useState([]);
+  
+  useEffect(() => {
+    if (!collector.user_id) return;
+    async function fetchBadges() {
+      try {
+        const { data } = await supabase
+          .from("user_badges")
+          .select("awarded_at, badge:badges (slug, label, description, icon)")
+          .eq("user_id", collector.user_id);
+        if (data) setBadges(data);
+      } catch (e) { console.error("Badge fetch error:", e); }
+    }
+    fetchBadges();
+  }, [collector.user_id]);
+
 
   const pfpUrl = collector.pfp_url || "";
   const name = collector.display_name || collector.display || "Collector";
@@ -46,6 +65,18 @@ export default function CollectorProfileScreen({ collector, onBack }) {
           </div>
         )}
       </div>
+
+            {/* Badges */}
+      {badges.length > 0 && (
+        <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 8, padding: "4px 16px 14px" }}>
+          {badges.map((b) => (
+            <div key={b.badge.slug} style={{ ...skeuo, borderRadius: 20, padding: "6px 14px", display: "flex", alignItems: "center", gap: 6, border: "1px solid " + C.accent + "33", background: "linear-gradient(180deg, rgba(228,188,74,0.06), transparent)" }}>
+              <span style={{ fontSize: 14 }}>{b.badge.icon}</span>
+              <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 1.5, color: C.accent, fontWeight: 600 }}>{b.badge.label.toUpperCase()}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Stats */}
       <div style={{ display: "flex", justifyContent: "center", gap: 20, padding: "0 16px 20px" }}>
