@@ -67,7 +67,7 @@ export default function SymbiosisVault() {
   // When ENTER is clicked on splash, go to collection if authed, signup if not
   const handleSplashEnter = () => {
     if (loading) {
-      // Auth still loading — show signup, the useEffect below will redirect
+      // Auth still loading â show signup, the useEffect below will redirect
       setScreen("signup");
     } else if (isAuthenticated) {
       setScreen("collection");
@@ -169,6 +169,11 @@ export default function SymbiosisVault() {
           onScan={() => setScreen("scan")}
           onLeaderboard={() => setScreen("leaderboard")}
           onProfile={() => setScreen("profile")}
+            onViewCollector={(c) => {
+              setSelectedCollector(c);
+              setPrevScreen("collection");
+              setScreen("collectorProfile");
+            }}
             session={session}
         />
       )}
