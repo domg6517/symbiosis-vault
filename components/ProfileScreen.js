@@ -40,6 +40,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   const linked = ownedCards.filter((c) => c.linked).length;
 
@@ -555,7 +556,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             <div style={{ marginBottom: 20 }}>
               <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>HOW DO I COLLECT?</div>
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6 }}>
-                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip â tap it with your phone and the card is yours. Build your collection before the window closes.
+                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip Ã¢ÂÂ tap it with your phone and the card is yours. Build your collection before the window closes.
               </div>
             </div>
 
@@ -588,16 +589,38 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
 
       <PrivacyPolicy visible={showPrivacy} onClose={() => setShowPrivacy(false)} />
       {showDeleteConfirm && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, backdropFilter: "blur(14px)" }} onClick={() => { if (!deleting) { setShowDeleteConfirm(false); setDeleteError(""); } }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, backdropFilter: "blur(14px)" }} onClick={() => { if (!deleting) { setShowDeleteConfirm(false); setDeleteError(""); setDeleteConfirmText(""); } }}>
           <div onClick={(e) => e.stopPropagation()} style={{ ...skeuo, borderRadius: 22, padding: "28px 24px", maxWidth: 340, width: "100%", border: "1px solid rgba(231,76,60,0.3)", boxShadow: "0 0 60px rgba(0,0,0,0.6), 0 0 40px rgba(231,76,60,0.08)", textAlign: "center" }}>
             <div style={{ width: 56, height: 56, borderRadius: "50%", border: "2px solid rgba(231,76,60,0.4)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", background: "rgba(231,76,60,0.08)" }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
             </div>
             <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700, color: "#e74c3c", marginBottom: 8 }}>Delete Account?</div>
-            <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, lineHeight: 1.6, marginBottom: 20 }}>This will permanently delete your vault, all linked cards, badges, and activity history. This cannot be undone.</div>
+            <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, lineHeight: 1.6, marginBottom: 16 }}>This will permanently delete your vault, all linked cards, badges, and activity history. This cannot be undone.</div>
+            <div style={{ fontFamily: MONO, fontSize: 10, color: C.textDim, letterSpacing: 1, marginBottom: 8, textAlign: "left" }}>TYPE "DELETE" TO CONFIRM</div>
+            <input
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value.toUpperCase())}
+              placeholder="DELETE"
+              autoCapitalize="characters"
+              style={{
+                width: "100%",
+                padding: "12px",
+                background: "transparent",
+                border: "1px solid rgba(231,76,60,0.3)",
+                borderRadius: 8,
+                color: "#e74c3c",
+                fontFamily: MONO,
+                fontSize: 14,
+                letterSpacing: 3,
+                textAlign: "center",
+                outline: "none",
+                boxSizing: "border-box",
+                marginBottom: 16,
+              }}
+            />
             {deleteError ? <div style={{ fontFamily: SANS, fontSize: 12, color: "#e74c3c", marginBottom: 12 }}>{deleteError}</div> : null}
-            <button onClick={handleDeleteAccount} disabled={deleting} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "1px solid rgba(231,76,60,0.5)", background: "linear-gradient(180deg, rgba(231,76,60,0.15), rgba(231,76,60,0.05))", color: "#e74c3c", fontFamily: MONO, fontSize: 11, letterSpacing: 2, fontWeight: 700, cursor: deleting ? "wait" : "pointer", opacity: deleting ? 0.6 : 1, marginBottom: 10 }}>{deleting ? "DELETING..." : "DELETE FOREVER"}</button>
-            <button onClick={() => { setShowDeleteConfirm(false); setDeleteError(""); }} disabled={deleting} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "1px solid rgba(228,188,74,0.2)", background: "transparent", color: "#e4bc4a", fontFamily: MONO, fontSize: 11, letterSpacing: 2, fontWeight: 600, cursor: "pointer", opacity: deleting ? 0.4 : 1 }}>CANCEL</button>
+            <button onClick={handleDeleteAccount} disabled={deleting || deleteConfirmText !== "DELETE"} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "1px solid rgba(231,76,60,0.5)", background: "linear-gradient(180deg, rgba(231,76,60,0.15), rgba(231,76,60,0.05))", color: "#e74c3c", fontFamily: MONO, fontSize: 11, letterSpacing: 2, fontWeight: 700, cursor: deleting ? "wait" : "pointer", opacity: (deleting || deleteConfirmText !== "DELETE") ? 0.4 : 1, marginBottom: 10 }}>{deleting ? "DELETING..." : "DELETE FOREVER"}</button>
+            <button onClick={() => { setShowDeleteConfirm(false); setDeleteError(""); setDeleteConfirmText(""); }} disabled={deleting} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "1px solid rgba(228,188,74,0.2)", background: "transparent", color: "#e4bc4a", fontFamily: MONO, fontSize: 11, letterSpacing: 2, fontWeight: 600, cursor: "pointer", opacity: deleting ? 0.4 : 1 }}>CANCEL</button>
           </div>
         </div>
       )}
