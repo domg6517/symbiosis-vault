@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { rateLimit, getClientIP } from "../../../lib/rateLimit";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseAdmin = createClient(
@@ -7,6 +8,12 @@ const supabaseAdmin = createClient(
 );
 
 export async function GET(request) {
+  const ip = getClientIP(request);
+  const { allowed } = rateLimit("ucheck:" + ip, 10, 60000);
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const username = searchParams.get("username");
