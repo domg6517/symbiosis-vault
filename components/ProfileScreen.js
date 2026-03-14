@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { supabase } from "../lib/supabase";
+import PrivacyPolicy from "./PrivacyPolicy";
 // Strip anything that isn't a valid social media username character
 function sanitizeHandle(val) {
   if (!val) return "";
@@ -36,6 +37,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [usernameError, setUsernameError] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showFAQ, setShowFAQ] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
 
@@ -375,7 +377,8 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             </div>
             <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
           </div>
-          <div onClick={() => setShowDeleteConfirm(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid rgba(231,76,60,0.25)", background: "linear-gradient(180deg, rgba(228,188,74,0.04), rgba(231,76,60,0.04))" }}>
+          <div onClick={() => setShowPrivacy(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}> <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> </div> <div style={{ flex: 1 }}> <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Privacy Policy</div> <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>How we protect your data</div> </div> <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div> </div>
+        <div onClick={() => setShowDeleteConfirm(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid rgba(231,76,60,0.25)", background: "linear-gradient(180deg, rgba(228,188,74,0.04), rgba(231,76,60,0.04))" }}>
             <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid rgba(231,76,60,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg>
             </div>
@@ -552,7 +555,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             <div style={{ marginBottom: 20 }}>
               <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>HOW DO I COLLECT?</div>
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6 }}>
-                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip — tap it with your phone and the card is yours. Build your collection before the window closes.
+                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip â tap it with your phone and the card is yours. Build your collection before the window closes.
               </div>
             </div>
 
@@ -583,6 +586,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
         </div>
       )}
 
+      <PrivacyPolicy visible={showPrivacy} onClose={() => setShowPrivacy(false)} />
       {showDeleteConfirm && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, backdropFilter: "blur(14px)" }} onClick={() => { if (!deleting) { setShowDeleteConfirm(false); setDeleteError(""); } }}>
           <div onClick={(e) => e.stopPropagation()} style={{ ...skeuo, borderRadius: 22, padding: "28px 24px", maxWidth: 340, width: "100%", border: "1px solid rgba(231,76,60,0.3)", boxShadow: "0 0 60px rgba(0,0,0,0.6), 0 0 40px rgba(231,76,60,0.08)", textAlign: "center" }}>
