@@ -168,6 +168,10 @@ export default function SymbiosisVault() {
           onScan={() => setScreen("scan")}
           onLeaderboard={() => setScreen("leaderboard")}
           onProfile={() => setScreen("profile")}
+            onViewCollector={(c) => {
+              setSelectedCollector({ display_name: c.display_name, display: c.display_name, user_id: c.user_id });
+              setScreen("collectorProfile");
+            }}
             session={session}
         />
       )}
