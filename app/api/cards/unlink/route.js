@@ -9,13 +9,11 @@ export async function POST(request) {
     if (!authHeader) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
     const token = authHeader.replace("Bearer ", "");
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser(token);
-
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -28,7 +26,7 @@ export async function POST(request) {
       );
     }
 
-    // Find card template with perspective info for activity logging
+    // Find card template with perspective and song info for activity logging
     const { data: cardTemplate } = await supabase
       .from("card_templates")
       .select(`
@@ -36,6 +34,7 @@ export async function POST(request) {
         chip_id,
         rarity,
         type,
+        song:songs (title),
         perspective:perspectives (id, name)
       `)
       .eq("chip_id", chipId)
@@ -74,7 +73,6 @@ export async function POST(request) {
         .select("username")
         .eq("id", user.id)
         .single();
-
       if (profile?.username) {
         displayName = profile.username;
       }
@@ -86,6 +84,7 @@ export async function POST(request) {
         card_perspective: cardTemplate.perspective?.name || null,
         card_rarity: cardTemplate.rarity,
         card_type: cardTemplate.type,
+        card_song_title: cardTemplate.song?.title || null,
         display_name: displayName,
       });
     } catch (activityErr) {
