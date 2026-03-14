@@ -8,7 +8,19 @@ const RARITY_POINTS = {
 };
 
 export async function GET(request) {
-  const supabase = createServerClient(request);
+  const supabase = createServerClient();
+
+  // Auth check - require valid session
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const token = authHeader.replace("Bearer ", "");
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+  if (authError || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
 
   // Fetch all linked cards with rarity from card_templates
   const { data: cards, error } = await supabase
