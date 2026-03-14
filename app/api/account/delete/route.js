@@ -57,14 +57,21 @@ export async function POST(request) {
       console.error("Delete user_cards error:", e);
     }
 
-    // 5. Profile
+    // 5. Terms acceptance log
+    try {
+      await supabase.from("terms_acceptance_log").delete().eq("user_id", userId);
+    } catch (e) {
+      console.error("Delete terms_acceptance_log error:", e);
+    }
+
+    // 6. Profile
     try {
       await supabase.from("profiles").delete().eq("id", userId);
     } catch (e) {
       console.error("Delete profiles error:", e);
     }
 
-    // 6. Delete PFP from storage
+    // 7. Delete PFP from storage
     try {
       const { data: files } = await supabase.storage
         .from("card-media")
@@ -77,7 +84,7 @@ export async function POST(request) {
       console.error("Delete storage error:", e);
     }
 
-    // 7. Delete auth user (requires service role)
+    // 8. Delete auth user (requires service role)
     const { error: deleteError } = await supabase.auth.admin.deleteUser(userId);
 
     if (deleteError) {
