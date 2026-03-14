@@ -5,13 +5,16 @@ import { rateLimit } from "../../../../lib/rateLimit";
 export async function POST(request) {
   try {
     const supabase = createServerClient();
+
     const authHeader = request.headers.get("authorization");
     if (!authHeader) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -23,14 +26,20 @@ export async function POST(request) {
 
     const { chipId } = await request.json();
     if (!chipId) {
-      return NextResponse.json({ error: "chipId is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "chipId is required" },
+        { status: 400 }
+      );
     }
 
     // Find the card template by chip ID
     const { data: cardTemplate, error: findError } = await supabase
       .from("card_templates")
       .select(`
-        id, chip_id, rarity, type,
+        id,
+        chip_id,
+        rarity,
+        type,
         song:songs (id, title, song_number, type),
         perspective:perspectives (id, name)
       `)
@@ -54,7 +63,10 @@ export async function POST(request) {
 
     if (existing && existing.linked) {
       return NextResponse.json(
-        { error: "You already have this card linked!", card: formatCard(cardTemplate) },
+        {
+          error: "You already have this card linked!",
+          card: formatCard(cardTemplate),
+        },
         { status: 409 }
       );
     }
@@ -63,7 +75,11 @@ export async function POST(request) {
     if (existing) {
       await supabase
         .from("user_cards")
-        .update({ linked: true, linked_at: new Date().toISOString(), unlinked_at: null })
+        .update({
+          linked: true,
+          linked_at: new Date().toISOString(),
+          unlinked_at: null,
+        })
         .eq("id", existing.id);
     } else {
       await supabase.from("user_cards").insert({
@@ -92,6 +108,7 @@ export async function POST(request) {
       if (profile?.username) {
         displayName = profile.username;
       }
+
       await supabase.from("activity_feed").insert({
         user_id: user.id,
         event_type: "card_linked",
@@ -99,10 +116,12 @@ export async function POST(request) {
         card_perspective: cardTemplate.perspective.name,
         card_rarity: cardTemplate.rarity,
         card_type: cardTemplate.type,
+        card_song_title: cardTemplate.song.title,
         display_name: displayName,
       });
+      console.log("Activity logged successfully for card link");
     } catch (activityErr) {
-      console.error("Activity log error:", activityErr);
+      console.error("Activity log error:", JSON.stringify(activityErr));
     }
 
     // Check if this completes a set (all 3 perspectives for this song)
@@ -124,6 +143,7 @@ export async function POST(request) {
     // If all 3 perspectives collected, unlock ultra rare
     if (songPerspectives.size >= 3 && cardTemplate.type === "single") {
       const ultraRareId = `UR-${cardTemplate.song.song_number}-${cardTemplate.perspective.id}`;
+
       const { data: ur } = await supabase
         .from("ultra_rares")
         .select("id")
@@ -150,7 +170,7 @@ export async function POST(request) {
       }
     }
 
-        return NextResponse.json({
+    return NextResponse.json({
       message: "Card linked successfully!",
       card: formatCard(cardTemplate),
       setComplete: songPerspectives.size >= 3,
