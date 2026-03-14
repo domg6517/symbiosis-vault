@@ -25,6 +25,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
   const [badges, setBadges] = useState([]);
   const [cropPreview, setCropPreview] = useState(null);
   const [cropFile, setCropFile] = useState(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   const linked = ownedCards.filter((c) => c.linked).length;
 
@@ -66,18 +67,38 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
   const handleCropConfirm = async () => {
     if (!cropFile) return;
     setSaving(true);
-    const ext = cropFile.name.split(".").pop();
-    const path = session.user.id + "/pfp." + ext;
-    const { error } = await supabase.storage
-      .from("card-media")
-      .upload("avatars/" + path, cropFile, { upsert: true });
+    try {
+      var uploadBlob = cropFile;
+      if (zoomLevel > 1) {
+        var img = new Image();
+        img.src = cropPreview;
+        await new Promise(function(r) { img.onload = r; if (img.complete) r(); });
+        var size = Math.min(img.width, img.height) / zoomLevel;
+        var cx = (img.width - size) / 2;
+        var cy = (img.height - size) / 2;
+        var canvas = document.createElement("canvas");
+        canvas.width = 512;
+        canvas.height = 512;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, cx, cy, size, size, 0, 0, 512, 512);
+        uploadBlob = await new Promise(function(r) { canvas.toBlob(r, "image/jpeg", 0.9); });
+      }
+      var ext = zoomLevel > 1 ? "jpg" : cropFile.name.split(".").pop();
+      var path = session.user.id + "/pfp." + ext;
+      var { error } = await supabase.storage
+        .from("card-media")
+        .upload("avatars/" + path, uploadBlob, { upsert: true, contentType: zoomLevel > 1 ? "image/jpeg" : cropFile.type });
     if (!error) {
       const { data } = supabase.storage.from("card-media").getPublicUrl("avatars/" + path);
       const newUrl = data.publicUrl + "?t=" + Date.now();
       setPfpUrl(newUrl);
       await supabase.auth.updateUser({ data: { pfp_url: newUrl } });
     }
+    } catch (err) {
+      console.error("Upload error:", err);
+    }
     if (cropPreview) URL.revokeObjectURL(cropPreview);
+    setZoomLevel(1);
     setCropPreview(null);
     setCropFile(null);
     setSaving(false);
@@ -85,6 +106,7 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
 
   const handleCropCancel = () => {
     if (cropPreview) URL.revokeObjectURL(cropPreview);
+    setZoomLevel(1);
     setCropPreview(null);
     setCropFile(null);
   };
@@ -454,9 +476,16 @@ export default function ProfileScreen({ ownedCards, onBack, session }) {
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.85)", zIndex: 9999, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24 }}>
           <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 16, textTransform: "uppercase" }}>Preview Your Photo</div>
           <div style={{ width: 180, height: 180, borderRadius: "50%", overflow: "hidden", border: "3px solid " + C.accent, boxShadow: "0 0 30px rgba(228,188,74,0.3)" }}>
-            <img src={cropPreview} alt="Preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src={cropPreview} alt="Preview" style={{ width: "100%", height: "100%", objectFit: "cover", transform: "scale(" + zoomLevel + ")", transition: "transform 0.15s ease" }} />
           </div>
-          <div style={{ marginTop: 24, display: "flex", gap: 16 }}>
+          
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginTop: 20 }}>
+            <button onClick={() => setZoomLevel(z => Math.max(1, z - 0.25))} style={{ width: 36, height: 36, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.05)", color: C.cream, fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>{String.fromCodePoint(0x2212)}</button>
+            <input type="range" min="1" max="3" step="0.1" value={zoomLevel} onChange={(e) => setZoomLevel(parseFloat(e.target.value))} style={{ width: 120, accentColor: C.accent }} />
+            <button onClick={() => setZoomLevel(z => Math.min(3, z + 0.25))} style={{ width: 36, height: 36, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.05)", color: C.cream, fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
+          </div>
+          <div style={{ fontFamily: MONO, fontSize: 9, color: "rgba(255,255,255,0.4)", marginTop: 6, letterSpacing: 1 }}>{Math.round(zoomLevel * 100)}%</div>
+          <div style={{ marginTop: 16, display: "flex", gap: 16 }}>
             <button onClick={handleCropCancel} style={{ ...skeuo, padding: "10px 28px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.05)", color: C.cream, fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, cursor: "pointer" }}>CANCEL</button>
             <button onClick={handleCropConfirm} disabled={saving} style={{ ...skeuo, padding: "10px 28px", borderRadius: 12, border: "1px solid " + C.accent, background: "linear-gradient(180deg, rgba(228,188,74,0.15), rgba(228,188,74,0.05))", color: C.accent, fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, cursor: "pointer", opacity: saving ? 0.5 : 1 }}>{saving ? "SAVING..." : "CONFIRM"}</button>
           </div>
