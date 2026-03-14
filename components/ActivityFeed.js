@@ -14,9 +14,9 @@ function timeAgo(date) {
 }
 
 const EVENT_ICONS = {
-  card_linked: "â¦",
-  card_unlinked: "â»",
-  user_joined: "â",
+  card_linked: "\u2726",
+  card_unlinked: "\u21BB",
+  user_joined: "\u2605",
 };
 
 const EVENT_COLORS = {
@@ -24,20 +24,6 @@ const EVENT_COLORS = {
   card_unlinked: C.textDim,
   user_joined: C.accent,
 };
-
-function formatEvent(item) {
-  const name = item.display_name || "A collector";
-  switch (item.event_type) {
-    case "card_linked":
-      return name + " scanned a " + (item.card_rarity || "") + " card";
-    case "card_unlinked":
-      return name + " released a card for trade";
-    case "user_joined":
-      return name + " joined the Vault";
-    default:
-      return name + " did something";
-  }
-}
 
 function formatEventAction(item) {
   switch (item.event_type) {
@@ -51,7 +37,6 @@ function formatEventAction(item) {
       return "did something";
   }
 }
-
 
 export default function ActivityFeed({ session, onViewCollector }) {
   const [events, setEvents] = useState([]);
@@ -99,7 +84,7 @@ export default function ActivityFeed({ session, onViewCollector }) {
   if (events.length === 0) {
     return (
       <div style={{ padding: "40px 20px", textAlign: "center" }}>
-        <div style={{ fontSize: 28, marginBottom: 12 }}>ð¡</div>
+        <div style={{ fontSize: 28, marginBottom: 12 }}>{"\uD83D\uDCE1"}</div>
         <div style={{ fontSize: 14, fontFamily: SANS, color: C.textSec, marginBottom: 6 }}>
           No activity yet
         </div>
@@ -113,7 +98,10 @@ export default function ActivityFeed({ session, onViewCollector }) {
   return (
     <div style={{ padding: "8px 16px 20px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0 12px" }}>
-        <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 3, color: C.textDim, textTransform: "uppercase" }}>
+        <div style={{
+          fontSize: 9, fontFamily: MONO, letterSpacing: 3,
+          color: C.textDim, textTransform: "uppercase",
+        }}>
           Live Activity
         </div>
         <div onClick={handleRefresh} style={{
@@ -127,11 +115,14 @@ export default function ActivityFeed({ session, onViewCollector }) {
         </div>
       </div>
       {events.map((item, i) => (
-        <div key={item.id || i} style={{
-          display: "flex", alignItems: "flex-start", gap: 12,
-          padding: "12px 0",
-          borderBottom: i < events.length - 1 ? "1px solid " + C.border : "none",
-        }}>
+        <div
+          key={item.id || i}
+          style={{
+            display: "flex", alignItems: "flex-start", gap: 12,
+            padding: "12px 0",
+            borderBottom: i < events.length - 1 ? "1px solid " + C.border : "none",
+          }}
+        >
           <div style={{
             width: 32, height: 32, borderRadius: "50%",
             ...skeuo.inset,
@@ -139,14 +130,15 @@ export default function ActivityFeed({ session, onViewCollector }) {
             fontSize: 14, flexShrink: 0,
             color: EVENT_COLORS[item.event_type] || C.textDim,
           }}>
-            {EVENT_ICONS[item.event_type] || "â¦"}
+            {EVENT_ICONS[item.event_type] || "\u2726"}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{
-              fontSize: 13, fontFamily: SANS, color: C.cream,
-              lineHeight: 1.4,
-            }}>
-              <span onClick={() => onViewCollector && onViewCollector({ user_id: item.user_id, display_name: item.display_name })} style={{ color: C.accent, cursor: "pointer", fontWeight: 600 }}>{item.display_name || "A collector"}</span>{" "}{formatEventAction(item)}
+            <div style={{ fontSize: 13, fontFamily: SANS, color: C.cream, lineHeight: 1.4 }}>
+              <span
+                onClick={() => onViewCollector && onViewCollector({ user_id: item.user_id, display_name: item.display_name })}
+                style={{ color: C.accent, cursor: "pointer", fontWeight: 600 }}
+              >{item.display_name || "A collector"}</span>{" "}
+              {formatEventAction(item)}
             </div>
             {item.card_perspective && (
               <div style={{
