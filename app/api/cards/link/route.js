@@ -1,5 +1,6 @@
 import { createServerClient } from "../../../../lib/supabase";
 import { NextResponse } from "next/server";
+import { rateLimit } from "../../../../lib/rateLimit";
 
 export async function POST(request) {
   try {
@@ -13,6 +14,11 @@ export async function POST(request) {
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { allowed } = rateLimit("link:" + user.id, 10, 60000);
+    if (!allowed) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const { chipId } = await request.json();
