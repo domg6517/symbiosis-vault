@@ -37,20 +37,29 @@ export default function SignupScreen({ onSignup }) {
     if (!trimmed || trimmed.length < 2 || isSignIn) {
       setUsernameAvailable(null);
       setUsernameError("");
+      setCheckingUsername(false);
       return;
     }
     if (!/^[a-zA-Z0-9_.-]+$/.test(trimmed)) {
       setUsernameAvailable(null);
       setUsernameError("Letters, numbers, _ . - only");
+      setCheckingUsername(false);
       return;
     }
     setCheckingUsername(true);
     setUsernameError("");
+    setUsernameAvailable(null);
+    const currentUsername = trimmed;
     const timer = setTimeout(async () => {
       try {
-        const { data: existing } = await supabase
-          .from("profiles").select("id").ilike("username", trimmed).maybeSingle();
-        if (existing) {
+        if (!supabase) { setCheckingUsername(false); return; }
+        const { data: existing, error: qErr } = await supabase
+          .from("profiles").select("id").ilike("username", currentUsername).limit(1);
+        // Only update if the username hasn't changed while we were querying
+        if (username.trim() !== currentUsername) return;
+        if (qErr) {
+          setUsernameAvailable(null);
+        } else if (existing && existing.length > 0) {
           setUsernameAvailable(false);
           setUsernameError("Username taken");
         } else {
@@ -61,7 +70,7 @@ export default function SignupScreen({ onSignup }) {
         setUsernameAvailable(null);
       }
       setCheckingUsername(false);
-    }, 400);
+    }, 500);
     return () => clearTimeout(timer);
   }, [username, isSignIn]);
 
@@ -256,9 +265,9 @@ export default function SignupScreen({ onSignup }) {
                 {checkingUsername ? (
                   <span style={{ color: C.textDim }}>checking...</span>
                 ) : usernameAvailable === true ? (
-                  <span style={{ color: "#6B8F71" }}>\u2713 available</span>
+                  <span style={{ color: "#6B8F71" }}>{String.fromCodePoint(0x2713)} available</span>
                 ) : usernameAvailable === false ? (
-                  <span style={{ color: "#B07272" }}>\u2717 taken</span>
+                  <span style={{ color: "#B07272" }}>{String.fromCodePoint(0x2717)} taken</span>
                 ) : usernameError ? (
                   <span style={{ color: "#B07272" }}>{usernameError}</span>
                 ) : null}
