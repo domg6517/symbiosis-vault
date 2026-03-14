@@ -16,7 +16,6 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    // Check current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -24,18 +23,17 @@ export function AuthProvider({ children }) {
       setLoading(false);
     });
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          fetchProfile(session.user.id);
-        } else {
-          setProfile(null);
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
       }
-    );
+    });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -50,12 +48,32 @@ export function AuthProvider({ children }) {
     if (data) setProfile(data);
   }
 
-  async function signUp(email, password) {
+  async function signUp(email, password, username) {
     if (!supabase) return { error: { message: "Supabase not configured" } };
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: { display_name: username },
+      },
     });
+
+    // Create profile row with username
+    if (!error && data?.user) {
+      try {
+        await supabase.from("profiles").upsert(
+          {
+            id: data.user.id,
+            username: username,
+            email: email,
+          },
+          { onConflict: "id" }
+        );
+      } catch (profileErr) {
+        console.error("Profile creation error:", profileErr);
+      }
+    }
+
     return { data, error };
   }
 
