@@ -52,20 +52,19 @@ export default function SignupScreen({ onSignup }) {
     const currentUsername = trimmed;
     const timer = setTimeout(async () => {
       try {
-        if (!supabase) { setCheckingUsername(false); return; }
-        const { data: existing, error: qErr } = await supabase
-          .from("profiles").select("id").ilike("username", currentUsername).limit(1);
+        const res = await fetch("/api/username-check?username=" + encodeURIComponent(currentUsername));
+      const result = await res.json();
         // Only update if the username hasn't changed while we were querying
         if (username.trim() !== currentUsername) return;
-        if (qErr) {
-          setUsernameAvailable(null);
-        } else if (existing && existing.length > 0) {
+        if (!res.ok) {
+        setUsernameAvailable(null);
+      } else if (result.available === false) {
           setUsernameAvailable(false);
           setUsernameError("Username taken");
-        } else {
-          setUsernameAvailable(true);
-          setUsernameError("");
-        }
+        } else if (result.available === true) {
+        setUsernameAvailable(true);
+        setUsernameError("");
+      }
       } catch (e) {
         setUsernameAvailable(null);
       }
@@ -89,11 +88,13 @@ export default function SignupScreen({ onSignup }) {
       if (trimmedUsername.length < 2) { setError("Username must be at least 2 characters"); return; }
       if (trimmedUsername.length > 24) { setError("Username must be 24 characters or less"); return; }
       if (!/^[a-zA-Z0-9_.-]+$/.test(trimmedUsername)) { setError("Username can only contain letters, numbers, _ . -"); return; }
-      if (supabase) {
-        const { data: existing } = await supabase
-          .from("profiles").select("id").ilike("username", trimmedUsername).maybeSingle();
-        if (existing) { setUsernameError("Username already taken"); setError("Username already taken"); return; }
+      try {
+      const checkRes = await fetch("/api/username-check?username=" + encodeURIComponent(trimmedUsername));
+      const checkResult = await checkRes.json();
+      if (checkRes.ok && checkResult.available === false) { setUsernameError("Username already taken"); setError("Username already taken");
+        return;
       }
+    } catch(e) {}
     }
 
     setLoading(true);
