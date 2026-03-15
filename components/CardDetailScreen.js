@@ -107,7 +107,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
       <div style={{ padding: "0 22px", zIndex: 1 }}>
         <div style={{ fontSize: 20, fontFamily: SERIF, fontWeight: 300, color: C.cream, marginBottom: 3, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>{song?.title}</div>
         <div style={{ fontSize: 12, fontFamily: SANS, color: C.textSec, marginBottom: 16 }}>
-          {card.perspective}  \u00B7  {isRare ? "Rare" : "Common"}  \u00B7  {card.chipId}
+          {card.perspective} {"\u00B7"} {isRare ? "Rare" : "Common"} {"\u00B7"} {card.chipId}
         </div>
 
         {/* Unlock */}
@@ -195,7 +195,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           <div style={{ fontSize: 13, fontFamily: SANS, fontWeight: 500, color: C.textSec }}>Trade on Discord</div>
           <div style={{ fontSize: 11, fontFamily: SANS, color: C.textDim, marginTop: 2 }}>Find collectors to trade with</div>
         </div>
-        <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>\u203A</div>
+        <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>{"\u203A"}</div>
       </div>
 
         <Divider style={{ marginBottom: 16 }} />
@@ -211,7 +211,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
               <div style={{ fontSize: 13, fontFamily: SANS, fontWeight: 500, color: C.textSec }}>Disconnect for trade</div>
               <div style={{ fontSize: 11, fontFamily: SANS, color: C.textDim, marginTop: 2 }}>Unlink this card so someone else can claim it</div>
             </div>
-            <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>\u203A</div>
+            <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>{"\u203A"}</div>
           </div>
         ) : (
           <div style={{ padding: "16px", ...skeuo.card, border: `1px solid ${C.rose}33`, marginBottom: 20, position: "relative", overflow: "hidden" }}>
@@ -256,7 +256,11 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           </div>
         )}
 
-        <div style={{
+        
+        {/* Hidden audio element */}
+        <audio ref={audioRef} playsInline preload="none" onEnded={() => setPlaying(false)} style={{ display: "none" }} />
+
+<div style={{
           display: "flex", justifyContent: "space-between",
           fontSize: 9, fontFamily: MONO, color: C.textDim, letterSpacing: 1, paddingBottom: 28,
         }}>
