@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 
 const C = {
-  bg: "#0E0D0B", cream: "#F5F0E8", accent: "#e4bc4a",
+  bg: "#0E0D0B", cream: "#F5F0E8", accent: "#A2A0B4",
   text: "#D4CBBA", textDim: "#7A7265", textSec: "#8B8177",
   teal: "#4ECDC4", rose: "#E8665A",
 };
