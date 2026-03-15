@@ -36,7 +36,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
       background: C.bg, overflow: "auto", position: "relative",
     }}>
       <FilmGrain opacity={0.04} />
-      <audio id="sv-audio" ref={audioRef} playsInline preload="none" onEnded={() => setPlaying(false)} style={{ position: "absolute", top: -9999, left: -9999 }} />
+      
       <div style={{ display: "flex", alignItems: "center", padding: "14px 18px", gap: 10, zIndex: 1 }}>
         <div onClick={onBack} style={{ cursor: "pointer", padding: 4 }}><ChevronLeft /></div>
         <div style={{ flex: 1 }}>
@@ -126,14 +126,19 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           <button onClick={() => {
                 if (!card.audioUrl) return;
                 if (playing) {
-                  if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0; }
+                  if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0; audioRef.current = null; }
                   setPlaying(false);
                 } else {
-                  if (audioRef.current) {
-                    audioRef.current.src = card.audioUrl;
+                  try {
+                    const a = new Audio(card.audioUrl);
+                    a.setAttribute("playsinline", "");
+                    a.crossOrigin = "anonymous";
+                    audioRef.current = a;
+                    a.onended = () => { setPlaying(false); audioRef.current = null; };
+                    a.onerror = (ev) => { window.alert("Load error: " + (ev.target.error ? ev.target.error.message : "unknown")); setPlaying(false); };
                     setPlaying(true);
-                    audioRef.current.play().catch(e => { window.alert("Play error: " + e.name + " - " + e.message); setPlaying(false); });
-                  }
+                    a.play().catch(e => { window.alert("Play fail: " + e.name + " " + e.message); setPlaying(false); });
+                  } catch(ex) { window.alert("Exception: " + ex.message); }
                 }
               }} style={{ ...skeuo.btnGhost, padding: "8px 16px", color: playing ? C.textDim : C.accent, fontSize: 9, fontFamily: MONO, letterSpacing: 2, cursor: "pointer", position: "relative", zIndex: 1, WebkitTapHighlightColor: "transparent", appearance: "none", outline: "none" }}>{playing ? "PAUSE" : "PLAY"}</button>
         </div>
