@@ -40,7 +40,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
         <div onClick={onBack} style={{ cursor: "pointer", padding: 4 }}><ChevronLeft /></div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 9, letterSpacing: 2, color: isBooster ? C.booster : C.textDim, fontFamily: MONO }}>
-            {isBooster ? `BOOSTER ${song?.num}` : "TEST DROP 1"}
+            {isBooster ? `BOOSTER ${song?.num}` : `SINGLE ${song?.num}`}
           </div>
         </div>
         <div style={{ ...skeuo.badge, padding: "4px 10px", display: "flex", alignItems: "center", gap: 4, fontSize: 9, fontFamily: MONO, color: C.teal, letterSpacing: 1 }}>
@@ -105,7 +105,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
       </div>
 
       <div style={{ padding: "0 22px", zIndex: 1 }}>
-        <div style={{ fontSize: 20, fontFamily: SERIF, fontWeight: 300, color: C.cream, marginBottom: 3, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>Test Drop 1</div>
+        <div style={{ fontSize: 20, fontFamily: SERIF, fontWeight: 300, color: C.cream, marginBottom: 3, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>{song?.title}</div>
         <div style={{ fontSize: 12, fontFamily: SANS, color: C.textSec, marginBottom: 16 }}>
           {card.perspective} · {isRare ? "Rare" : "Common"} · {card.chipId}
         </div>
@@ -120,7 +120,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           <MusicIcon />
           <div style={{ flex: 1, position: "relative", zIndex: 1 }}>
             <div style={{ fontSize: 9, color: C.accent, fontFamily: MONO, letterSpacing: 2 }}>UNLOCKED</div>
-            <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>Redacted — {card.perspective}</div>
+            <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>{song?.title} — {card.perspective}</div>
           </div>
           <div onClick={() => {
                 if (card.audioUrl) {
@@ -143,7 +143,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
 
         {/* Completion */}
         <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 3, color: C.textDim, marginBottom: 10 }}>
-          TEST DROP 1 COMPLETION
+          {(song?.title || "").toUpperCase()} COMPLETION
         </div>
         <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
           {PERSPECTIVES.map((persp) => {
