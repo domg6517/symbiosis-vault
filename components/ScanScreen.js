@@ -59,7 +59,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes scanPulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.12); opacity: 1; } }
         @keyframes scanRing { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(2.5); opacity: 0; } }
-        @keyframes scanGlow { 0%, 100% { box-shadow: 0 0 20px rgba(200,184,138,0.1); } 50% { box-shadow: 0 0 50px rgba(200,184,138,0.35), 0 0 80px rgba(200,184,138,0.15); } }
+        @keyframes scanGlow { 0%, 100% { box-shadow: 0 0 20px rgba(162,160,180,0.1); } 50% { box-shadow: 0 0 50px rgba(162,160,180,0.35), 0 0 80px rgba(162,160,180,0.15); } }
         @keyframes scanSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes scanBounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
@@ -192,7 +192,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
                 <div style={skeuo.gloss} />
                 <div style={{
                   fontSize: 10, fontFamily: MONO, letterSpacing: 3,
-                  color: "#E4BC4A", position: "relative", zIndex: 1,
+                  color: "#A2A0B4", position: "relative", zIndex: 1,
                 }}>SET COMPLETE &mdash; ULTRA RARE UNLOCKED</div>
               </div>
             )}
