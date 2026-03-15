@@ -141,7 +141,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             <div onClick={onScan} style={{
               ...skeuo.card, marginTop: 24, padding: "14px 32px", borderRadius: 14,
               border: "1px solid " + C.accent + "33", cursor: "pointer",
-              background: "linear-gradient(180deg, rgba(228,188,74,0.1), transparent)",
+              background: "linear-gradient(180deg, rgba(162,160,180,0.1), transparent)",
               display: "flex", alignItems: "center", gap: 10,
             }}>
               <NfcIcon size={16} color={C.accent} />
@@ -239,7 +239,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                 <span style={{ color: C.megaGold, fontFamily: MONO, fontWeight: 600 }}>{ownedUltraCount}</span> discovered
               </div>
               <div style={{ height: 4, width: 80, ...skeuo.inset, overflow: "hidden", borderRadius: 4, position: "relative", zIndex: 1 }}>
-                <div style={{ width: `${(ownedUltraCount / 30) * 100}%`, height: "100%", background: `linear-gradient(180deg, #E4BC4A, #D4A43A, #C49430)`, boxShadow: "0 1px 0 rgba(255,255,255,0.25) inset", borderRadius: 4 }} />
+                <div style={{ width: `${(ownedUltraCount / 30) * 100}%`, height: "100%", background: `linear-gradient(180deg, #A2A0B4, #B8B6D0, #8280A0)`, boxShadow: "0 1px 0 rgba(255,255,255,0.25) inset", borderRadius: 4 }} />
               </div>
             </div>
 
