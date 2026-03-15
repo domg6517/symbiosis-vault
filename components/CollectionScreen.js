@@ -133,7 +133,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             <div style={{ textAlign: "center", marginTop: 24 }}>
               <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: C.cream }}>Your vault is empty</div>
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 8, lineHeight: 1.5, maxWidth: 260 }}>
-                Scan the NFC chip on the back of any Symbiosis polaroid to add it to your collection.
+                Scan the NFC chip on the back of any Symbiosis photo card to add it to your collection.
               </div>
             </div>
 
