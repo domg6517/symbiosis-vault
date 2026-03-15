@@ -33,7 +33,7 @@ const PrismaticCanvas = ({ width = 390, height = 844 }) => {
       ctx.translate(oX, oY);
       ctx.rotate(angle);
       const beams = [
-        { o: -0.04, c1: "rgba(200,184,138,0.40)", c2: "rgba(180,160,100,0.14)", w: 50 },
+        { o: -0.04, c1: "rgba(162,160,180,0.40)", c2: "rgba(180,160,100,0.14)", w: 50 },
         { o: -0.07, c1: "rgba(212,164,58,0.28)", c2: "rgba(200,150,60,0.10)", w: 80 },
         { o: -0.01, c1: "rgba(220,180,80,0.45)", c2: "rgba(200,160,40,0.12)", w: 70 },
         { o: 0.02, c1: "rgba(180,150,60,0.38)", c2: "rgba(160,130,40,0.10)", w: 65 },
@@ -66,13 +66,13 @@ const PrismaticCanvas = ({ width = 390, height = 844 }) => {
       ctx.restore();
       const hs = ctx.createRadialGradient(oX, oY, 0, oX, oY, 250);
       hs.addColorStop(0, "rgba(212,164,58,0.40)");
-      hs.addColorStop(0.15, "rgba(200,184,138,0.20)");
+      hs.addColorStop(0.15, "rgba(162,160,180,0.20)");
       hs.addColorStop(0.4, "rgba(180,150,80,0.08)");
       hs.addColorStop(1, "transparent");
       ctx.fillStyle = hs;
       ctx.fillRect(0, 0, W, H);
       const mg = ctx.createRadialGradient(W*0.25, H*0.55, 0, W*0.25, H*0.55, 200);
-      mg.addColorStop(0, "rgba(200,184,138,0.10)");
+      mg.addColorStop(0, "rgba(162,160,180,0.10)");
       mg.addColorStop(0.5, "rgba(180,150,80,0.04)");
       mg.addColorStop(1, "transparent");
       ctx.fillStyle = mg;
@@ -90,7 +90,7 @@ const PrismaticCanvas = ({ width = 390, height = 844 }) => {
       ctx.rotate(angle + 0.12);
       const fr = ctx.createLinearGradient(0, 0, 0, -bL * 0.7);
       fr.addColorStop(0, "rgba(212,164,58,0.08)");
-      fr.addColorStop(0.3, "rgba(200,184,138,0.04)");
+      fr.addColorStop(0.3, "rgba(162,160,180,0.04)");
       fr.addColorStop(1, "transparent");
       ctx.fillStyle = fr;
       ctx.beginPath();
@@ -191,7 +191,7 @@ export default function SplashScreen({ onEnter }) {
         <div style={{
           fontSize: 11, letterSpacing: 10, color: C.accent,
           fontFamily: SANS, fontWeight: 500, marginTop: 12,
-          textShadow: `0 0 20px rgba(200,184,138,0.3)`,
+          textShadow: `0 0 20px rgba(162,160,180,0.3)`,
         }}>VAULT</div>
 
         <Divider style={{ width: 120, margin: "32px auto 24px" }} />
