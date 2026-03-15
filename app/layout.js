@@ -2,7 +2,7 @@ import { AuthProvider } from "../components/AuthContext";
 
 export const metadata = {
   title: "Symbiosis Vault",
-  description: "NFC Collectible Series — Jack & Jack",
+  description: "NFC Collectible Photo Cards — Jack & Jack",
   themeColor: "#0C0B0E",
   appleWebApp: {
     capable: true,
@@ -10,6 +10,27 @@ export const metadata = {
     title: "Symbiosis Vault",
   },
   manifest: "/manifest.json",
+  openGraph: {
+    title: "Symbiosis Vault",
+    description: "NFC Collectible Photo Cards — Jack & Jack",
+    url: "https://vault.jackandjack.store",
+    siteName: "Symbiosis Vault",
+    images: [
+      {
+        url: "https://vault.jackandjack.store/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Symbiosis Vault — NFC Collectible Photo Cards",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Symbiosis Vault",
+    description: "NFC Collectible Photo Cards — Jack & Jack",
+    images: ["https://vault.jackandjack.store/og-image.png"],
+  },
 };
 
 export const viewport = {
