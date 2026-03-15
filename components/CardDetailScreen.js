@@ -36,6 +36,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
       background: C.bg, overflow: "auto", position: "relative",
     }}>
       <FilmGrain opacity={0.04} />
+      <audio id="sv-audio" ref={audioRef} playsInline preload="none" onEnded={() => setPlaying(false)} style={{ position: "absolute", top: -9999, left: -9999 }} />
       <div style={{ display: "flex", alignItems: "center", padding: "14px 18px", gap: 10, zIndex: 1 }}>
         <div onClick={onBack} style={{ cursor: "pointer", padding: 4 }}><ChevronLeft /></div>
         <div style={{ flex: 1 }}>
@@ -123,22 +124,18 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
             <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>{song?.title}  -  {card.perspective}</div>
           </div>
           <button onClick={() => {
-                window.alert("PLAY tapped! audioUrl: " + (card.audioUrl ? "YES" : "NO"));
-                if (card.audioUrl) {
-                  if (playing && audioRef.current) {
-                    audioRef.current.pause();
-                    audioRef.current = null;
-                    setPlaying(false);
-                  } else {
-                    const audio = new Audio(card.audioUrl);
-                    audioRef.current = audio;
-                    audio.play()
-                      .then(() => setPlaying(true))
-                      .catch((e) => { console.error("Audio play error:", e); setPlaying(false); });
-                    audio.onended = () => { setPlaying(false); audioRef.current = null; };
+                if (!card.audioUrl) return;
+                if (playing) {
+                  if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0; }
+                  setPlaying(false);
+                } else {
+                  const el = document.getElementById("sv-audio");
+                  if (el) {
+                    el.src = card.audioUrl;
+                    el.play().then(() => setPlaying(true)).catch(e => { console.error("play err", e); setPlaying(false); });
                   }
                 }
-              }} style={{ ...skeuo.btnGhost, padding: "7px 14px", color: playing ? C.textDim : C.accent, fontSize: 9, fontFamily: MONO, letterSpacing: 2, cursor: "pointer", position: "relative", zIndex: 1, WebkitTapHighlightColor: "transparent", touchAction: "manipulation", minWidth: 60, minHeight: 36, border: "1px solid " + C.accent + "44" }}>{playing ? "PAUSE" : "PLAY"}</button>
+              }} style={{ ...skeuo.btnGhost, padding: "8px 16px", color: playing ? C.textDim : C.accent, fontSize: 9, fontFamily: MONO, letterSpacing: 2, cursor: "pointer", position: "relative", zIndex: 1, WebkitTapHighlightColor: "transparent", touchAction: "manipulation", minHeight: 36, appearance: "none", outline: "none" }}>{playing ? "PAUSE" : "PLAY"}</button>
         </div>
 
         {/* Completion */}
