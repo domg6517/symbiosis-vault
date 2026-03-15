@@ -37,7 +37,17 @@ export default function ScanLinkPage() {
       const { supabase } = await import("../../../lib/supabase");
       if (!supabase) { setStatus("error"); setError("App not configured"); return; }
 
-      const { data: { session } } = await supabase.auth.getSession();
+      let session = null;
+      const { data: sData } = await supabase.auth.getSession();
+      session = sData?.session;
+      if (!session) {
+        session = await new Promise((resolve) => {
+          const t = setTimeout(() => resolve(null), 2500);
+          const { data: { subscription } } = supabase.auth.onAuthStateChange((ev, s) => {
+            if (s) { clearTimeout(t); subscription.unsubscribe(); resolve(s); }
+          });
+        });
+      }
       if (!session) {
         if (typeof window !== "undefined") localStorage.setItem("pendingChipId", chipId);
         setStatus("login");
