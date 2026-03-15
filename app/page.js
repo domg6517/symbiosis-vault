@@ -21,6 +21,7 @@ export default function SymbiosisVault() {
   const [prevScreen, setPrevScreen] = useState("collection");
   const [ownedCards, setOwnedCards] = useState([]);
   const [termsAccepted, setTermsAccepted] = useState(true);
+  const [isOffline, setIsOffline] = useState(false);
   const { session, loading, isAuthenticated, isSupabaseConfigured } = useAuth();
 
   // Track whether we're navigating via popstate to avoid double pushState
@@ -97,7 +98,7 @@ export default function SymbiosisVault() {
   // When ENTER is clicked on splash, go to collection if authed, signup if not
   const handleSplashEnter = () => {
     if (loading) {
-      // Auth still loading ÃÂ¢ÃÂÃÂ show signup, the useEffect below will redirect
+      // Auth still loading ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ show signup, the useEffect below will redirect
       navigateTo("signup");
     } else if (isAuthenticated) {
       navigateTo("collection");
@@ -133,6 +134,20 @@ export default function SymbiosisVault() {
     } catch (e) {
       setTermsAccepted(false);
     }
+  }, []);
+
+  
+  // Detect online/offline status
+  useEffect(() => {
+    const goOffline = () => setIsOffline(true);
+    const goOnline = () => setIsOffline(false);
+    setIsOffline(!navigator.onLine);
+    window.addEventListener("offline", goOffline);
+    window.addEventListener("online", goOnline);
+    return () => {
+      window.removeEventListener("offline", goOffline);
+      window.removeEventListener("online", goOnline);
+    };
   }, []);
 
   const handleDisconnect = async (chipId) => {
@@ -178,6 +193,49 @@ export default function SymbiosisVault() {
         paddingBottom: "env(safe-area-inset-bottom)",
       }}
     >
+      {isOffline && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: C.bg,
+          zIndex: 99999,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 32,
+          textAlign: "center",
+        }}>
+          <div style={{ fontSize: 48, marginBottom: 20 }}>{String.fromCodePoint(0x1F4E1)}</div>
+          <div style={{
+            fontFamily: SERIF,
+            fontSize: 24,
+            fontWeight: 700,
+            color: C.cream,
+            marginBottom: 12,
+          }}>No Connection</div>
+          <div style={{
+            fontFamily: SANS,
+            fontSize: 14,
+            color: C.textDim,
+            lineHeight: 1.6,
+            maxWidth: 280,
+            marginBottom: 24,
+          }}>
+            Symbiosis Vault needs an internet connection to sync your collection and verify cards.
+          </div>
+          <div style={{
+            fontFamily: MONO,
+            fontSize: 10,
+            letterSpacing: 2,
+            color: C.accent,
+            padding: "10px 20px",
+            borderRadius: 8,
+            border: "1px solid " + C.accent + "44",
+          }}>WAITING FOR CONNECTION...</div>
+        </div>
+      )}
+
       {isAuthenticated && !termsAccepted && (
         <TermsModal onAccept={() => setTermsAccepted(true)} />
       )}
