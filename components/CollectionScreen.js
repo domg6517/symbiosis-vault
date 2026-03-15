@@ -149,7 +149,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             </div>
 
             {/* Get More Cards */}
-            <a href="https://discord.gg/SbSWCkumk6" target="_blank" rel="noopener noreferrer" style={{
+            <a href="https://jackandjack.store/" target="_blank" rel="noopener noreferrer" style={{
               marginTop: 14, fontFamily: MONO, fontSize: 9, letterSpacing: 2, color: C.textDim,
               textDecoration: "none", padding: "10px 20px", borderRadius: 10,
               border: "1px solid rgba(255,255,255,0.06)",
