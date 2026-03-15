@@ -48,7 +48,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
         </div>
       </div>
 
-      {/* Large photo card Ã¢ÂÂ user artwork style */}
+      {/* Large photo card  -  user artwork style */}
       <div style={{
         display: "flex", justifyContent: "center", padding: "4px 20px 20px", zIndex: 1,
         opacity: show ? 1 : 0, transform: show ? "translateY(0)" : "translateY(16px)",
@@ -107,7 +107,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
       <div style={{ padding: "0 22px", zIndex: 1 }}>
         <div style={{ fontSize: 20, fontFamily: SERIF, fontWeight: 300, color: C.cream, marginBottom: 3, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>{song?.title}</div>
         <div style={{ fontSize: 12, fontFamily: SANS, color: C.textSec, marginBottom: 16 }}>
-          {card.perspective} ÃÂ· {isRare ? "Rare" : "Common"} ÃÂ· {card.chipId}
+          {card.perspective}  \u00B7  {isRare ? "Rare" : "Common"}  \u00B7  {card.chipId}
         </div>
 
         {/* Unlock */}
@@ -120,7 +120,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           <MusicIcon />
           <div style={{ flex: 1, position: "relative", zIndex: 1 }}>
             <div style={{ fontSize: 9, color: C.accent, fontFamily: MONO, letterSpacing: 2 }}>UNLOCKED</div>
-            <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>{song?.title} Ã¢ÂÂ {card.perspective}</div>
+            <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>{song?.title}  -  {card.perspective}</div>
           </div>
           <div onClick={() => {
                 if (card.audioUrl) {
@@ -173,7 +173,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
         }}>
           {complete && <div style={skeuo.gloss} />}
           <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 2, color: complete ? C.accent : C.textDim, position: "relative", zIndex: 1 }}>
-            {complete ? "Ã¢ÂÂ¦ ALL 3 PERSPECTIVES Ã¢ÂÂ BADGE UNLOCKED" : `${uniquePerspectives} OF 3 Ã¢ÂÂ COLLECT ALL TO UNLOCK BADGE`}
+            {complete ? "\u2726 ALL 3 PERSPECTIVES  -  BADGE UNLOCKED" : `${uniquePerspectives} OF 3  -  COLLECT ALL TO UNLOCK BADGE`}
           </div>
         </div>
 
