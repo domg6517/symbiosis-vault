@@ -9,6 +9,7 @@ export default function SignupScreen({ onSignup }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [isSignIn, setIsSignIn] = useState(false);
   const [error, setError] = useState("");
   const [usernameError, setUsernameError] = useState("");
@@ -18,13 +19,9 @@ export default function SignupScreen({ onSignup }) {
   const [show, setShow] = useState(false);
   const [confirmationSent, setConfirmationSent] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
-  const [birthDate, setBirthDate] = useState("");
-  const [ageError, setAgeError] = useState("");
   const { signUp, signIn, isSupabaseConfigured } = useAuth();
 
-  useEffect(() => {
-    setTimeout(() => setShow(true), 150);
-  }, []);
+  useEffect(() => { setTimeout(() => setShow(true), 150); }, []);
 
   // Resend cooldown timer
   useEffect(() => {
@@ -55,18 +52,17 @@ export default function SignupScreen({ onSignup }) {
     const timer = setTimeout(async () => {
       try {
         const res = await fetch("/api/username-check?username=" + encodeURIComponent(currentUsername));
-      const result = await res.json();
-        // Only update if the username hasn't changed while we were querying
+        const result = await res.json();
         if (username.trim() !== currentUsername) return;
         if (!res.ok) {
-        setUsernameAvailable(null);
-      } else if (result.available === false) {
+          setUsernameAvailable(null);
+        } else if (result.available === false) {
           setUsernameAvailable(false);
           setUsernameError("Username taken");
         } else if (result.available === true) {
-        setUsernameAvailable(true);
-        setUsernameError("");
-      }
+          setUsernameAvailable(true);
+          setUsernameError("");
+        }
       } catch (e) {
         setUsernameAvailable(null);
       }
@@ -76,33 +72,9 @@ export default function SignupScreen({ onSignup }) {
   }, [username, isSignIn]);
 
   async function handleSubmit() {
-    if (!isSupabaseConfigured) {
-      onSignup();
-      return;
-    }
+    if (!isSupabaseConfigured) { onSignup(); return; }
     if (!email) { setError("Email is required"); return; }
     if (!password || password.length < 6) { setError("Password must be at least 6 characters"); return; }
-
-    // Age gate - 16+ required
-    if (!isSignIn) {
-      if (!birthDate) {
-        setError("Date of birth is required");
-        return;
-      }
-      const dob = new Date(birthDate);
-      const today = new Date();
-      let age = today.getFullYear() - dob.getFullYear();
-      const monthDiff = today.getMonth() - dob.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
-        age--;
-      }
-      if (age < 16) {
-        setAgeError("You must be 16 or older to use Symbiosis Vault");
-        setError("You must be 16 or older to use Symbiosis Vault");
-        return;
-      }
-      setAgeError("");
-    }
 
     // Username validation for signup only
     if (!isSignIn) {
@@ -111,13 +83,24 @@ export default function SignupScreen({ onSignup }) {
       if (trimmedUsername.length < 2) { setError("Username must be at least 2 characters"); return; }
       if (trimmedUsername.length > 24) { setError("Username must be 24 characters or less"); return; }
       if (!/^[a-zA-Z0-9_.-]+$/.test(trimmedUsername)) { setError("Username can only contain letters, numbers, _ . -"); return; }
+
+      // Date of birth validation
+      if (!dateOfBirth) { setError("Date of birth is required"); return; }
+      const dob = new Date(dateOfBirth);
+      const now = new Date();
+      const age = now.getFullYear() - dob.getFullYear() - (now < new Date(now.getFullYear(), dob.getMonth(), dob.getDate()) ? 1 : 0);
+      if (isNaN(dob.getTime())) { setError("Please enter a valid date of birth"); return; }
+      if (age < 13) { setError("You must be at least 13 years old"); return; }
+
       try {
-      const checkRes = await fetch("/api/username-check?username=" + encodeURIComponent(trimmedUsername));
-      const checkResult = await checkRes.json();
-      if (checkRes.ok && checkResult.available === false) { setUsernameError("Username already taken"); setError("Username already taken");
-        return;
-      }
-    } catch(e) {}
+        const checkRes = await fetch("/api/username-check?username=" + encodeURIComponent(trimmedUsername));
+        const checkResult = await checkRes.json();
+        if (checkRes.ok && checkResult.available === false) {
+          setUsernameError("Username already taken");
+          setError("Username already taken");
+          return;
+        }
+      } catch(e) {}
     }
 
     setLoading(true);
@@ -130,17 +113,11 @@ export default function SignupScreen({ onSignup }) {
       if (authError) { setError(authError.message); }
       else { onSignup(); }
     } else {
-      const { data, error: authError } = await signUp(email, password, username.trim());
+      const { data, error: authError } = await signUp(email, password, username.trim(), dateOfBirth);
       setLoading(false);
-      if (authError) {
-        setError(authError.message);
-      } else if (data && !data.session) {
-        // Email confirmation is required \u2014 no session returned yet
-        setConfirmationSent(true);
-      } else {
-        // Auto-confirmed or confirmation disabled \u2014 proceed
-        onSignup();
-      }
+      if (authError) { setError(authError.message); }
+      else if (data && !data.session) { setConfirmationSent(true); }
+      else { onSignup(); }
     }
   }
 
@@ -150,11 +127,8 @@ export default function SignupScreen({ onSignup }) {
     setError("");
     const { error: resendErr } = await supabase.auth.resend({ type: "signup", email });
     setLoading(false);
-    if (resendErr) {
-      setError(resendErr.message);
-    } else {
-      setResendCooldown(60);
-    }
+    if (resendErr) { setError(resendErr.message); }
+    else { setResendCooldown(60); }
   }
 
   // ========================
@@ -162,86 +136,31 @@ export default function SignupScreen({ onSignup }) {
   // ========================
   if (confirmationSent) {
     return (
-      <div style={{
-        height: "100%", display: "flex", flexDirection: "column",
-        background: C.bg, position: "relative",
-      }}>
+      <div style={{ height: "100%", display: "flex", flexDirection: "column", background: C.bg, position: "relative" }}>
         <FilmGrain opacity={0.04} />
-        <div style={{
-          flex: 1, display: "flex", flexDirection: "column",
-          alignItems: "center", justifyContent: "center",
-          padding: "40px 28px", textAlign: "center",
-        }}>
-          {/* Mail icon */}
-          <div style={{
-            width: 72, height: 72, borderRadius: "50%",
-            ...skeuo.card,
-            border: "1.5px solid " + C.accent + "44",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            marginBottom: 24, fontSize: 32,
-          }}>{"\u2709"}</div>
-
-          <div style={{
-            fontSize: 26, fontWeight: 300, color: C.cream, fontFamily: SERIF,
-            lineHeight: 1.25, textShadow: "0 1px 3px rgba(0,0,0,0.4)", marginBottom: 12,
-          }}>Check your email</div>
-
-          <div style={{
-            fontSize: 14, color: C.textSec, fontFamily: SANS,
-            lineHeight: 1.6, maxWidth: 280, marginBottom: 8,
-          }}>We sent a confirmation link to</div>
-
-          <div style={{
-            fontSize: 15, color: C.accent, fontFamily: MONO,
-            letterSpacing: 0.5, marginBottom: 24, wordBreak: "break-all",
-          }}>{email}</div>
-
-          <div style={{
-            fontSize: 13, color: C.textDim, fontFamily: SANS,
-            lineHeight: 1.6, maxWidth: 280, marginBottom: 32,
-          }}>
-            Tap the link in the email to verify your account, then come back here and sign in.
-          </div>
-
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 28px", textAlign: "center" }}>
+          <div style={{ width: 72, height: 72, borderRadius: "50%", ...skeuo.card, border: "1.5px solid " + C.accent + "44", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24, fontSize: 32 }}>{"\u2709"}</div>
+          <div style={{ fontSize: 26, fontWeight: 300, color: C.cream, fontFamily: SERIF, lineHeight: 1.25, textShadow: "0 1px 3px rgba(0,0,0,0.4)", marginBottom: 12 }}>Check your email</div>
+          <div style={{ fontSize: 14, color: C.textSec, fontFamily: SANS, lineHeight: 1.6, maxWidth: 280, marginBottom: 8 }}>We sent a confirmation link to</div>
+          <div style={{ fontSize: 15, color: C.accent, fontFamily: MONO, letterSpacing: 0.5, marginBottom: 24, wordBreak: "break-all" }}>{email}</div>
+          <div style={{ fontSize: 13, color: C.textDim, fontFamily: SANS, lineHeight: 1.6, maxWidth: 280, marginBottom: 32 }}>Tap the link in the email to verify your account, then come back here and sign in.</div>
           <Divider style={{ margin: "0 0 24px", maxWidth: 200 }} />
-
-          {error && (
-            <div style={{ marginBottom: 14, fontSize: 13, color: "#B07272", fontFamily: SANS }}>
-              {error}
-            </div>
-          )}
-
-          <button onClick={handleResend} disabled={loading || resendCooldown > 0}
-            style={{
-              width: "100%", maxWidth: 280, padding: "14px",
-              ...skeuo.card,
-              border: "1px solid " + C.accent + "33",
-              background: "linear-gradient(145deg, rgba(228,188,74,0.08), rgba(228,188,74,0.02))",
-              color: C.accent, fontSize: 11, fontFamily: MONO, fontWeight: 600,
-              letterSpacing: 3, cursor: (loading || resendCooldown > 0) ? "default" : "pointer",
-              opacity: (loading || resendCooldown > 0) ? 0.5 : 1, marginBottom: 12,
-            }}>
-            {loading ? "SENDING..." : resendCooldown > 0 ? ("RESEND IN " + resendCooldown + "s") : "RESEND EMAIL"}
-          </button>
-
-          <button onClick={() => {
-            setConfirmationSent(false);
-            setIsSignIn(true);
-            setPassword("");
-            setError("");
-          }} style={{
-            width: "100%", maxWidth: 280, padding: "15px",
-            ...skeuo.btnGold, color: C.bg, fontSize: 11,
-            fontFamily: MONO, fontWeight: 600, letterSpacing: 3, cursor: "pointer",
+          {error && (<div style={{ marginBottom: 14, fontSize: 13, color: "#B07272", fontFamily: SANS }}>{error}</div>)}
+          <button onClick={handleResend} disabled={loading || resendCooldown > 0} style={{
+            width: "100%", maxWidth: 280, padding: "14px", ...skeuo.card,
+            border: "1px solid " + C.accent + "33",
+            background: "linear-gradient(145deg, rgba(228,188,74,0.08), rgba(228,188,74,0.02))",
+            color: C.accent, fontSize: 11, fontFamily: MONO, fontWeight: 600, letterSpacing: 3,
+            cursor: (loading || resendCooldown > 0) ? "default" : "pointer",
+            opacity: (loading || resendCooldown > 0) ? 0.5 : 1, marginBottom: 12,
+          }}>{loading ? "SENDING..." : resendCooldown > 0 ? ("RESEND IN " + resendCooldown + "s") : "RESEND EMAIL"}</button>
+          <button onClick={() => { setConfirmationSent(false); setIsSignIn(true); setPassword(""); setError(""); }} style={{
+            width: "100%", maxWidth: 280, padding: "15px", ...skeuo.btnGold,
+            color: C.bg, fontSize: 11, fontFamily: MONO, fontWeight: 600, letterSpacing: 3, cursor: "pointer",
           }}>SIGN IN</button>
-
           <div style={{ marginTop: 20, fontSize: 12, color: C.textDim, fontFamily: SANS }}>
             Wrong email?{" "}
-            <span style={{ color: C.accent, cursor: "pointer" }} onClick={() => {
-              setConfirmationSent(false);
-              setIsSignIn(false);
-              setEmail(""); setPassword(""); setUsername(""); setBirthDate(""); setAgeError(""); setError("");
-            }}>Start over</span>
+            <span style={{ color: C.accent, cursor: "pointer" }} onClick={() => { setConfirmationSent(false); setIsSignIn(false); setEmail(""); setPassword(""); setUsername(""); setDateOfBirth(""); setError(""); }}>Start over</span>
           </div>
         </div>
       </div>
@@ -252,38 +171,29 @@ export default function SignupScreen({ onSignup }) {
   // MAIN SIGNUP / SIGN IN FORM
   // ========================
   return (
-    <div style={{
-      height: "100%", display: "flex", flexDirection: "column",
-      background: C.bg, position: "relative",
-    }}>
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: C.bg, position: "relative" }}>
       <FilmGrain opacity={0.04} />
       <div style={{
-        flex: 1, display: "flex", flexDirection: "column",
-        padding: "64px 28px 40px",
-        opacity: show ? 1 : 0,
-        transform: show ? "translateY(0)" : "translateY(16px)",
+        flex: 1, display: "flex", flexDirection: "column", padding: "64px 28px 40px",
+        opacity: show ? 1 : 0, transform: show ? "translateY(0)" : "translateY(16px)",
         transition: "all 0.7s cubic-bezier(0.2, 0, 0, 1)",
       }}>
         <div style={{ fontSize: 9, letterSpacing: 5, color: C.textDim, fontFamily: MONO }}>EST. 2026</div>
-        <div style={{
-          fontSize: 30, fontWeight: 300, color: C.cream, fontFamily: SERIF,
-          marginTop: 16, lineHeight: 1.25, textShadow: "0 1px 3px rgba(0,0,0,0.4)",
-        }}>{isSignIn ? "Welcome\nback." : "Start your\ncollection."}</div>
+        <div style={{ fontSize: 30, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 16, lineHeight: 1.25, textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>
+          {isSignIn ? "Welcome\nback." : "Start your\ncollection."}
+        </div>
         <Divider style={{ margin: "20px 0" }} />
-        
 
         {/* Username field - signup only */}
         {!isSignIn && (
           <div style={{ marginTop: 32 }}>
             <label style={{ fontSize: 10, letterSpacing: 3, color: C.textDim, fontFamily: MONO, display: "block", marginBottom: 10 }}>USERNAME</label>
             <div style={{ ...skeuo.inset, padding: 2 }}>
-              <input type="text" value={username}
-                onChange={(e) => { setUsername(e.target.value); setUsernameError(""); setError(""); }}
+              <input type="text" value={username} onChange={(e) => { setUsername(e.target.value); setUsernameError(""); setError(""); }}
                 placeholder="Choose a username" autoCapitalize="none" autoCorrect="off"
                 style={{ width: "100%", padding: "14px 12px", background: "transparent", border: "none", color: C.cream, fontSize: 16, fontFamily: SANS, outline: "none", boxSizing: "border-box", caretColor: C.accent }}
               />
             </div>
-            {/* Username availability indicator */}
             {username.trim().length >= 2 && (
               <div style={{ marginTop: 8, fontSize: 12, fontFamily: MONO, letterSpacing: 0.5, display: "flex", alignItems: "center", gap: 6 }}>
                 {checkingUsername ? (
@@ -304,8 +214,7 @@ export default function SignupScreen({ onSignup }) {
         <div style={{ marginTop: isSignIn ? 32 : 18 }}>
           <label style={{ fontSize: 10, letterSpacing: 3, color: C.textDim, fontFamily: MONO, display: "block", marginBottom: 10 }}>EMAIL</label>
           <div style={{ ...skeuo.inset, padding: 2 }}>
-            <input type="email" value={email}
-              onChange={(e) => { setEmail(e.target.value); setError(""); }}
+            <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setError(""); }}
               placeholder="your@email.com"
               style={{ width: "100%", padding: "14px 12px", background: "transparent", border: "none", color: C.cream, fontSize: 16, fontFamily: SANS, outline: "none", boxSizing: "border-box", caretColor: C.accent }}
             />
@@ -316,36 +225,52 @@ export default function SignupScreen({ onSignup }) {
         <div style={{ marginTop: 18 }}>
           <label style={{ fontSize: 10, letterSpacing: 3, color: C.textDim, fontFamily: MONO, display: "block", marginBottom: 10 }}>PASSWORD</label>
           <div style={{ ...skeuo.inset, padding: 2 }}>
-            <input type="password" value={password}
-              onChange={(e) => { setPassword(e.target.value); setError(""); }}
+            <input type="password" value={password} onChange={(e) => { setPassword(e.target.value); setError(""); }}
               placeholder="Min 6 characters"
               style={{ width: "100%", padding: "14px 12px", background: "transparent", border: "none", color: C.cream, fontSize: 16, fontFamily: SANS, outline: "none", boxSizing: "border-box", caretColor: C.accent }}
             />
           </div>
         </div>
 
+        {/* Date of Birth field - signup only */}
+        {!isSignIn && (
+          <div style={{ marginTop: 18 }}>
+            <label style={{ fontSize: 10, letterSpacing: 3, color: C.textDim, fontFamily: MONO, display: "block", marginBottom: 10 }}>DATE OF BIRTH</label>
+            <div style={{ ...skeuo.inset, padding: 2 }}>
+              <input type="date" value={dateOfBirth} onChange={(e) => { setDateOfBirth(e.target.value); setError(""); }}
+                max={new Date().toISOString().split("T")[0]}
+                style={{
+                  width: "100%", padding: "14px 12px", background: "transparent",
+                  border: "none", color: dateOfBirth ? C.cream : C.textDim, fontSize: 16, fontFamily: SANS,
+                  outline: "none", boxSizing: "border-box", caretColor: C.accent,
+                  colorScheme: "dark",
+                }}
+              />
+            </div>
+          </div>
+        )}
+
         {error && (
           <div style={{ marginTop: 14, fontSize: 13, color: "#B07272", fontFamily: SANS }}>{error}</div>
         )}
 
-        <button onClick={handleSubmit} disabled={loading}
-          style={{
-            width: "100%", marginTop: 28, padding: "15px",
-            ...skeuo.btnGold, color: C.bg, fontSize: 11, fontFamily: MONO, fontWeight: 600,
-            letterSpacing: 3, cursor: loading ? "wait" : "pointer", opacity: loading ? 0.7 : 1,
-          }}>
+        <button onClick={handleSubmit} disabled={loading} style={{
+          width: "100%", marginTop: 28, padding: "15px",
+          ...skeuo.btnGold,
+          color: C.bg, fontSize: 11, fontFamily: MONO, fontWeight: 600,
+          letterSpacing: 3, cursor: loading ? "wait" : "pointer",
+          opacity: loading ? 0.7 : 1,
+        }}>
           {loading ? "..." : isSignIn ? "SIGN IN" : "CREATE VAULT"}
         </button>
 
         <div style={{ textAlign: "center", marginTop: 18, fontSize: 13, color: C.textDim, fontFamily: SANS }}>
           {isSignIn ? "New collector? " : "Already collecting? "}
-          <span style={{ color: C.accent, cursor: "pointer" }}
-            onClick={() => { setIsSignIn(!isSignIn); setError(""); setUsernameError(""); setAgeError(""); setBirthDate(""); }}>
+          <span style={{ color: C.accent, cursor: "pointer" }} onClick={() => { setIsSignIn(!isSignIn); setError(""); setUsernameError(""); }}>
             {isSignIn ? "Create vault" : "Sign in"}
           </span>
         </div>
       </div>
-
       <div style={{ textAlign: "center", padding: "0 28px 20px", fontSize: 10, color: C.textDim, fontFamily: SANS, lineHeight: 1.5 }}>
         By entering the Vault you agree to the collection terms.
       </div>
