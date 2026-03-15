@@ -123,6 +123,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
             <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>{song?.title}  -  {card.perspective}</div>
           </div>
           <button onClick={() => {
+                window.alert("PLAY tapped! audioUrl: " + (card.audioUrl ? "YES" : "NO"));
                 if (card.audioUrl) {
                   if (playing && audioRef.current) {
                     audioRef.current.pause();
