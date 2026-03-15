@@ -3,11 +3,11 @@ export const C = {
   bg: "#0C0B0E", bgWarm: "#11100F", surface: "#1A1816",
   surfaceRaised: "#201E1B", surfaceInset: "#0F0E0C",
   cream: "#F2EDE4", creamDim: "#D4CEBC", creamDark: "#A89F8E",
-  accent: "#C8B88A", accentDim: "rgba(200,184,138,0.10)",
+  accent: "#A2A0B4", accentDim: "rgba(162,160,180,0.10)",
   teal: "#7FB5A8", tealDim: "rgba(127,181,168,0.08)",
   rose: "#B07272", text: "#E8E2D6", textSec: "#9A9488",
-  textDim: "#5A564E", purple: "#917FB5", gold: "#C8B88A",
-  megaGold: "#D4A43A", booster: "#6B8E7B",
+  textDim: "#5A564E", purple: "#917FB5", gold: "#A2A0B4",
+  megaGold: "#B8B6D0", booster: "#6B8E7B",
 };
 
 export const SERIF = "Georgia, 'Times New Roman', serif";
@@ -29,7 +29,7 @@ export const skeuo = {
     borderRadius: 8,
   },
   btnGold: {
-    background: `linear-gradient(180deg, #D4C48E, #B8A470, #A89460)`,
+    background: `linear-gradient(180deg, #B8B6C8, #A2A0B4, #9290A6)`,
     boxShadow: `0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 3px 8px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3)`,
     border: `1px solid rgba(0,0,0,0.15)`,
     borderRadius: 6,
