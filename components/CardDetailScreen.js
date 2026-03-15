@@ -124,24 +124,20 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           </div>
           <button onClick={() => {
                 if (card.audioUrl) {
-            if (playing) {
-              if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0; }
-              setPlaying(false);
-            } else {
-              if (audioRef.current) {
-                audioRef.current.src = card.audioUrl;
-                audioRef.current.load();
-                audioRef.current.play()
-                  .then(() => setPlaying(true))
-                  .catch((e) => { console.error("Audio play error:", e, card.audioUrl); setPlaying(false); });
-              }
-            }
-          } else {
-            console.warn("No audioUrl on card:", card.chipId);
-            setPlaying(true);
-            setTimeout(() => setPlaying(false), 1500);
-          }
-              }} style={{ ...skeuo.btnGhost, padding: "7px 14px", color: playing ? C.textDim : C.accent, fontSize: 9, fontFamily: MONO, letterSpacing: 2, cursor: "pointer", position: "relative", zIndex: 1, WebkitTapHighlightColor: "transparent", touchAction: "manipulation", minWidth: 60, minHeight: 36 }}>{playing ? (card.audioUrl ? "PAUSE" : "SOON") : "PLAY"}</button>
+                  if (playing && audioRef.current) {
+                    audioRef.current.pause();
+                    audioRef.current = null;
+                    setPlaying(false);
+                  } else {
+                    const audio = new Audio(card.audioUrl);
+                    audioRef.current = audio;
+                    audio.play()
+                      .then(() => setPlaying(true))
+                      .catch((e) => { console.error("Audio play error:", e); setPlaying(false); });
+                    audio.onended = () => { setPlaying(false); audioRef.current = null; };
+                  }
+                }
+              }} style={{ ...skeuo.btnGhost, padding: "7px 14px", color: playing ? C.textDim : C.accent, fontSize: 9, fontFamily: MONO, letterSpacing: 2, cursor: "pointer", position: "relative", zIndex: 1, WebkitTapHighlightColor: "transparent", touchAction: "manipulation", minWidth: 60, minHeight: 36, border: "1px solid " + C.accent + "44" }}>{playing ? "PAUSE" : "PLAY"}</button>
         </div>
 
         {/* Completion */}
@@ -255,11 +251,6 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
             )}
           </div>
         )}
-
-        
-        {/* Hidden audio element */}
-        <audio ref={audioRef} playsInline preload="none" onEnded={() => setPlaying(false)} style={{ display: "none" }} />
-
 <div style={{
           display: "flex", justifyContent: "space-between",
           fontSize: 9, fontFamily: MONO, color: C.textDim, letterSpacing: 1, paddingBottom: 28,
