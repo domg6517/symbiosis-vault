@@ -81,7 +81,7 @@ export default function ScanLinkPage() {
   );
 
   const Btn = ({ onClick, label, gold }) => (
-    <button onClick={onClick} style={{ marginTop: 28, padding: "14px 44px", background: gold ? `linear-gradient(135deg, ${C.accent}, #c9a23a)` : "linear-gradient(145deg, #2A2520, #1E1B17)", color: gold ? C.bg : C.accent, fontFamily: MONO, fontSize: 10, letterSpacing: 4, fontWeight: gold ? 600 : 400, border: gold ? "none" : `1px solid ${C.accent}33`, borderRadius: 8, cursor: "pointer" }}>
+    <button onClick={onClick} style={{ marginTop: 28, padding: "14px 44px", background: gold ? `linear-gradient(135deg, ${C.accent}, #9290A6)` : "linear-gradient(145deg, #2A2520, #1E1B17)", color: gold ? C.bg : C.accent, fontFamily: MONO, fontSize: 10, letterSpacing: 4, fontWeight: gold ? 600 : 400, border: gold ? "none" : `1px solid ${C.accent}33`, borderRadius: 8, cursor: "pointer" }}>
       {label}
     </button>
   );
