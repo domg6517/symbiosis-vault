@@ -41,8 +41,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
-  const [exporting, setExporting] = useState(false);
-
+  
   const linked = ownedCards.filter((c) => c.linked).length;
 
   // Fetch user badges
@@ -164,23 +163,10 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   };
 
   
-  const handleExportData = async () => {
-    setExporting(true);
-    try {
-      const res = await fetch("/api/account/export", {
-        method: "POST",
-        headers: { Authorization: "Bearer " + session.access_token },
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        alert(data.error || "Request failed");
-      } else {
-        alert(data.message || "Data export request submitted!");
-      }
-    } catch (e) {
-      alert("Request failed. Please try again.");
-    }
-    setExporting(false);
+  const handleExportData = () => {
+    const subject = encodeURIComponent("Data Export Request - Symbiosis Vault");
+    const body = encodeURIComponent("User email: " + email + "\nUser ID: " + (session?.user?.id || "N/A") + "\n\nI would like to request a copy of my personal data from Symbiosis Vault.");
+    window.open("mailto:info@jackandjack.store?subject=" + subject + "&body=" + body, "_self");
   };
 
   const handleCropCancel = () => {
@@ -404,7 +390,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             </div>
             <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
           </div>
-          <div onClick={handleExportData} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: exporting ? "wait" : "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)", opacity: exporting ? 0.6 : 1 }}> <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> </div> <div style={{ flex: 1 }}> <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>{exporting ? "Requesting..." : "Request My Data"}</div> <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Request a copy of your data</div> </div> <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div> </div>
+          <div onClick={handleExportData} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)",  }}> <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> </div> <div style={{ flex: 1 }}> <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>"Request My Data"</div> <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Request a copy of your data</div> </div> <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div> </div>
         <div onClick={() => setShowPrivacy(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}> <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> </div> <div style={{ flex: 1 }}> <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Privacy Policy</div> <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>How we protect your data</div> </div> <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div> </div>
         <div onClick={() => setShowDeleteConfirm(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid rgba(231,76,60,0.25)", background: "linear-gradient(180deg, rgba(228,188,74,0.04), rgba(231,76,60,0.04))" }}>
             <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid rgba(231,76,60,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -504,9 +490,9 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             <div style={{ ...skeuo, borderRadius: 14, padding: "14px 16px", marginBottom: 10, animation: "fadeSlideIn 0.4s ease 0.5s both" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
                 <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.accent, color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 14, fontWeight: 800, flexShrink: 0 }}>1</div>
-                <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 600 }}>Tap the 3-dot menu</div>
+                <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 600 }}>Tap the three dots in the upper right</div>
               </div>
-              <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 10, lineHeight: 1.5 }}>In Chrome, look for this icon in the top-right corner:</div>
+              <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 10, lineHeight: 1.5 }}>In your browser, look for this icon in the upper-right corner:</div>
               <div style={{ display: "flex", justifyContent: "center", padding: "10px 0" }}>
                 <div style={{ width: 40, height: 40, borderRadius: 20, background: "#333", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, boxShadow: "0 2px 6px rgba(0,0,0,0.3)" }}>
                   <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#fff" }} />
@@ -520,26 +506,26 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             <div style={{ ...skeuo, borderRadius: 14, padding: "14px 16px", marginBottom: 10, animation: "fadeSlideIn 0.4s ease 0.65s both" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
                 <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.accent, color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 14, fontWeight: 800, flexShrink: 0 }}>2</div>
-                <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 600 }}>Tap "Install app"</div>
+                <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 600 }}>Tap "Add to Home screen"</div>
               </div>
-              <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 10, lineHeight: 1.5 }}>In the dropdown menu, look for:</div>
+              <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 10, lineHeight: 1.5 }}>In the menu, look for:</div>
               <div style={{ background: "#2d2d2d", borderRadius: 8, padding: "12px 16px", display: "flex", alignItems: "center", gap: 12 }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8ab4f8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
-                <span style={{ fontFamily: "Roboto, sans-serif", fontSize: 14, color: "#e8eaed" }}>Install app</span>
+                <span style={{ fontFamily: "Roboto, sans-serif", fontSize: 14, color: "#e8eaed" }}>Add to Home screen</span>
               </div>
-              <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, textAlign: "center", marginTop: 8, fontStyle: "italic" }}>It may also say "Add to Home screen"</div>
+              
             </div>
 
             {/* Android Step 3 */}
             <div style={{ ...skeuo, borderRadius: 14, padding: "14px 16px", marginBottom: 6, animation: "fadeSlideIn 0.4s ease 0.8s both" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
                 <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.accent, color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 14, fontWeight: 800, flexShrink: 0 }}>3</div>
-                <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 600 }}>Tap "Install" to confirm</div>
+                <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 600 }}>Tap "Add" to confirm</div>
               </div>
-              <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 10, lineHeight: 1.5 }}>A popup will appear. Tap the button:</div>
+              <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 10, lineHeight: 1.5 }}>A preview will appear. Tap the button:</div>
               <div style={{ display: "flex", justifyContent: "center", padding: "6px 0" }}>
                 <div style={{ background: "#8ab4f8", borderRadius: 20, padding: "10px 36px" }}>
-                  <span style={{ fontFamily: "Roboto, sans-serif", fontSize: 14, color: "#000", fontWeight: 500 }}>Install</span>
+                  <span style={{ fontFamily: "Roboto, sans-serif", fontSize: 14, color: "#000", fontWeight: 500 }}>Add</span>
                 </div>
               </div>
               <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, textAlign: "center", marginTop: 8, fontStyle: "italic" }}>Done! The app icon will appear on your home screen.</div>
@@ -574,16 +560,16 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       )}
 
       {showFAQ && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div onClick={() => setShowFAQ(false)} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.7)" }} />
-          <div style={{ position: "relative", width: "92%", maxWidth: 380, maxHeight: "80vh", overflow: "auto", ...skeuo, borderRadius: 20, padding: "28px 22px", border: "1px solid " + C.accent + "33" }}>
+        <div style={{ position: "fixed", inset: 0, zIndex: 9999 }}>
+          <div onClick={() => setShowFAQ(false)} style={{ position: "absolute", inset: 0, background: "#000" }} />
+          <div style={{ position: "relative", width: "100%", height: "100%", overflow: "auto", background: C.bg, padding: "28px 22px" }}>
             <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>FAQ</div>
             <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.textDim, textAlign: "center", marginBottom: 20 }}>FREQUENTLY ASKED QUESTIONS</div>
 
             <div style={{ marginBottom: 20 }}>
               <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>HOW DO I COLLECT?</div>
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6 }}>
-                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ tap it with your phone and the card is yours. Build your collection before the window closes.
+                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip — tap it with your phone and the card is yours. Build your collection before the window closes.
               </div>
             </div>
 
