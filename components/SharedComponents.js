@@ -3,8 +3,8 @@ import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { LockSmall } from "./Icons";
 import { PERSPECTIVES } from "./data";
 
-// ─── MINI POLAROID (SKEUOMORPHIC) ──────────
-export const MiniPolaroid = ({ perspective, rarity, count, onClick, isBooster = false }) => {
+// ─── MINI PHOTO CARD (SKEUOMORPHIC) ──────────
+export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster = false }) => {
   const label = perspective === "J&J" ? "J&J" : perspective.split(" ")[1];
   const isRare = rarity === "rare";
   return (
@@ -103,7 +103,7 @@ export const SongRow = ({ song, ownedCards, onCardClick, isBooster = false, isLa
               return <EmptyCell key={pg.perspective} />;
             }
             return pg.cards.map((card, ci) => (
-              <MiniPolaroid
+              <MiniPhotoCard
                 key={card.chipId}
                 perspective={card.perspective}
                 rarity={card.rarity}
