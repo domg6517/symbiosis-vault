@@ -48,13 +48,17 @@ export function AuthProvider({ children }) {
     if (data) setProfile(data);
   }
 
-  async function signUp(email, password, username) {
+  async function signUp(email, password, username, dateOfBirth) {
     if (!supabase) return { error: { message: "Supabase not configured" } };
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { display_name: username },
+        data: {
+          display_name: username,
+          date_of_birth: dateOfBirth,
+        },
       },
     });
 
