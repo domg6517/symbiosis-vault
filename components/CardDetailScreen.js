@@ -196,7 +196,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           <div style={{ fontSize: 13, fontFamily: SANS, fontWeight: 500, color: C.textSec }}>Trade on Discord</div>
           <div style={{ fontSize: 11, fontFamily: SANS, color: C.textDim, marginTop: 2 }}>Find collectors to trade with</div>
         </div>
-        <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>Ã¢ÂÂº</div>
+        <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>\u203A</div>
       </div>
 
         <Divider style={{ marginBottom: 16 }} />
@@ -212,7 +212,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
               <div style={{ fontSize: 13, fontFamily: SANS, fontWeight: 500, color: C.textSec }}>Disconnect for trade</div>
               <div style={{ fontSize: 11, fontFamily: SANS, color: C.textDim, marginTop: 2 }}>Unlink this card so someone else can claim it</div>
             </div>
-            <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>Ã¢ÂÂº</div>
+            <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>\u203A</div>
           </div>
         ) : (
           <div style={{ padding: "16px", ...skeuo.card, border: `1px solid ${C.rose}33`, marginBottom: 20, position: "relative", overflow: "hidden" }}>
