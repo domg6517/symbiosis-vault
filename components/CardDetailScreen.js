@@ -132,7 +132,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
                   if (audioRef.current) {
                     audioRef.current.src = card.audioUrl;
                     setPlaying(true);
-                    audioRef.current.play().catch(() => setPlaying(false));
+                    audioRef.current.play().catch(e => { window.alert("Play error: " + e.name + " - " + e.message); setPlaying(false); });
                   }
                 }
               }} style={{ ...skeuo.btnGhost, padding: "8px 16px", color: playing ? C.textDim : C.accent, fontSize: 9, fontFamily: MONO, letterSpacing: 2, cursor: "pointer", position: "relative", zIndex: 1, WebkitTapHighlightColor: "transparent", appearance: "none", outline: "none" }}>{playing ? "PAUSE" : "PLAY"}</button>
