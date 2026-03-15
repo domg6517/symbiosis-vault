@@ -48,7 +48,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
         </div>
       </div>
 
-      {/* Large polaroid — user artwork style */}
+      {/* Large photo card — user artwork style */}
       <div style={{
         display: "flex", justifyContent: "center", padding: "4px 20px 20px", zIndex: 1,
         opacity: show ? 1 : 0, transform: show ? "translateY(0)" : "translateY(16px)",
