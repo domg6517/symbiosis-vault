@@ -48,7 +48,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
         </div>
       </div>
 
-      {/* Large photo card — user artwork style */}
+      {/* Large photo card â user artwork style */}
       <div style={{
         display: "flex", justifyContent: "center", padding: "4px 20px 20px", zIndex: 1,
         opacity: show ? 1 : 0, transform: show ? "translateY(0)" : "translateY(16px)",
@@ -107,7 +107,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
       <div style={{ padding: "0 22px", zIndex: 1 }}>
         <div style={{ fontSize: 20, fontFamily: SERIF, fontWeight: 300, color: C.cream, marginBottom: 3, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>{song?.title}</div>
         <div style={{ fontSize: 12, fontFamily: SANS, color: C.textSec, marginBottom: 16 }}>
-          {card.perspective} · {isRare ? "Rare" : "Common"} · {card.chipId}
+          {card.perspective} Â· {isRare ? "Rare" : "Common"} Â· {card.chipId}
         </div>
 
         {/* Unlock */}
@@ -120,7 +120,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           <MusicIcon />
           <div style={{ flex: 1, position: "relative", zIndex: 1 }}>
             <div style={{ fontSize: 9, color: C.accent, fontFamily: MONO, letterSpacing: 2 }}>UNLOCKED</div>
-            <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>{song?.title} — {card.perspective}</div>
+            <div style={{ fontSize: 14, color: C.cream, fontFamily: SANS, marginTop: 2 }}>{song?.title} â {card.perspective}</div>
           </div>
           <div onClick={() => {
                 if (card.audioUrl) {
@@ -132,7 +132,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
                       audioRef.current = new Audio(card.audioUrl);
                       audioRef.current.onended = () => setPlaying(false);
                     }
-                    audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
+                    audioRef.current.play().then(() => setPlaying(true)).catch((e) => { console.error("Audio play error:", e); setPlaying(false); });
                   }
                 } else {
                   setPlaying(true);
@@ -169,7 +169,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
         }}>
           {complete && <div style={skeuo.gloss} />}
           <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 2, color: complete ? C.accent : C.textDim, position: "relative", zIndex: 1 }}>
-            {complete ? "✦ ALL 3 PERSPECTIVES — BADGE UNLOCKED" : `${uniquePerspectives} OF 3 — COLLECT ALL TO UNLOCK BADGE`}
+            {complete ? "â¦ ALL 3 PERSPECTIVES â BADGE UNLOCKED" : `${uniquePerspectives} OF 3 â COLLECT ALL TO UNLOCK BADGE`}
           </div>
         </div>
 
@@ -192,7 +192,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           <div style={{ fontSize: 13, fontFamily: SANS, fontWeight: 500, color: C.textSec }}>Trade on Discord</div>
           <div style={{ fontSize: 11, fontFamily: SANS, color: C.textDim, marginTop: 2 }}>Find collectors to trade with</div>
         </div>
-        <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>›</div>
+        <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>âº</div>
       </div>
 
         <Divider style={{ marginBottom: 16 }} />
@@ -208,7 +208,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
               <div style={{ fontSize: 13, fontFamily: SANS, fontWeight: 500, color: C.textSec }}>Disconnect for trade</div>
               <div style={{ fontSize: 11, fontFamily: SANS, color: C.textDim, marginTop: 2 }}>Unlink this card so someone else can claim it</div>
             </div>
-            <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>›</div>
+            <div style={{ fontSize: 18, color: C.textDim, position: "relative", zIndex: 1 }}>âº</div>
           </div>
         ) : (
           <div style={{ padding: "16px", ...skeuo.card, border: `1px solid ${C.rose}33`, marginBottom: 20, position: "relative", overflow: "hidden" }}>
