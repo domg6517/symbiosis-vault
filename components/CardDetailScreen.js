@@ -124,24 +124,23 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           </div>
           <div onClick={() => {
                 if (card.audioUrl) {
-                  if (playing) {
-                    audioRef.current?.pause();
-                    setPlaying(false);
-                  } else {
-                    if (!audioRef.current) {
-                      audioRef.current = new Audio(card.audioUrl);
-                      audioRef.current.setAttribute("playsinline", "");
-                      audioRef.current.onended = () => setPlaying(false);
-                    }
-                    audioRef.current.load();
-
-                    audioRef.current.play().then(() => setPlaying(true)).catch((e) => { console.error("Audio play error:", e); setPlaying(false); });
-                  }
-                } else {
-                  console.warn("No audioUrl on card:", card.chipId);
-                  setPlaying(true);
-                  setTimeout(() => setPlaying(false), 1500);
-                }
+            if (playing) {
+              if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0; }
+              setPlaying(false);
+            } else {
+              if (audioRef.current) {
+                audioRef.current.src = card.audioUrl;
+                audioRef.current.load();
+                audioRef.current.play()
+                  .then(() => setPlaying(true))
+                  .catch((e) => { console.error("Audio play error:", e, card.audioUrl); setPlaying(false); });
+              }
+            }
+          } else {
+            console.warn("No audioUrl on card:", card.chipId);
+            setPlaying(true);
+            setTimeout(() => setPlaying(false), 1500);
+          }
               }} style={{ ...skeuo.btnGhost, padding: "7px 14px", color: playing ? C.textDim : C.accent, fontSize: 9, fontFamily: MONO, letterSpacing: 2, cursor: "pointer", position: "relative", zIndex: 1 }}>{playing ? (card.audioUrl ? "PAUSE" : "SOON") : "PLAY"}</div>
         </div>
 
