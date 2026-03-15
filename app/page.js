@@ -130,7 +130,9 @@ export default function SymbiosisVault() {
   useEffect(() => {
     try {
       const accepted = localStorage.getItem("termsAccepted");
-      setTermsAccepted(accepted === "true");
+      const savedVersion = localStorage.getItem("termsVersion");
+      const CURRENT_TERMS_VERSION = "2.0";
+      setTermsAccepted(accepted === "true" && savedVersion === CURRENT_TERMS_VERSION);
     } catch (e) {
       setTermsAccepted(false);
     }
