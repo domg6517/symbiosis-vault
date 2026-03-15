@@ -98,7 +98,7 @@ export default function SymbiosisVault() {
   // When ENTER is clicked on splash, go to collection if authed, signup if not
   const handleSplashEnter = () => {
     if (loading) {
-      // Auth still loading ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ show signup, the useEffect below will redirect
+      // Auth still loading -- show signup, the useEffect below will redirect
       navigateTo("signup");
     } else if (isAuthenticated) {
       navigateTo("collection");
