@@ -77,7 +77,7 @@ export const SongRow = ({ song, ownedCards, onCardClick, isBooster = false, isLa
       <div style={{
         display: "flex", alignItems: "center",
         padding: "10px 16px", minHeight: 82,
-        background: complete ? `linear-gradient(135deg, rgba(200,184,138,0.06), rgba(200,184,138,0.02))` : "transparent",
+        background: complete ? `linear-gradient(135deg, rgba(162,160,180,0.06), rgba(162,160,180,0.02))` : "transparent",
         transition: "background 0.3s ease",
       }}>
         <div style={{ width: 80, flexShrink: 0 }}>
