@@ -13,6 +13,13 @@ const SANS = "'Inter', -apple-system, sans-serif";
 
 export default function ScanLinkPage() {
   const { chipId } = useParams();
+
+  // Redirect to custom domain if on Vercel URL (session is domain-specific)
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hostname === "symbiosis-vault.vercel.app") {
+      window.location.replace("https://vault.jackandjack.store" + window.location.pathname + window.location.search);
+    }
+  }, []);
   const [status, setStatus] = useState("loading");
   const [cardInfo, setCardInfo] = useState(null);
   const [error, setError] = useState("");
