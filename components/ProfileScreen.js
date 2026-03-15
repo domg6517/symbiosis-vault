@@ -77,11 +77,14 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       setSaving(false);
       return;
     }
-    await supabase.auth.updateUser({ data: { display_name: trimmed } });
+    await supabase.auth.updateUser({ data: { display_name: trimmed, instagram, twitter, tiktok } });
     await supabase.from("profiles").upsert({
       id: session.user.id,
       username: trimmed,
-      email: session.user.email
+      email: session.user.email,
+      instagram: instagram || null,
+      twitter: twitter || null,
+      tiktok: tiktok || null
     }, { onConflict: "id" });
     setSaving(false);
     setEditing(false);
