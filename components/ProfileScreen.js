@@ -257,7 +257,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       {badges.length > 0 && (
         <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 8, padding: "4px 16px 14px" }}>
           {badges.map((b) => (
-            <div key={b.badge.slug} style={{ ...skeuo, borderRadius: 20, padding: "6px 14px", display: "flex", alignItems: "center", gap: 6, border: "1px solid " + C.accent + "33", background: "linear-gradient(180deg, rgba(228,188,74,0.06), transparent)" }}>
+            <div key={b.badge.slug} style={{ ...skeuo, borderRadius: 20, padding: "6px 14px", display: "flex", alignItems: "center", gap: 6, border: "1px solid " + C.accent + "33", background: "linear-gradient(180deg, rgba(162,160,180,0.06), transparent)" }}>
               <span style={{ fontSize: 14 }}>{b.badge.icon}</span>
               <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 1.5, color: C.accent, fontWeight: 600 }}>{b.badge.label.toUpperCase()}</span>
             </div>
@@ -319,7 +319,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           display: "flex", alignItems: "center", gap: 14,
           cursor: "pointer",
           border: "1px solid " + C.accent + "22",
-          background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)",
+          background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)",
         }}>
           <div style={{
             width: 36, height: 36, borderRadius: 10,
@@ -338,7 +338,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
 
       {/* Notifications */}
       <div style={{ padding: "8px 16px 0" }}>
-        <div style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}>
+        <div style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)" }}>
           <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
           </div>
@@ -352,7 +352,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
 
       {/* Trade Offers */}
       <div style={{ padding: "8px 16px 0" }}>
-        <div style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}>
+        <div style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)" }}>
           <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9" /><path d="M3 11V9a4 4 0 014-4h14" /><polyline points="7 23 3 19 7 15" /><path d="M21 13v2a4 4 0 01-4 4H3" /></svg>
           </div>
@@ -368,7 +368,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       <div style={{ padding: "10px 16px 0" }}>
         <div onClick={() => window.open("mailto:info@jackandjack.store?subject=Symbiosis%20Vault%20Bug%20Report", "_self")}
             style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
-              border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}>
+              border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)" }}>
             <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             </div>
@@ -380,7 +380,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           </div>
           <div onClick={() => setShowFAQ(true)}
             style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8,
-              border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}>
+              border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)" }}>
             <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             </div>
@@ -390,9 +390,9 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             </div>
             <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
           </div>
-          <div onClick={handleExportData} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)",  }}> <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> </div> <div style={{ flex: 1 }}> <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>"Request My Data"</div> <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Request a copy of your data</div> </div> <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div> </div>
-        <div onClick={() => setShowPrivacy(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.04), transparent)" }}> <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> </div> <div style={{ flex: 1 }}> <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Privacy Policy</div> <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>How we protect your data</div> </div> <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div> </div>
-        <div onClick={() => setShowDeleteConfirm(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid rgba(231,76,60,0.25)", background: "linear-gradient(180deg, rgba(228,188,74,0.04), rgba(231,76,60,0.04))" }}>
+          <div onClick={handleExportData} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)",  }}> <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> </div> <div style={{ flex: 1 }}> <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>"Request My Data"</div> <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Request a copy of your data</div> </div> <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div> </div>
+        <div onClick={() => setShowPrivacy(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)" }}> <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> </div> <div style={{ flex: 1 }}> <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Privacy Policy</div> <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>How we protect your data</div> </div> <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div> </div>
+        <div onClick={() => setShowDeleteConfirm(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid rgba(231,76,60,0.25)", background: "linear-gradient(180deg, rgba(162,160,180,0.04), rgba(231,76,60,0.04))" }}>
             <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid rgba(231,76,60,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg>
             </div>
@@ -478,7 +478,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             </div>
 
             {/* Safari note */}
-            <div style={{ ...skeuo, borderRadius: 10, padding: "10px 14px", marginBottom: 20, marginTop: 10, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(228,188,74,0.06), transparent)" }}>
+            <div style={{ ...skeuo, borderRadius: 10, padding: "10px 14px", marginBottom: 20, marginTop: 10, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.06), transparent)" }}>
               <div style={{ fontFamily: SANS, fontSize: 12, color: C.accent, fontWeight: 600, marginBottom: 4 }}>{"\u26A0"} Must use Safari</div>
               <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, lineHeight: 1.5 }}>On iPhone, this only works in Safari. Chrome and other browsers don't support it on iOS.</div>
             </div>
@@ -542,7 +542,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       {cropPreview && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.85)", zIndex: 9999, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24 }}>
           <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 16, textTransform: "uppercase" }}>Preview Your Photo</div>
-          <div style={{ width: 180, height: 180, borderRadius: "50%", overflow: "hidden", border: "3px solid " + C.accent, boxShadow: "0 0 30px rgba(228,188,74,0.3)" }}>
+          <div style={{ width: 180, height: 180, borderRadius: "50%", overflow: "hidden", border: "3px solid " + C.accent, boxShadow: "0 0 30px rgba(162,160,180,0.3)" }}>
             <img src={cropPreview} alt="Preview" style={{ width: "100%", height: "100%", objectFit: "cover", transform: "scale(" + zoomLevel + ")", transition: "transform 0.15s ease" }} />
           </div>
           
@@ -554,7 +554,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           <div style={{ fontFamily: MONO, fontSize: 9, color: "rgba(255,255,255,0.4)", marginTop: 6, letterSpacing: 1 }}>{Math.round(zoomLevel * 100)}%</div>
           <div style={{ marginTop: 16, display: "flex", gap: 16 }}>
             <button onClick={handleCropCancel} style={{ ...skeuo, padding: "10px 28px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.05)", color: C.cream, fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, cursor: "pointer" }}>CANCEL</button>
-            <button onClick={handleCropConfirm} disabled={saving} style={{ ...skeuo, padding: "10px 28px", borderRadius: 12, border: "1px solid " + C.accent, background: "linear-gradient(180deg, rgba(228,188,74,0.15), rgba(228,188,74,0.05))", color: C.accent, fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, cursor: "pointer", opacity: saving ? 0.5 : 1 }}>{saving ? "SAVING..." : "CONFIRM"}</button>
+            <button onClick={handleCropConfirm} disabled={saving} style={{ ...skeuo, padding: "10px 28px", borderRadius: 12, border: "1px solid " + C.accent, background: "linear-gradient(180deg, rgba(162,160,180,0.15), rgba(162,160,180,0.05))", color: C.accent, fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, cursor: "pointer", opacity: saving ? 0.5 : 1 }}>{saving ? "SAVING..." : "CONFIRM"}</button>
           </div>
         </div>
       )}
@@ -589,7 +589,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6, marginBottom: 12 }}>
                 We're here to help. Reach out and we'll get back to you.
               </div>
-              <div onClick={() => window.open("mailto:info@jackandjack.store")} style={{ ...skeuo, borderRadius: 12, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer", border: "1px solid " + C.accent + "33", background: "linear-gradient(145deg, rgba(228,188,74,0.08), rgba(228,188,74,0.02))" }}>
+              <div onClick={() => window.open("mailto:info@jackandjack.store")} style={{ ...skeuo, borderRadius: 12, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer", border: "1px solid " + C.accent + "33", background: "linear-gradient(145deg, rgba(162,160,180,0.08), rgba(162,160,180,0.02))" }}>
                 <span style={{ fontSize: 14 }}>{String.fromCodePoint(0x2709)}</span>
                 <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: 1, color: C.accent, fontWeight: 600 }}>info@jackandjack.store</span>
               </div>
@@ -633,7 +633,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             />
             {deleteError ? <div style={{ fontFamily: SANS, fontSize: 12, color: "#e74c3c", marginBottom: 12 }}>{deleteError}</div> : null}
             <button onClick={handleDeleteAccount} disabled={deleting || deleteConfirmText !== "DELETE"} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "1px solid rgba(231,76,60,0.5)", background: "linear-gradient(180deg, rgba(231,76,60,0.15), rgba(231,76,60,0.05))", color: "#e74c3c", fontFamily: MONO, fontSize: 11, letterSpacing: 2, fontWeight: 700, cursor: deleting ? "wait" : "pointer", opacity: (deleting || deleteConfirmText !== "DELETE") ? 0.4 : 1, marginBottom: 10 }}>{deleting ? "DELETING..." : "DELETE FOREVER"}</button>
-            <button onClick={() => { setShowDeleteConfirm(false); setDeleteError(""); setDeleteConfirmText(""); }} disabled={deleting} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "1px solid rgba(228,188,74,0.2)", background: "transparent", color: "#e4bc4a", fontFamily: MONO, fontSize: 11, letterSpacing: 2, fontWeight: 600, cursor: "pointer", opacity: deleting ? 0.4 : 1 }}>CANCEL</button>
+            <button onClick={() => { setShowDeleteConfirm(false); setDeleteError(""); setDeleteConfirmText(""); }} disabled={deleting} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "1px solid rgba(162,160,180,0.2)", background: "transparent", color: "#A2A0B4", fontFamily: MONO, fontSize: 11, letterSpacing: 2, fontWeight: 600, cursor: "pointer", opacity: deleting ? 0.4 : 1 }}>CANCEL</button>
           </div>
         </div>
       )}
