@@ -71,14 +71,14 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.textSec} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </div>
           <div onClick={onProfile} style={{
-            width: 34, height: 34,
+            width: 34, height: 34, marginLeft: 6,
             ...skeuo.card,
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer",
             borderRadius: 8,
           }}><ProfileIcon size={16} color={C.textSec} /></div>
           <div onClick={onLeaderboard} style={{
-            width: 34, height: 34,
+            width: 34, height: 34, marginLeft: 6,
             ...skeuo.card,
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer",
