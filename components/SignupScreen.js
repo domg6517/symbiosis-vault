@@ -19,6 +19,8 @@ export default function SignupScreen({ onSignup }) {
   const [show, setShow] = useState(false);
   const [confirmationSent, setConfirmationSent] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [resetSent, setResetSent] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const { signUp, signIn, isSupabaseConfigured } = useAuth();
 
   useEffect(() => { setTimeout(() => setShow(true), 150); }, []);
@@ -131,6 +133,43 @@ export default function SignupScreen({ onSignup }) {
     else { setResendCooldown(60); }
   }
 
+  async function handleResetPassword() {
+    if (!email) {
+      setError("Please enter your email address first");
+      return;
+    }
+    setResetLoading(true);
+    setError("");
+    const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "https://vault.jackandjack.store/auth/reset",
+    });
+    setResetLoading(false);
+    if (resetErr) {
+      setError(resetErr.message);
+    } else {
+      setResetSent(true);
+    }
+  }
+
+  // ========================
+  // RESET PASSWORD SENT SCREEN
+  // ========================
+  if (resetSent) {
+    return (
+      <div style={{ height: "100%", display: "flex", flexDirection: "column", background: C.bg, position: "relative" }}>
+        <FilmGrain opacity={0.04} />
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 28px", textAlign: "center" }}>
+          <div style={{ width: 72, height: 72, borderRadius: "50%", ...skeuo.card, border: "1.5px solid " + C.accent + "44", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24, fontSize: 32 }}>{String.fromCodePoint(0x1F512)}</div>
+          <div style={{ fontSize: 26, fontWeight: 300, color: C.cream, fontFamily: SERIF, lineHeight: 1.25, textShadow: "0 1px 3px rgba(0,0,0,0.4)", marginBottom: 12 }}>Reset link sent</div>
+          <div style={{ fontSize: 14, color: C.textSec, fontFamily: SANS, lineHeight: 1.6, maxWidth: 280, marginBottom: 8 }}>We sent a password reset link to</div>
+          <div style={{ fontSize: 15, color: C.accent, fontFamily: MONO, letterSpacing: 0.5, marginBottom: 24, wordBreak: "break-all" }}>{email}</div>
+          <div style={{ fontSize: 13, color: C.textDim, fontFamily: SANS, lineHeight: 1.6, maxWidth: 280, marginBottom: 32 }}>Check your inbox and tap the link to set a new password. Then come back and sign in.</div>
+          <button onClick={() => { setResetSent(false); setIsSignIn(true); setPassword(""); setError(""); }} style={{ width: "100%", maxWidth: 280, padding: "15px", ...skeuo.btnGold, color: C.bg, fontSize: 11, fontFamily: MONO, fontWeight: 600, letterSpacing: 3, cursor: "pointer" }}>BACK TO SIGN IN</button>
+        </div>
+      </div>
+    );
+  }
+
   // ========================
   // CONFIRMATION EMAIL SCREEN
   // ========================
@@ -231,6 +270,13 @@ export default function SignupScreen({ onSignup }) {
             />
           </div>
         </div>
+        {isSignIn && (
+          <div style={{ textAlign: "right", marginTop: 8 }}>
+            <span onClick={handleResetPassword} style={{ fontSize: 12, color: C.accent, fontFamily: SANS, cursor: "pointer", opacity: resetLoading ? 0.5 : 1 }}>
+              {resetLoading ? "Sending..." : "Forgot password?"}
+            </span>
+          </div>
+        )}
 
         {/* Date of Birth field - signup only */}
         {!isSignIn && (
