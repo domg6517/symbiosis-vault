@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { C, SERIF, SANS, MONO } from "./design";
 import { Divider } from "./Icons";
 
-// âââ ANIMATED PRISMATIC BACKGROUND (canvas fallback) âââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ ANIMATED PRISMATIC BACKGROUND (canvas fallback) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const PrismaticCanvas = ({ width = 390, height = 844 }) => {
   const canvasRef = useRef(null);
   useEffect(() => {
@@ -107,10 +107,10 @@ const PrismaticCanvas = ({ width = 390, height = 844 }) => {
     draw();
     return () => cancelAnimationFrame(raf);
   }, [width, height]);
-  return <canvas ref={canvasRef} style={{position:"absolute",inset:0,width:"100%",height:"100%",zIndex:0}} />;
+  return <canvas ref={canvasRef} style={{position:"absolute",inset:0,width:"100%",height:"100%",zIndex:0,overflowY:"auto"}} />;
 };
 
-// âââ SPLASH SCREEN âââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ SPLASH SCREEN Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 export default function SplashScreen({ onEnter }) {
   const [step, setStep] = useState(0);
   const [videoFailed, setVideoFailed] = useState(false);
