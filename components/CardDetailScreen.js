@@ -129,16 +129,11 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
                   if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0; audioRef.current = null; }
                   setPlaying(false);
                 } else {
-                  try {
-                    const a = new Audio(card.audioUrl);
-                    a.setAttribute("playsinline", "");
-                    a.crossOrigin = "anonymous";
-                    audioRef.current = a;
-                    a.onended = () => { setPlaying(false); audioRef.current = null; };
-                    a.onerror = (ev) => { window.alert("Load error: " + (ev.target.error ? ev.target.error.message : "unknown")); setPlaying(false); };
-                    setPlaying(true);
-                    a.play().catch(e => { window.alert("Play fail: " + e.name + " " + e.message); setPlaying(false); });
-                  } catch(ex) { window.alert("Exception: " + ex.message); }
+                  const a = new Audio(card.audioUrl);
+                  audioRef.current = a;
+                  a.onended = () => { setPlaying(false); audioRef.current = null; };
+                  setPlaying(true);
+                  a.play().catch(() => setPlaying(false));
                 }
               }} style={{ ...skeuo.btnGhost, padding: "8px 16px", color: playing ? C.textDim : C.accent, fontSize: 9, fontFamily: MONO, letterSpacing: 2, cursor: "pointer", position: "relative", zIndex: 1, WebkitTapHighlightColor: "transparent", appearance: "none", outline: "none" }}>{playing ? "PAUSE" : "PLAY"}</button>
         </div>
