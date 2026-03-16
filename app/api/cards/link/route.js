@@ -81,7 +81,7 @@ export async function POST(request) {
 
     if (alreadyLinked && alreadyLinked.user_id !== user.id) {
       return NextResponse.json(
-        { error: "This card is already linked to another collector. It must be disconnected first." },
+        { error: "This card is connected to another account." },
         { status: 409 }
       );
     }
@@ -97,7 +97,7 @@ export async function POST(request) {
     if (existing && existing.linked) {
       return NextResponse.json(
         {
-          error: "You already have this card linked!",
+          error: "Already collected!",
           card: formatCard(cardTemplate),
         },
         { status: 409 }
