@@ -1,11 +1,12 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { useAuth } from "./AuthContext";
 
 export default function LeaderboardScreen({ onBack, onViewCollector }) {
   const [leaders, setLeaders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const { session } = useAuth();
 
   useEffect(() => {
@@ -33,7 +34,20 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
             cursor: "pointer", fontSize: 18,
           }}
         >←</div>
-        <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700 }}>Leaderboard</div>
+        <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700, flex: 1 }}>Leaderboard</div>
+        <div onClick={() => fetchLeaderboard(true)} style={{
+          ...skeuo, width: 36, height: 36, borderRadius: 10,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          cursor: "pointer", fontSize: 16,
+          opacity: refreshing ? 0.5 : 1,
+          transition: "opacity 0.2s",
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.textSec} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{
+            animation: refreshing ? "spin 1s linear infinite" : "none",
+          }}>
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2.5 11.5a10 10 0 0 1 18.4-4.5M21.5 12.5a10 10 0 0 1-18.4 4.5"/>
+          </svg>
+        </div>
       </div>
 
       {/* Subtitle */}
