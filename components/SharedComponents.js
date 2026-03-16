@@ -26,7 +26,7 @@ export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster =
       }}>
         {!imageUrl && <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.3) 100%)" }} />}
         {imageUrl ? (
-          <img src={imageUrl} alt={label} style={{ width: "100%", height: "100%", objectFit: "contain", position: "absolute", inset: 0, zIndex: 1 }} />
+          <img src={imageUrl} alt={label} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0, zIndex: 1 }} />
         ) : (
           <div style={{ fontSize: 12, fontWeight: 300, color: C.cream, fontFamily: SERIF, zIndex: 1, letterSpacing: 1 }}>{label}</div>
         )}
