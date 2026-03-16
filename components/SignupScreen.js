@@ -156,7 +156,7 @@ export default function SignupScreen({ onSignup }) {
   // ========================
   if (resetSent) {
     return (
-      <div style={{ minHeight: "100%", display: "flex", flexDirection: "column", background: C.bg, position: "relative", overflowY: "auto" }}>
+      <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", background: C.bg, overflowY: "auto", zIndex: 10 }}>
         <FilmGrain opacity={0.04} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 28px", textAlign: "center" }}>
           <div style={{ width: 72, height: 72, borderRadius: "50%", ...skeuo.card, border: "1.5px solid " + C.accent + "44", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24, fontSize: 32 }}>{String.fromCodePoint(0x1F512)}</div>
