@@ -66,10 +66,10 @@ export default function ScanScreen({ session, onBack, onScanned }) {
         @keyframes gentlePulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
       ` }} />
       <div style={{
-        height: "100%", display: "flex", flexDirection: "column",
+        minHeight: "100%", display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
         background: `radial-gradient(ellipse at 50% 40%, #151312, ${C.bg})`,
-        position: "relative", overflow: "hidden",
+        position: "relative", overflowY: "auto",
       }}>
         <FilmGrain opacity={0.04} />
         <div onClick={onBack} style={{
