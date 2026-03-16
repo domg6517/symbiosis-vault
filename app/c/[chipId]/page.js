@@ -128,7 +128,7 @@ export default function ScanLinkPage() {
         </div>
       )}
 
-      {status === "already" && (
+      {(status === "already" || status === "taken") && (
         <div style={{ animation: "fadeUp 0.5s ease" }}>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Icon>
