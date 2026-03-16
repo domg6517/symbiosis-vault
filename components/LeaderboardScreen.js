@@ -34,11 +34,11 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
 
   const medal = (rank) =>
     rank === 1
-      ? "\u{1F947}"
+      ? "🥇"
       : rank === 2
-        ? "\u{1F948}"
+        ? "🥈"
         : rank === 3
-          ? "\u{1F949}"
+          ? "🥉"
           : rank;
 
   return (
@@ -72,7 +72,7 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
             cursor: "pointer",
             fontSize: 18,
           }}
-        >\u2190</div>
+        >←</div>
         <div
           style={{
             fontFamily: SERIF,
@@ -243,14 +243,14 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
                     letterSpacing: 1,
                   }}
                 >
-                  {entry.points || entry.totalCards} PTS \u00B7{" "}
+                  {entry.points || entry.totalCards} PTS ·{" "}
                   {entry.totalCards} CARD
                   {entry.totalCards !== 1 ? "S" : ""}
                 </div>
               </div>
               {/* Arrow */}
               <div style={{ fontSize: 16, color: C.textDim }}>
-                \u203A
+                ›
               </div>
             </div>
           ))}
