@@ -186,10 +186,10 @@ export default function SymbiosisVault() {
     <div
       style={{
         width: "100%",
-        minHeight: "100dvh",
+        height: "100dvh",
         background: "#000",
         fontFamily: SANS,
-        overflow: "auto",
+        overflow: "hidden",
         position: "relative",
         paddingTop: "env(safe-area-inset-top)",
         paddingBottom: "env(safe-area-inset-bottom)",
