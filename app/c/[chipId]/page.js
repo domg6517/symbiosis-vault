@@ -31,7 +31,7 @@ export default function ScanLinkPage() {
 
   // Auto-redirect to home after successful link
   useEffect(() => {
-    if (status === "success" || status === "already") {
+    if (status === "success" || status === "already" || status === "taken") {
       const timer = setTimeout(() => {
         if (typeof window !== "undefined") window.location.href = "/?from=scan";
       }, 2000);
@@ -75,7 +75,7 @@ export default function ScanLinkPage() {
       if (typeof window !== "undefined" && window.navigator?.vibrate) {
         window.navigator.vibrate([100, 50, 100]);
       } }
-      else if (res.status === 409) { setCardInfo(data.card); setStatus("already");
+      else if (res.status === 409) { setCardInfo(data.card); if (data.error && data.error.includes("another account")) { setStatus("taken"); } else { setStatus("already"); };
       // Light haptic for already collected
       if (typeof window !== "undefined" && window.navigator?.vibrate) {
         window.navigator.vibrate(50);
@@ -135,9 +135,9 @@ export default function ScanLinkPage() {
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
             </Icon>
           </div>
-          <div style={{ fontFamily: SERIF, fontSize: 22, color: C.cream, marginTop: 20 }}>Already Collected</div>
+          <div style={{ fontFamily: SERIF, fontSize: 22, color: C.cream, marginTop: 20 }}>{status === "taken" ? "Card Unavailable" : "Already Collected"}</div>
           {cardInfo && (<div style={{ fontFamily: SANS, fontSize: 14, color: C.accent, marginTop: 8 }}>{cardInfo.perspective} &middot; {cardInfo.rarity}</div>)}
-          <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6 }}>This card is already in your vault</div>
+          <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6 }}>{status === "taken" ? "This card is connected to another collector" : "This card is already in your vault"}</div>
           <div style={{ fontFamily: MONO, fontSize: 9, color: C.textDim, letterSpacing: 1, marginTop: 16, opacity: 0.4 }}>Redirecting to vault...</div>
           <Btn onClick={goToApp} label="OPEN VAULT" />
         </div>
