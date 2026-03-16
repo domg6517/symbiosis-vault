@@ -24,7 +24,7 @@ export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster =
         position: "relative", overflow: "hidden",
         boxShadow: "0 1px 3px rgba(0,0,0,0.3) inset",
       }}>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.3) 100%)" }} />
+        {!imageUrl && <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.3) 100%)" }} />}
         {imageUrl ? (
           <img src={imageUrl} alt={label} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0, zIndex: 1 }} />
         ) : (
@@ -112,7 +112,6 @@ export const SongRow = ({ song, ownedCards, onCardClick, isBooster = false, isLa
                 onClick={() => onCardClick(card)}
                 isBooster={isBooster}
                 imageUrl={card.imageUrl}
-                editionNum={pg.cards.length > 1 ? ci + 1 : null}
               />
             ));
           })}
