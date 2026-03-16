@@ -71,6 +71,21 @@ export async function POST(request) {
       );
     }
 
+    // Check if this card is already linked by ANY user
+    const { data: alreadyLinked } = await supabase
+      .from("user_cards")
+      .select("id, user_id")
+      .eq("card_template_id", cardTemplate.id)
+      .eq("linked", true)
+      .single();
+
+    if (alreadyLinked && alreadyLinked.user_id !== user.id) {
+      return NextResponse.json(
+        { error: "This card is already linked to another collector. It must be disconnected first." },
+        { status: 409 }
+      );
+    }
+
     // Check if already linked by this user
     const { data: existing } = await supabase
       .from("user_cards")
