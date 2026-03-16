@@ -75,7 +75,11 @@ export default function ScanLinkPage() {
       if (typeof window !== "undefined" && window.navigator?.vibrate) {
         window.navigator.vibrate([100, 50, 100]);
       } }
-      else if (res.status === 409) { setCardInfo(data.card); if (data.error && data.error.includes("another account")) { setStatus("taken"); } else { setStatus("already"); };
+      else if (res.status === 401) {
+        // Session expired — show login instead of error
+        if (typeof window !== "undefined") localStorage.setItem("pendingChipId", chipId);
+        setStatus("login");
+      } else if (res.status === 409) { setCardInfo(data.card); if (data.error && data.error.includes("another account")) { setStatus("taken"); } else { setStatus("already"); };
       // Light haptic for already collected
       if (typeof window !== "undefined" && window.navigator?.vibrate) {
         window.navigator.vibrate(50);
