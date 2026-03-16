@@ -11,7 +11,7 @@ function sanitizeHandle(val) {
   return val.replace(/^@/, "").replace(/[^a-zA-Z0-9_.-]/g, "").slice(0, 30);
 }
 
-export default function ProfileScreen({ ownedCards, onBack, session, onAccountDeleted }) {
+export default function ProfileScreen({ ownedCards, onBack, session, onAccountDeleted, refreshProfile }) {
   const [editing, setEditing] = useState(false);
   const [displayName, setDisplayName] = useState(
     session?.user?.user_metadata?.display_name || "Collector"
@@ -87,6 +87,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       twitter: twitter || null,
       tiktok: tiktok || null
     }, { onConflict: "id" });
+    if (refreshProfile) await refreshProfile();
     setSaving(false);
     setEditing(false);
   };
@@ -588,7 +589,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             <div style={{ marginBottom: 20 }}>
               <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>HOW DO I COLLECT?</div>
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6 }}>
-                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip Ã¢ÂÂ tap it with your phone and the card is yours. Build your collection before the window closes.
+                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip ÃÂ¢ÃÂÃÂ tap it with your phone and the card is yours. Build your collection before the window closes.
               </div>
             </div>
 
