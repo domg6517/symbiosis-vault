@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { supabase } from "../lib/supabase";
 import PrivacyPolicy from "./PrivacyPolicy";
+import TermsModal from "./TermsModal";
 // Strip anything that isn't a valid social media username character
 function sanitizeHandle(val) {
   if (!val) return "";
@@ -38,6 +39,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showFAQ, setShowFAQ] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
@@ -155,6 +157,13 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
         setDeleting(false);
         return;
       }
+      // Clear terms localStorage so re-signup shows terms again
+      try {
+        localStorage.removeItem("termsAccepted");
+        localStorage.removeItem("termsVersion");
+        localStorage.removeItem("termsAcceptedAt");
+      } catch (e) {}
+      await supabase.auth.signOut();
       if (onAccountDeleted) onAccountDeleted();
     } catch (err) {
       setDeleteError("Something went wrong. Please try again.");
@@ -391,7 +400,17 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
           </div>
           <div onClick={handleExportData} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)",  }}> <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> </div> <div style={{ flex: 1 }}> <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>"Request My Data"</div> <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Request a copy of your data</div> </div> <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div> </div>
-        <div onClick={() => setShowPrivacy(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)" }}> <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> </div> <div style={{ flex: 1 }}> <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Privacy Policy</div> <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>How we protect your data</div> </div> <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div> </div>
+        <div onClick={() => setShowTerms(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)" }}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Terms of Service</div>
+              <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Our terms and conditions</div>
+            </div>
+            <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
+          </div>
+          <div onClick={() => setShowPrivacy(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)" }}> <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> </div> <div style={{ flex: 1 }}> <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Privacy Policy</div> <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>How we protect your data</div> </div> <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div> </div>
         <div onClick={() => setShowDeleteConfirm(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid rgba(231,76,60,0.25)", background: "linear-gradient(180deg, rgba(162,160,180,0.04), rgba(231,76,60,0.04))" }}>
             <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid rgba(231,76,60,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg>
@@ -569,7 +588,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
             <div style={{ marginBottom: 20 }}>
               <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>HOW DO I COLLECT?</div>
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6 }}>
-                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip — tap it with your phone and the card is yours. Build your collection before the window closes.
+                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip â tap it with your phone and the card is yours. Build your collection before the window closes.
               </div>
             </div>
 
@@ -601,6 +620,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       )}
 
       <PrivacyPolicy visible={showPrivacy} onClose={() => setShowPrivacy(false)} />
+      {showTerms && <TermsModal onAccept={() => setShowTerms(false)} />}
       {showDeleteConfirm && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, backdropFilter: "blur(14px)" }} onClick={() => { if (!deleting) { setShowDeleteConfirm(false); setDeleteError(""); setDeleteConfirmText(""); } }}>
           <div onClick={(e) => e.stopPropagation()} style={{ ...skeuo, borderRadius: 22, padding: "28px 24px", maxWidth: 340, width: "100%", border: "1px solid rgba(231,76,60,0.3)", boxShadow: "0 0 60px rgba(0,0,0,0.6), 0 0 40px rgba(231,76,60,0.08)", textAlign: "center" }}>
