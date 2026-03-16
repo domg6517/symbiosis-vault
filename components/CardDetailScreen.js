@@ -41,7 +41,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
         <div onClick={onBack} style={{ cursor: "pointer", padding: 4 }}><ChevronLeft /></div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 9, letterSpacing: 2, color: isBooster ? C.booster : C.textDim, fontFamily: MONO }}>
-            {isBooster ? `BOOSTER ${song?.num}` : `SINGLE ${song?.num}`}
+            {isBooster ? `BOOSTER ${song?.num}` : `${(song?.title || "SINGLE").toUpperCase()} ${song?.num}`}
           </div>
         </div>
         <div style={{ ...skeuo.badge, padding: "4px 10px", display: "flex", alignItems: "center", gap: 4, fontSize: 9, fontFamily: MONO, color: C.teal, letterSpacing: 1 }}>
