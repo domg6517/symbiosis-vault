@@ -48,9 +48,11 @@ export function AuthProvider({ children }) {
     if (data) setProfile(data);
   }
 
-  async function refreshProfile() {
-    if (!supabase || !user) return;
-    await fetchProfile(user.id);
+  async function refreshProfile(userId) {
+    if (!supabase) return;
+    const id = userId || user?.id;
+    if (!id) return;
+    await fetchProfile(id);
   }
 
   async function signUp(email, password, username, dateOfBirth) {
