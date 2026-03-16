@@ -4,7 +4,7 @@ import { LockSmall } from "./Icons";
 import { PERSPECTIVES } from "./data";
 
 // ─── MINI PHOTO CARD (SKEUOMORPHIC) ──────────
-export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster = false }) => {
+export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster = false, imageUrl = null }) => {
   const label = perspective === "J&J" ? "J&J" : perspective.split(" ")[1];
   const isRare = rarity === "rare";
   return (
@@ -25,10 +25,11 @@ export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster =
         boxShadow: "0 1px 3px rgba(0,0,0,0.3) inset",
       }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.3) 100%)" }} />
-        <div style={{
-          fontSize: 12, fontWeight: 300, color: C.cream,
-          fontFamily: SERIF, zIndex: 1, letterSpacing: 1,
-        }}>{label}</div>
+        {imageUrl ? (
+          <img src={imageUrl} alt={label} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0, zIndex: 1 }} />
+        ) : (
+          <div style={{ fontSize: 12, fontWeight: 300, color: C.cream, fontFamily: SERIF, zIndex: 1, letterSpacing: 1 }}>{label}</div>
+        )}
         {isRare && (
           <div style={{ position: "absolute", top: 2, right: 3, fontSize: 6, color: C.purple, fontFamily: MONO }}>R</div>
         )}
@@ -110,6 +111,7 @@ export const SongRow = ({ song, ownedCards, onCardClick, isBooster = false, isLa
                 count={ci === 0 ? pg.cards.length : 0}
                 onClick={() => onCardClick(card)}
                 isBooster={isBooster}
+                imageUrl={card.imageUrl}
               />
             ));
           })}
