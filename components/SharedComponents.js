@@ -41,15 +41,6 @@ export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster =
         textAlign: "center", paddingTop: 2,
         fontSize: 6, fontFamily: SERIF, fontStyle: "italic", color: "#5A5550",
       }}>{label}</div>
-      {count > 1 && (
-        <div style={{
-          position: "absolute", top: -4, right: -4,
-          width: 16, height: 16, borderRadius: "50%",
-          ...skeuo.btnGold,
-          color: C.bg, fontSize: 9, fontFamily: MONO, fontWeight: 700,
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>{count}</div>
-      )}
     </div>
   );
 };
