@@ -48,6 +48,11 @@ export function AuthProvider({ children }) {
     if (data) setProfile(data);
   }
 
+  async function refreshProfile() {
+    if (!supabase || !user) return;
+    await fetchProfile(user.id);
+  }
+
   async function signUp(email, password, username, dateOfBirth) {
     if (!supabase) return { error: { message: "Supabase not configured" } };
 
@@ -110,6 +115,7 @@ export function AuthProvider({ children }) {
         signOut,
         isAuthenticated: !!user,
         isSupabaseConfigured,
+            refreshProfile,
       }}
     >
       {children}
