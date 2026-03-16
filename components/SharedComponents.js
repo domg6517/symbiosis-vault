@@ -4,7 +4,7 @@ import { LockSmall } from "./Icons";
 import { PERSPECTIVES } from "./data";
 
 // ─── MINI PHOTO CARD (SKEUOMORPHIC) ──────────
-export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster = false, imageUrl = null }) => {
+export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster = false, imageUrl = null, editionNum = null }) => {
   const label = perspective === "J&J" ? "J&J" : perspective.split(" ")[1];
   const isRare = rarity === "rare";
   return (
@@ -112,6 +112,7 @@ export const SongRow = ({ song, ownedCards, onCardClick, isBooster = false, isLa
                 onClick={() => onCardClick(card)}
                 isBooster={isBooster}
                 imageUrl={card.imageUrl}
+                editionNum={pg.cards.length > 1 ? ci + 1 : null}
               />
             ));
           })}
