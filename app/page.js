@@ -22,7 +22,7 @@ export default function SymbiosisVault() {
   const [ownedCards, setOwnedCards] = useState([]);
   const [termsAccepted, setTermsAccepted] = useState(true);
   const [isOffline, setIsOffline] = useState(false);
-  const { session, loading, isAuthenticated, isSupabaseConfigured } = useAuth();
+  const { session, loading, isAuthenticated, isSupabaseConfigured, refreshProfile } = useAuth();
 
   // Track whether we're navigating via popstate to avoid double pushState
   const isPopNavRef = useRef(false);
@@ -288,6 +288,7 @@ export default function SymbiosisVault() {
           ownedCards={ownedCards}
           onBack={() => navigateTo("collection")}
           session={session}
+          refreshProfile={refreshProfile}
           onAccountDeleted={() => navigateTo("splash")}
         />
       )}
