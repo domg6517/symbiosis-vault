@@ -76,7 +76,7 @@ export default function ScanLinkPage() {
         window.navigator.vibrate([100, 50, 100]);
       } }
       else if (res.status === 401) {
-        // Session expired — show login instead of error
+        // Session expired â show login instead of error
         if (typeof window !== "undefined") localStorage.setItem("pendingChipId", chipId);
         setStatus("login");
       } else if (res.status === 409) { setCardInfo(data.card); if (data.error && data.error.includes("another account")) { setStatus("taken"); } else { setStatus("already"); };
@@ -108,7 +108,7 @@ export default function ScanLinkPage() {
   );
 
   return (
-    <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: `radial-gradient(ellipse at 50% 30%, #1A1816 0%, ${C.bg} 70%)`, fontFamily: SANS, textAlign: "center", padding: "0 32px" }}>
+    <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflowY: "auto", background: `radial-gradient(ellipse at 50% 30%, #1A1816 0%, ${C.bg} 70%)`, fontFamily: SANS, textAlign: "center", padding: "0 32px" }}>
 
       {status === "loading" && (<><Spinner /><div style={{ color: C.textSec, fontFamily: MONO, fontSize: 11, letterSpacing: 2, marginTop: 20 }}>READING CARD...</div></>)}
 
