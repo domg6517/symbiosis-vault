@@ -32,9 +32,11 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [deleteError, setDeleteError] = useState("");
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [isDirty, setIsDirty] = useState(false);
+  const [dbg, setDbg] = useState("...");
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
   const pendingNavRef = useRef(null);
 
+  const _ds = { position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999, background: "rgba(0,0,0,0.95)", color: "#0f0", fontFamily: "monospace", fontSize: 9, padding: 6, maxHeight: 50, overflow: "auto", wordBreak: "break-all" };
   const linked = ownedCards.filter((c) => c.linked).length;
 
   // Fetch profile from DB on mount (ensures socials persist across reloads)
@@ -44,8 +46,8 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       try {
         const url = "/api/profile/get?userId=" + session.user.id + "&t=" + Date.now();
         const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) return;
-        const data = await res.json();
+        if (!res.ok) { setDbg("ERR:" + res.status); return; }
+        const data = await res.json(); setDbg(JSON.stringify(data));
         setDebugInfo(JSON.stringify(data));
         if (data.profile) {
           setDisplayName(data.profile.username || "Collector");
@@ -108,7 +110,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       });
       if (res.status === 409) { setUsernameError("Username already taken"); setSaving(false); return; }
       if (!res.ok) { const err = await res.json(); setUsernameError(err.error || "Failed to save"); setSaving(false); return; }
-      if (refreshProfile) await refreshProfile(session.user.id);
+      setDbg("SAVED OK"); if (refreshProfile) await refreshProfile(session.user.id);
       setIsDirty(false);
       setSaving(false);
       setEditing(false);
@@ -187,6 +189,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
 
   return (
     <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", background: C.bg, color: C.text, padding: "0 0 20px" }}>
+        <div style={_ds}>{dbg}</div>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", padding: "14px 16px 6px", paddingTop: "calc(env(safe-area-inset-top, 0px) + 14px)", gap: 12 }}>
         <div onClick={() => safeNavigate(onBack)} style={{ ...skeuo, width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 18 }}>{String.fromCodePoint(0x2190)}</div>
