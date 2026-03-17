@@ -67,42 +67,29 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
     setUsernameError("");
     var trimmed = displayName.trim();
     if (!trimmed) { setSaving(false); return; }
-
-    try {
-      // Use server-side API for save (bypasses RLS for uniqueness check + profile update)
-      const res = await fetch("/api/profile/update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: session.user.id,
-          username: trimmed,
-          email: session.user.email,
-          instagram: instagram || null,
-          twitter: twitter || null,
-          tiktok: tiktok || null,
-        }),
-      });
-
-      if (res.status === 409) {
-        setUsernameError("Username already taken");
-        setSaving(false);
-        return;
-      }
-
-      if (!res.ok) {
-        const err = await res.json();
-        setUsernameError(err.error || "Failed to save");
-        setSaving(false);
-        return;
-      }
-
-      if (refreshProfile) await refreshProfile(session.user.id);
+    var { data: existing } = await supabase
+      .from("profiles")
+      .select("id")
+      .ilike("username", trimmed)
+      .neq("id", session.user.id)
+      .maybeSingle();
+    if (existing) {
+      setUsernameError("Username already taken");
       setSaving(false);
-      setEditing(false);
-    } catch (err) {
-      setUsernameError("Network error, try again");
-      setSaving(false);
+      return;
     }
+    await supabase.auth.updateUser({ data: { display_name: trimmed, instagram, twitter, tiktok } });
+    await supabase.from("profiles").upsert({
+      id: session.user.id,
+      username: trimmed,
+      email: session.user.email,
+      instagram: instagram || null,
+      twitter: twitter || null,
+      tiktok: tiktok || null
+    }, { onConflict: "id" });
+    if (refreshProfile) await refreshProfile();
+    setSaving(false);
+    setEditing(false);
   };
 
   const handlePfpChange = (e) => {
@@ -595,14 +582,14 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       {showFAQ && (
         <div style={{ position: "fixed", inset: 0, zIndex: 9999 }}>
           <div onClick={() => setShowFAQ(false)} style={{ position: "absolute", inset: 0, background: "#000" }} />
-          <div style={{ position: "relative", width: "100%", height: "100%", overflow: "auto", background: C.bg, padding: "28px 22px" }}>
+          <div style={{ position: "relative", width: "100%", height: "100%", overflow: "auto", paddingTop: "env(safe-area-inset-top, 0px)", background: C.bg, padding: "28px 22px" }}>
             <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>FAQ</div>
             <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.textDim, textAlign: "center", marginBottom: 20 }}>FREQUENTLY ASKED QUESTIONS</div>
 
             <div style={{ marginBottom: 20 }}>
               <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>HOW DO I COLLECT?</div>
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6 }}>
-                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ tap it with your phone and the card is yours. Build your collection before the window closes.
+                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip — tap it with your phone and the card is yours. Build your collection before the window closes.
               </div>
             </div>
 
