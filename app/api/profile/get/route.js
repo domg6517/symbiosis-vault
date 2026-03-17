@@ -21,7 +21,7 @@ export async function GET(request) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+      return NextResponse.json({ error: "Profile not found", detail: error.message, code: error.code, hint: error.hint || "" }, { status: 404 });
     }
 
     return NextResponse.json({ profile: data });
