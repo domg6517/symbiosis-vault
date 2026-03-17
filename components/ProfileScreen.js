@@ -32,6 +32,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [deleteError, setDeleteError] = useState("");
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [isDirty, setIsDirty] = useState(false);
+  const [apiProfile, setApiProfile] = useState(null);
   const [dbg, setDbg] = useState("...");
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
   const pendingNavRef = useRef(null);
@@ -47,7 +48,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
         const url = "/api/profile/get?userId=" + session.user.id + "&t=" + Date.now();
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) { setDbg("ERR:" + res.status); return; }
-        const data = await res.json(); setDbg(JSON.stringify(data));
+        const data = await res.json(); setDbg(JSON.stringify(data)); if (data.profile) setApiProfile(data.profile);
         setDebugInfo(JSON.stringify(data));
         if (data.profile) {
           setDisplayName(data.profile.username || "Collector");
@@ -189,13 +190,13 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
 
   return (
     <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", background: C.bg, color: C.text, padding: "0 0 20px" }}>
-        <div style={_ds}>API:{dbg} | STATE ig:{instagram} tw:{twitter} tt:{tiktok}</div>
+        <div style={_ds}>ap:{apiProfile?.instagram || "null"} | ig:{instagram} | editing:{String(editing)}</div>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", padding: "14px 16px 6px", paddingTop: "calc(env(safe-area-inset-top, 0px) + 14px)", gap: 12 }}>
         <div onClick={() => safeNavigate(onBack)} style={{ ...skeuo, width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 18 }}>{String.fromCodePoint(0x2190)}</div>
         <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700 }}>Profile</div>
         <div style={{ flex: 1 }} />
-        <div onClick={() => editing ? handleSave() : setEditing(true)} style={{ ...skeuo, padding: "8px 16px", borderRadius: 10, fontFamily: MONO, fontSize: 11, letterSpacing: 2, cursor: "pointer", color: C.accent }}>{saving ? "SAVING..." : editing ? "SAVE" : "EDIT"}</div>
+        <div onClick={() => editing ? handleSave() : setEditing(true); if (apiProfile) { setInstagram(apiProfile.instagram || ""); setTwitter(apiProfile.twitter || ""); setTiktok(apiProfile.tiktok || ""); }} style={{ ...skeuo, padding: "8px 16px", borderRadius: 10, fontFamily: MONO, fontSize: 11, letterSpacing: 2, cursor: "pointer", color: C.accent }}>{saving ? "SAVING..." : editing ? "SAVE" : "EDIT"}</div>
       </div>
 
       {/* PFP + Name */}
@@ -247,9 +248,9 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       <div style={{ padding: "0 16px" }}>
         <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 6 }}>SOCIAL LINKS</div>
         {[
-          { icon: "\u{1F4F7}", label: "Instagram", value: instagram, set: setInstagram, prefix: "@", url: "https://instagram.com/" },
-          { icon: "\u{1D54F}", label: "X / Twitter", value: twitter, set: setTwitter, prefix: "@", url: "https://x.com/" },
-          { icon: "\u{1F3B5}", label: "TikTok", value: tiktok, set: setTiktok, prefix: "@", url: "https://tiktok.com/@" },
+          { icon: "\u{1F4F7}", label: "Instagram", value: editing ? instagram : (apiProfile?.instagram || ""), set: setInstagram, prefix: "@", url: "https://instagram.com/" },
+          { icon: "\u{1D54F}", label: "X / Twitter", value: editing ? twitter : (apiProfile?.twitter || ""), set: setTwitter, prefix: "@", url: "https://x.com/" },
+          { icon: "\u{1F3B5}", label: "TikTok", value: editing ? tiktok : (apiProfile?.tiktok || ""), set: setTiktok, prefix: "@", url: "https://tiktok.com/@" },
         ].map((s) => (
           <div key={s.label} style={{ ...skeuo, borderRadius: 12, padding: "9px 14px", marginBottom: 5, display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ fontSize: 16 }}>{s.icon}</div>
