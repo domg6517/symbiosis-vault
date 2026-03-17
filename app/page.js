@@ -13,6 +13,9 @@ import ProfileScreen from "../components/ProfileScreen";
 import LeaderboardScreen from "../components/LeaderboardScreen";
 import CollectorProfileScreen from "../components/CollectorProfileScreen";
 import TermsModal from "../components/TermsModal";
+import FAQScreen from "../components/FAQScreen";
+import PrivacyScreen from "../components/PrivacyScreen";
+import TermsScreen from "../components/TermsScreen";
 
 export default function SymbiosisVault() {
   const [screen, setScreen] = useState("loading");
@@ -290,6 +293,9 @@ export default function SymbiosisVault() {
           session={session}
           refreshProfile={refreshProfile}
           onAccountDeleted={() => navigateTo("splash")}
+          onFAQ={() => navigateTo("faq")}
+          onPrivacy={() => navigateTo("privacy")}
+          onTerms={() => navigateTo("terms")}
         />
       )}
       {screen === "leaderboard" && (
@@ -300,7 +306,13 @@ export default function SymbiosisVault() {
           }}
         />
       )}
-      {screen === "collectorProfile" && selectedCollector && (
+      {screen === "faq" ? (
+        <FAQScreen onBack={() => navigateTo("profile")} />
+      ) : screen === "privacy" ? (
+        <PrivacyScreen onBack={() => navigateTo("profile")} />
+      ) : screen === "terms" ? (
+        <TermsScreen onBack={() => navigateTo("profile")} />
+      ) : screen === "collectorProfile" && selectedCollector && (
         <CollectorProfileScreen
           collector={selectedCollector}
           onBack={() => navigateTo(prevScreen)}
