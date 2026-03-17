@@ -51,9 +51,14 @@ export async function POST(request) {
       return NextResponse.json({ error: "Failed to update profile" }, { status: 500 });
     }
 
-    // Also update auth user metadata
+    // Also update auth user metadata — include socials so session stays in sync
     const { error: authError } = await supabase.auth.admin.updateUserById(userId, {
-      user_metadata: { display_name: trimmed }
+      user_metadata: {
+        display_name: trimmed,
+        instagram: instagram || null,
+        twitter: twitter || null,
+        tiktok: tiktok || null,
+      }
     });
 
     return NextResponse.json({ success: true, username: trimmed });
