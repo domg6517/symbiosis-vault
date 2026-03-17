@@ -39,17 +39,18 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function fetchProfile(userId) {
-    if (!supabase) return;
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    if (data) setProfile(data);
+    if (!userId) return;
+    try {
+      const res = await fetch("/api/profile/get?userId=" + userId + "&t=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.profile) setProfile(data.profile);
+    } catch (e) {
+      console.error("Profile fetch error:", e);
+    }
   }
 
   async function refreshProfile(userId) {
-    if (!supabase) return;
     const id = userId || user?.id;
     if (!id) return;
     await fetchProfile(id);
