@@ -106,7 +106,6 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           tiktok: tiktok || null,
         }),
       });
-      const saveData = await res.clone().json(); setDebugInfo("SAVE: " + JSON.stringify(saveData));
       if (res.status === 409) { setUsernameError("Username already taken"); setSaving(false); return; }
       if (!res.ok) { const err = await res.json(); setUsernameError(err.error || "Failed to save"); setSaving(false); return; }
       if (refreshProfile) await refreshProfile(session.user.id);
