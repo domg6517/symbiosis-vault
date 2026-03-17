@@ -42,7 +42,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
     if (!session?.user?.id) return;
     async function loadProfile() {
       try {
-        const res = await fetch("/api/profile/get?userId=" + session.user.id);
+        const res = await fetch("/api/profile/get?userId=" + session.user.id + "&t=" + Date.now(), { cache: "no-store" });
         if (!res.ok) return;
         const data = await res.json();
         if (data.profile) {
