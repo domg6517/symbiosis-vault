@@ -13,15 +13,9 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [displayName, setDisplayName] = useState(
     session?.user?.user_metadata?.display_name || "Collector"
   );
-  const [instagram, setInstagram] = useState(
-    session?.user?.user_metadata?.instagram || ""
-  );
-  const [twitter, setTwitter] = useState(
-    session?.user?.user_metadata?.twitter || ""
-  );
-  const [tiktok, setTiktok] = useState(
-    session?.user?.user_metadata?.tiktok || ""
-  );
+  const [instagram, setInstagram] = useState("");
+  const [twitter, setTwitter] = useState("");
+  const [tiktok, setTiktok] = useState("");
   const fileRef = useRef(null);
   const [pfpUrl, setPfpUrl] = useState(
     session?.user?.user_metadata?.pfp_url || ""
@@ -52,11 +46,11 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
         if (!res.ok) return;
         const data = await res.json();
         if (data.profile) {
-          if (data.profile.username) setDisplayName(data.profile.username);
-          if (data.profile.instagram) setInstagram(data.profile.instagram);
-          if (data.profile.twitter) setTwitter(data.profile.twitter);
-          if (data.profile.tiktok) setTiktok(data.profile.tiktok);
-          if (data.profile.pfp_url) setPfpUrl(data.profile.pfp_url);
+          setDisplayName(data.profile.username || "Collector");
+          setInstagram(data.profile.instagram || "");
+          setTwitter(data.profile.twitter || "");
+          setTiktok(data.profile.tiktok || "");
+          setPfpUrl(data.profile.pfp_url || "");
         }
       } catch (e) {
         console.error("Profile fetch error:", e);
