@@ -232,7 +232,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
 
       {/* Social Links */}
       <div style={{ padding: "0 16px" }}>
-        <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 6 }}>SOCIAL LINKS</div>
+        <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 6 }}>SOCIAL LINKS " + (ctxProfile ? "\u2713" : "\u2717") + "</div>
         {[
           { icon: "\u{1F4F7}", label: "Instagram", value: editing ? instagram : (ctxProfile && ctxProfile.instagram || ""), set: setInstagram, prefix: "@", url: "https://instagram.com/" },
           { icon: "\u{1D54F}", label: "X / Twitter", value: editing ? twitter : (ctxProfile && ctxProfile.twitter || ""), set: setTwitter, prefix: "@", url: "https://x.com/" },
