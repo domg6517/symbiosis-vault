@@ -16,7 +16,7 @@ export async function GET(request) {
 
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, username, email, instagram, twitter, tiktok, pfp_url")
+      .select("id, username, email, instagram, twitter, tiktok")
       .eq("id", userId)
       .single();
 
