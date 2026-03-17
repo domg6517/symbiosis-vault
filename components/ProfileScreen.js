@@ -580,42 +580,74 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       )}
 
       {showFAQ && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 9999 }}>
-          <div onClick={() => setShowFAQ(false)} style={{ position: "absolute", inset: 0, background: "#000" }} />
-          <div style={{ position: "relative", width: "100%", height: "100%", overflow: "auto", paddingTop: "env(safe-area-inset-top, 0px)", background: C.bg, padding: "28px 22px" }}>
-            <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>FAQ</div>
-            <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.textDim, textAlign: "center", marginBottom: 20 }}>FREQUENTLY ASKED QUESTIONS</div>
+        <div
+          onClick={() => setShowFAQ(false)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.85)",
+            zIndex: 10000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 20,
+            paddingTop: "calc(env(safe-area-inset-top, 0px) + 20px)",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: C.bg,
+              border: "1.5px solid " + C.accent + "55",
+              borderRadius: 14,
+              maxWidth: 600,
+              width: "100%",
+              maxHeight: "88vh",
+              overflow: "auto",
+              padding: "32px 24px 24px",
+            }}
+          >
+            <div style={{ fontFamily: SERIF, fontSize: 24, color: C.cream, textAlign: "center", marginBottom: 4 }}>FAQ</div>
+            <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.textDim, textAlign: "center", marginBottom: 28 }}>FREQUENTLY ASKED QUESTIONS</div>
 
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>HOW DO I COLLECT?</div>
-              <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6 }}>
-                During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip — tap it with your phone and the card is yours. Build your collection before the window closes.
-              </div>
+            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.textDim, marginBottom: 10 }}>HOW DO I COLLECT?</div>
+            <div style={{ fontFamily: SANS, fontSize: 14, color: C.textSec, lineHeight: 1.6, marginBottom: 20 }}>
+              During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip \u2014 tap it with your phone and the card is yours. Build your collection before the window closes.
             </div>
+            <div style={{ borderBottom: "1px solid " + C.textDim + "22", marginBottom: 20 }} />
 
-            <div style={{ height: 1, background: "rgba(168,168,184,0.1)", margin: "0 0 20px" }} />
-
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>LEADERBOARD SCORING</div>
-              <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6 }}>
-                Every card you collect earns points toward your rank. Common cards are worth 1 point, Rare cards earn 2 points, and Ultra Rares are worth 5 points. The more you collect, the higher you climb.
-              </div>
+            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.textDim, marginBottom: 10 }}>LEADERBOARD SCORING</div>
+            <div style={{ fontFamily: SANS, fontSize: 14, color: C.textSec, lineHeight: 1.6, marginBottom: 20 }}>
+              Every card you collect earns points toward your rank. Common cards are worth 1 point, Rare cards earn 2 points, and Ultra Rares are worth 5 points. The more you collect, the higher you climb.
             </div>
+            <div style={{ borderBottom: "1px solid " + C.textDim + "22", marginBottom: 20 }} />
 
-            <div style={{ height: 1, background: "rgba(168,168,184,0.1)", margin: "0 0 20px" }} />
-
-            <div style={{ marginBottom: 24 }}>
-              <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.accent, marginBottom: 8 }}>STILL HAVE QUESTIONS?</div>
-              <div style={{ fontFamily: SANS, fontSize: 13, color: C.textSec, lineHeight: 1.6, marginBottom: 12 }}>
-                We're here to help. Reach out and we'll get back to you.
-              </div>
-              <div onClick={() => window.open("mailto:info@jackandjack.store")} style={{ ...skeuo, borderRadius: 12, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer", border: "1px solid " + C.accent + "33", background: "linear-gradient(145deg, rgba(162,160,180,0.08), rgba(162,160,180,0.02))" }}>
-                <span style={{ fontSize: 14 }}>{String.fromCodePoint(0x2709)}</span>
-                <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: 1, color: C.accent, fontWeight: 600 }}>info@jackandjack.store</span>
-              </div>
+            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.textDim, marginBottom: 10 }}>STILL HAVE QUESTIONS?</div>
+            <div style={{ fontFamily: SANS, fontSize: 14, color: C.textSec, lineHeight: 1.6, marginBottom: 16 }}>
+              We're here to help. Reach out and we'll get back to you.
             </div>
+            <a href="mailto:info@jackandjack.store" style={{
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+              padding: "14px", ...skeuo.card, textDecoration: "none",
+              color: C.textSec, fontFamily: MONO, fontSize: 12, letterSpacing: 1,
+              marginBottom: 20,
+            }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.textDim} strokeWidth="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
+              info@jackandjack.store
+            </a>
 
-            <button onClick={() => setShowFAQ(false)} style={{ width: "100%", padding: "13px", ...skeuo, borderRadius: 12, border: "1px solid rgba(168,168,184,0.15)", color: C.cream, fontSize: 11, fontFamily: MONO, fontWeight: 600, letterSpacing: 3, cursor: "pointer", background: "transparent" }}>CLOSE</button>
+            <div
+              onClick={() => setShowFAQ(false)}
+              style={{
+                ...skeuo.card, padding: "14px",
+                textAlign: "center", cursor: "pointer",
+                fontFamily: MONO, fontSize: 11, letterSpacing: 3,
+                color: C.textDim,
+              }}
+            >CLOSE</div>
           </div>
         </div>
       )}
