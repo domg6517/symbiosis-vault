@@ -32,8 +32,11 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [deleteError, setDeleteError] = useState("");
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [isDirty, setIsDirty] = useState(false);
+  const [debugInfo, setDebugInfo] = useState("loading...");
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
   const pendingNavRef = useRef(null);
+
+  const debugStyle = { position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999, background: "rgba(0,0,0,0.9)", color: "#0f0", fontFamily: "monospace", fontSize: 10, padding: 8, maxHeight: 60, overflow: "auto", wordBreak: "break-all" };
 
   const linked = ownedCards.filter((c) => c.linked).length;
 
@@ -42,9 +45,11 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
     if (!session?.user?.id) return;
     async function loadProfile() {
       try {
-        const res = await fetch("/api/profile/get?userId=" + session.user.id + "&t=" + Date.now(), { cache: "no-store" });
-        if (!res.ok) return;
+        const url = "/api/profile/get?userId=" + session.user.id + "&t=" + Date.now();
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) { setDebugInfo("API error: " + res.status); return; }
         const data = await res.json();
+        setDebugInfo(JSON.stringify(data));
         if (data.profile) {
           setDisplayName(data.profile.username || "Collector");
           setInstagram(data.profile.instagram || "");
@@ -105,6 +110,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           tiktok: tiktok || null,
         }),
       });
+      const saveData = await res.clone().json(); setDebugInfo("SAVE: " + JSON.stringify(saveData));
       if (res.status === 409) { setUsernameError("Username already taken"); setSaving(false); return; }
       if (!res.ok) { const err = await res.json(); setUsernameError(err.error || "Failed to save"); setSaving(false); return; }
       if (refreshProfile) await refreshProfile(session.user.id);
@@ -186,6 +192,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
 
   return (
     <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", background: C.bg, color: C.text, padding: "0 0 20px" }}>
+        <div style={debugStyle}>DEBUG: {debugInfo}</div>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", padding: "14px 16px 6px", paddingTop: "calc(env(safe-area-inset-top, 0px) + 14px)", gap: 12 }}>
         <div onClick={() => safeNavigate(onBack)} style={{ ...skeuo, width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 18 }}>{String.fromCodePoint(0x2190)}</div>
