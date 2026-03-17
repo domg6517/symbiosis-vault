@@ -47,7 +47,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       try {
         const url = "/api/profile/get?userId=" + session.user.id + "&t=" + Date.now();
         const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) { setDebugInfo("API error: " + res.status); return; }
+        if (!res.ok) { const errBody = await res.json().catch(() => ({})); setDebugInfo("API " + res.status + ": " + JSON.stringify(errBody)); return; }
         const data = await res.json();
         setDebugInfo(JSON.stringify(data));
         if (data.profile) {
