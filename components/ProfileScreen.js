@@ -32,11 +32,8 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [deleteError, setDeleteError] = useState("");
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [isDirty, setIsDirty] = useState(false);
-  const [debugInfo, setDebugInfo] = useState("loading...");
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
   const pendingNavRef = useRef(null);
-
-  const debugStyle = { position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999, background: "rgba(0,0,0,0.9)", color: "#0f0", fontFamily: "monospace", fontSize: 10, padding: 8, maxHeight: 60, overflow: "auto", wordBreak: "break-all" };
 
   const linked = ownedCards.filter((c) => c.linked).length;
 
@@ -47,7 +44,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       try {
         const url = "/api/profile/get?userId=" + session.user.id + "&t=" + Date.now();
         const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) { const errBody = await res.json().catch(() => ({})); setDebugInfo("API " + res.status + ": " + JSON.stringify(errBody)); return; }
+        if (!res.ok) return;
         const data = await res.json();
         setDebugInfo(JSON.stringify(data));
         if (data.profile) {
@@ -55,7 +52,6 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           setInstagram(data.profile.instagram || "");
           setTwitter(data.profile.twitter || "");
           setTiktok(data.profile.tiktok || "");
-          setPfpUrl(data.profile.pfp_url || "");
         }
       } catch (e) {
         console.error("Profile fetch error:", e);
@@ -192,7 +188,6 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
 
   return (
     <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, overflowY: "auto", WebkitOverflowScrolling: "touch", background: C.bg, color: C.text, padding: "0 0 20px" }}>
-        <div style={debugStyle}>DEBUG: {debugInfo}</div>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", padding: "14px 16px 6px", paddingTop: "calc(env(safe-area-inset-top, 0px) + 14px)", gap: 12 }}>
         <div onClick={() => safeNavigate(onBack)} style={{ ...skeuo, width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 18 }}>{String.fromCodePoint(0x2190)}</div>
