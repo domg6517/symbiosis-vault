@@ -45,6 +45,7 @@ export default function TermsModal({ onAccept }) {
         alignItems: "center",
         justifyContent: "center",
         padding: 20,
+        paddingTop: "calc(env(safe-area-inset-top, 0px) + 20px)",
         fontFamily: SANS,
       }}
     >
