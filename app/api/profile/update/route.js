@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "../../../../lib/supabase";
 import { rateLimit, getClientIP } from "../../../../lib/rateLimit";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(request) {
   const ip = getClientIP(request);
   const { allowed } = rateLimit("profile-update:" + ip, 10, 60000);
@@ -51,7 +53,7 @@ export async function POST(request) {
       return NextResponse.json({ error: "Failed to update profile" }, { status: 500 });
     }
 
-    // Also update auth user metadata — include socials so session stays in sync
+    // Also update auth user metadata â include socials so session stays in sync
     const { error: authError } = await supabase.auth.admin.updateUserById(userId, {
       user_metadata: {
         display_name: trimmed,
