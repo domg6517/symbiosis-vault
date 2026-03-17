@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { supabase } from "../lib/supabase";
+import { useAuth } from "./AuthContext";
 
 function sanitizeHandle(val) {
   if (!val) return "";
@@ -9,6 +10,7 @@ function sanitizeHandle(val) {
 }
 
 export default function ProfileScreen({ ownedCards, onBack, session, onAccountDeleted, refreshProfile, onFAQ, onPrivacy, onTerms }) {
+  const { profile: ctxProfile } = useAuth();
   const [editing, setEditing] = useState(false);
   const [displayName, setDisplayName] = useState(
     session?.user?.user_metadata?.display_name || "Collector"
@@ -39,32 +41,14 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [isDirty, setIsDirty] = useState(false);
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
-  const [apiProfile, setApiProfile] = useState(null);
   const pendingNavRef = useRef(null);
 
   const linked = ownedCards.filter((c) => c.linked).length;
 
-  // Fetch profile from DB on mount (ensures socials persist across reloads)
+  // Sync displayName from context profile
   useEffect(() => {
-    if (!session?.user?.id) return;
-    async function loadProfile() {
-      try {
-        const res = await fetch("/api/profile/get?userId=" + session.user.id + "&t=" + Date.now(), { cache: "no-store" });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (data.profile) {
-          setApiProfile(data.profile);
-          setDisplayName(data.profile.username || "Collector");
-          setInstagram(data.profile.instagram || "");
-          setTwitter(data.profile.twitter || "");
-          setTiktok(data.profile.tiktok || "");
-        }
-      } catch (e) {
-        console.error("Profile fetch error:", e);
-      }
-    }
-    loadProfile();
-  }, [session]);
+    if (ctxProfile && ctxProfile.username) setDisplayName(ctxProfile.username);
+  }, [ctxProfile]);
 
   // Fetch user badges
   useEffect(() => {
@@ -115,7 +99,6 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       if (res.status === 409) { setUsernameError("Username already taken"); setSaving(false); return; }
       if (!res.ok) { const err = await res.json(); setUsernameError(err.error || "Failed to save"); setSaving(false); return; }
       if (refreshProfile) await refreshProfile(session.user.id);
-      setApiProfile({ username: trimmed, instagram: instagram || null, twitter: twitter || null, tiktok: tiktok || null });
       setIsDirty(false);
       setSaving(false);
       setEditing(false);
@@ -199,7 +182,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
         <div onClick={() => safeNavigate(onBack)} style={{ ...skeuo, width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 18 }}>{String.fromCodePoint(0x2190)}</div>
         <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700 }}>Profile</div>
         <div style={{ flex: 1 }} />
-        <div onClick={() => editing ? handleSave() : (() => { if (apiProfile) { setInstagram(apiProfile.instagram || ""); setTwitter(apiProfile.twitter || ""); setTiktok(apiProfile.tiktok || ""); } setEditing(true); })()} style={{ ...skeuo, padding: "8px 16px", borderRadius: 10, fontFamily: MONO, fontSize: 11, letterSpacing: 2, cursor: "pointer", color: C.accent }}>{saving ? "SAVING..." : editing ? "SAVE" : "EDIT"}</div>
+        <div onClick={() => editing ? handleSave() : (() => { if (ctxProfile) { setInstagram(ctxProfile.instagram || ""); setTwitter(ctxProfile.twitter || ""); setTiktok(ctxProfile.tiktok || ""); } setEditing(true); })()} style={{ ...skeuo, padding: "8px 16px", borderRadius: 10, fontFamily: MONO, fontSize: 11, letterSpacing: 2, cursor: "pointer", color: C.accent }}>{saving ? "SAVING..." : editing ? "SAVE" : "EDIT"}</div>
       </div>
 
       {/* PFP + Name */}
@@ -251,9 +234,9 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       <div style={{ padding: "0 16px" }}>
         <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 6 }}>SOCIAL LINKS</div>
         {[
-          { icon: "\u{1F4F7}", label: "Instagram", value: editing ? instagram : (apiProfile && apiProfile.instagram ? apiProfile.instagram : ""), set: setInstagram, prefix: "@", url: "https://instagram.com/" },
-          { icon: "\u{1D54F}", label: "X / Twitter", value: editing ? twitter : (apiProfile && apiProfile.twitter ? apiProfile.twitter : ""), set: setTwitter, prefix: "@", url: "https://x.com/" },
-          { icon: "\u{1F3B5}", label: "TikTok", value: editing ? tiktok : (apiProfile && apiProfile.tiktok ? apiProfile.tiktok : ""), set: setTiktok, prefix: "@", url: "https://tiktok.com/@" },
+          { icon: "\u{1F4F7}", label: "Instagram", value: editing ? instagram : (ctxProfile && ctxProfile.instagram || ""), set: setInstagram, prefix: "@", url: "https://instagram.com/" },
+          { icon: "\u{1D54F}", label: "X / Twitter", value: editing ? twitter : (ctxProfile && ctxProfile.twitter || ""), set: setTwitter, prefix: "@", url: "https://x.com/" },
+          { icon: "\u{1F3B5}", label: "TikTok", value: editing ? tiktok : (ctxProfile && ctxProfile.tiktok || ""), set: setTiktok, prefix: "@", url: "https://tiktok.com/@" },
         ].map((s) => (
           <div key={s.label} style={{ ...skeuo, borderRadius: 12, padding: "9px 14px", marginBottom: 5, display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ fontSize: 16 }}>{s.icon}</div>
