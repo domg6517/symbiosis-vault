@@ -13,9 +13,15 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [displayName, setDisplayName] = useState(
     session?.user?.user_metadata?.display_name || "Collector"
   );
-  const [instagram, setInstagram] = useState("");
-  const [twitter, setTwitter] = useState("");
-  const [tiktok, setTiktok] = useState("");
+  const [instagram, setInstagram] = useState(
+    session?.user?.user_metadata?.instagram || ""
+  );
+  const [twitter, setTwitter] = useState(
+    session?.user?.user_metadata?.twitter || ""
+  );
+  const [tiktok, setTiktok] = useState(
+    session?.user?.user_metadata?.tiktok || ""
+  );
   const fileRef = useRef(null);
   const [pfpUrl, setPfpUrl] = useState(
     session?.user?.user_metadata?.pfp_url || ""
@@ -32,9 +38,10 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [deleteError, setDeleteError] = useState("");
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [isDirty, setIsDirty] = useState(false);
-  const [apiProfile, setApiProfile] = useState(null);
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
+  const [apiProfile, setApiProfile] = useState(null);
   const pendingNavRef = useRef(null);
+
   const linked = ownedCards.filter((c) => c.linked).length;
 
   // Fetch profile from DB on mount (ensures socials persist across reloads)
@@ -42,11 +49,9 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
     if (!session?.user?.id) return;
     async function loadProfile() {
       try {
-        const url = "/api/profile/get?userId=" + session.user.id + "&t=" + Date.now();
-        const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) { return; }
-        const data = await res.json(); setDbg(JSON.stringify(data));
-        setDebugInfo(JSON.stringify(data));
+        const res = await fetch("/api/profile/get?userId=" + session.user.id + "&t=" + Date.now(), { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
         if (data.profile) {
           setApiProfile(data.profile);
           setDisplayName(data.profile.username || "Collector");
@@ -108,7 +113,8 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
         }),
       });
       if (res.status === 409) { setUsernameError("Username already taken"); setSaving(false); return; }
-      if (!res.ok) { const err = await res.json(); setUsernameError(err.error || "Failed to save"); setSaving(false); return; } if (refreshProfile) await refreshProfile(session.user.id);
+      if (!res.ok) { const err = await res.json(); setUsernameError(err.error || "Failed to save"); setSaving(false); return; }
+      if (refreshProfile) await refreshProfile(session.user.id);
       setApiProfile({ username: trimmed, instagram: instagram || null, twitter: twitter || null, tiktok: tiktok || null });
       setIsDirty(false);
       setSaving(false);
@@ -193,7 +199,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
         <div onClick={() => safeNavigate(onBack)} style={{ ...skeuo, width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 18 }}>{String.fromCodePoint(0x2190)}</div>
         <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700 }}>Profile</div>
         <div style={{ flex: 1 }} />
-        <div onClick={() => editing ? handleSave() : if (apiProfile) { setInstagram(apiProfile.instagram || ""); setTwitter(apiProfile.twitter || ""); setTiktok(apiProfile.tiktok || ""); } setEditing(true)} style={{ ...skeuo, padding: "8px 16px", borderRadius: 10, fontFamily: MONO, fontSize: 11, letterSpacing: 2, cursor: "pointer", color: C.accent }}>{saving ? "SAVING..." : editing ? "SAVE" : "EDIT"}</div>
+        <div onClick={() => editing ? handleSave() : (() => { if (apiProfile) { setInstagram(apiProfile.instagram || ""); setTwitter(apiProfile.twitter || ""); setTiktok(apiProfile.tiktok || ""); } setEditing(true); })()} style={{ ...skeuo, padding: "8px 16px", borderRadius: 10, fontFamily: MONO, fontSize: 11, letterSpacing: 2, cursor: "pointer", color: C.accent }}>{saving ? "SAVING..." : editing ? "SAVE" : "EDIT"}</div>
       </div>
 
       {/* PFP + Name */}
@@ -332,7 +338,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </div>
-          <div style={{ flex: 1 }}><div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Request My Data</div><div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Request a copy of your data</div></div>
+          <div style={{ flex: 1 }}><div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Request My Data</div><div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Request a cory of your data</div></div>
           <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
         </div>
 
