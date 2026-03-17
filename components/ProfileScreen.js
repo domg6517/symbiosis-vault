@@ -615,7 +615,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
 
             <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: C.textDim, marginBottom: 10 }}>HOW DO I COLLECT?</div>
             <div style={{ fontFamily: SANS, fontSize: 14, color: C.textSec, lineHeight: 1.6, marginBottom: 20 }}>
-              During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip \u2014 tap it with your phone and the card is yours. Build your collection before the window closes.
+              During the limited release window, scan any Jack & Jack NFC collectible to add it to your vault. Each physical card holds a unique chip -- tap it with your phone and the card is yours. Build your collection before the window closes.
             </div>
             <div style={{ borderBottom: "1px solid " + C.textDim + "22", marginBottom: 20 }} />
 
