@@ -35,6 +35,7 @@ export default function PrivacyPolicy({ visible, onClose }) {
         alignItems: "center",
         justifyContent: "center",
         padding: 16,
+        paddingTop: "calc(env(safe-area-inset-top, 0px) + 16px)",
       }}
     >
       <div
@@ -66,8 +67,8 @@ export default function PrivacyPolicy({ visible, onClose }) {
 
         {/* 1 */}
         <h2 style={sectionTitle}>1. Information We Collect</h2>
-        <p style={para}><span style={bold}>Account Information:</span> Email address, username, and password (securely hashed â we never store plaintext passwords).</p>
-        <p style={para}><span style={bold}>Profile Data (Optional):</span> Profile photo, biography, and social media handles (Instagram, TikTok, X) â only if you choose to add them.</p>
+        <p style={para}><span style={bold}>Account Information:</span> Email address, username, and password (securely hashed — we never store plaintext passwords).</p>
+        <p style={para}><span style={bold}>Profile Data (Optional):</span> Profile photo, biography, and social media handles (Instagram, TikTok, X) — only if you choose to add them.</p>
         <p style={para}><span style={bold}>Collection Data:</span> NFC chip IDs of scanned photo cards, timestamps of scans, and your card inventory and collection statistics.</p>
         <p style={para}><span style={bold}>Device & Technical Data:</span> Device type, operating system, NFC capability status, and basic diagnostic information necessary for NFC functionality.</p>
         <p style={{ ...para, marginBottom: 24 }}><span style={bold}>Activity Data:</span> App usage patterns (features accessed, activity feed events) to improve your experience. This data is never shared externally.</p>
