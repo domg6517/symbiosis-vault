@@ -46,10 +46,23 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
 
   const linked = ownedCards.filter((c) => c.linked).length;
 
-  // Sync displayName from context profile
-  useEffect(() => {
-    if (ctxProfile && ctxProfile.username) setDisplayName(ctxProfile.username);
-  }, [ctxProfile]);
+  
+
+  // Fetch profile from server on mount
+  useEffect(function() {
+    if (!session || !session.user || !session.user.id) return;
+    var uid = session.user.id;
+    fetch("/api/profile/get?userId=" + uid + "&t=" + Date.now(), { cache: "no-store" })
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) {
+        if (data && data.profile) {
+          if (typeof window !== "undefined") window.__svProfile = data.profile;
+          setServerProfile(data.profile);
+          if (data.profile.username) setDisplayName(data.profile.username);
+        }
+      })
+      .catch(function(e) { console.error("profile fetch err", e); });
+  }, [session]);
 
   // Fetch user badges
   useEffect(() => {
