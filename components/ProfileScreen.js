@@ -55,10 +55,10 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
     fetch("/api/profile/get?userId=" + uid + "&t=" + Date.now(), { cache: "no-store" })
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(data) {
-        if (data && data.profile) {
-          if (typeof window !== "undefined") window.__svProfile = data.profile;
-          setServerProfile(data.profile);
-          if (data.profile.username) setDisplayName(data.profile.username);
+        if (data && data.username) {
+          if (typeof window !== "undefined") window.__svProfile = data;
+          setServerProfile(data);
+          if (data.username) setDisplayName(data.username);
         }
       })
       .catch(function(e) { console.error("profile fetch err", e); });
@@ -114,7 +114,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       if (!res.ok) { const err = await res.json(); setUsernameError(err.error || "Failed to save"); setSaving(false); return; }
       setServerProfile(prev => ({ ...prev, username: trimmed, instagram: instagram || null, twitter: twitter || null, tiktok: tiktok || null }));
       if (refreshProfile) await refreshProfile(session.user.id);
-      try { var fr = await fetch("/api/profile/get?userId=" + session.user.id + "&t=" + Date.now(), { cache: "no-store" }); if (fr.ok) { var fd = await fr.json(); if (fd && fd.profile) { window.__svProfile = fd.profile; setServerProfile(fd.profile); } } } catch(e) {}
+      try { var fr = await fetch("/api/users/profile?userId=" + session.user.id + "&t=" + Date.now(), { headers: { "Authorization": "Bearer " + session.access_token }, cache: "no-store" }); if (fr.ok) { var fd = await fr.json(); if (fd && fd.profile) { window.__svProfile = fd.profile; setServerProfile(fd.profile); } } } catch(e) {}
       setIsDirty(false);
       setSaving(false);
       setEditing(false);
