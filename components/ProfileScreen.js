@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect, useReducer } from "react";
+import { useState, useRef, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "./AuthContext";
@@ -11,8 +11,6 @@ function sanitizeHandle(val) {
 
 export default function ProfileScreen({ ownedCards, onBack, session, onAccountDeleted, refreshProfile, onFAQ, onPrivacy, onTerms }) {
   const { profile: ctxProfile } = useAuth();
-  const profileRef = useRef(null);
-  const [, forceRender] = useReducer(x => x + 1, 0);
   const [editing, setEditing] = useState(false);
   const [displayName, setDisplayName] = useState(
     session?.user?.user_metadata?.display_name || "Collector"
@@ -43,6 +41,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [isDirty, setIsDirty] = useState(false);
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
+  const [serverProfile, setServerProfile] = useState(null);
   const pendingNavRef = useRef(null);
 
   const linked = ownedCards.filter((c) => c.linked).length;
@@ -100,7 +99,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       });
       if (res.status === 409) { setUsernameError("Username already taken"); setSaving(false); return; }
       if (!res.ok) { const err = await res.json(); setUsernameError(err.error || "Failed to save"); setSaving(false); return; }
-      profileRef.current = { ...profileRef.current, username: trimmed, instagram: instagram || null, twitter: twitter || null, tiktok: tiktok || null };
+      setServerProfile(prev => ({ ...prev, username: trimmed, instagram: instagram || null, twitter: twitter || null, tiktok: tiktok || null }));
       if (refreshProfile) await refreshProfile(session.user.id);
       setIsDirty(false);
       setSaving(false);
@@ -185,7 +184,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
         <div onClick={() => safeNavigate(onBack)} style={{ ...skeuo, width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 18 }}>{String.fromCodePoint(0x2190)}</div>
         <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700 }}>Profile</div>
         <div style={{ flex: 1 }} />
-        <div onClick={() => editing ? handleSave() : (() => { if (profileRef.current) { setInstagram(profileRef.current.instagram || ""); setTwitter(profileRef.current.twitter || ""); setTiktok(profileRef.current.tiktok || ""); } setEditing(true); })()} style={{ ...skeuo, padding: "8px 16px", borderRadius: 10, fontFamily: MONO, fontSize: 11, letterSpacing: 2, cursor: "pointer", color: C.accent }}>{saving ? "SAVING..." : editing ? "SAVE" : "EDIT"}</div>
+        <div onClick={() => editing ? handleSave() : (() => { if (serverProfile) { setInstagram(serverProfile.instagram || ""); setTwitter(serverProfile.twitter || ""); setTiktok(serverProfile.tiktok || ""); } setEditing(true); })()} style={{ ...skeuo, padding: "8px 16px", borderRadius: 10, fontFamily: MONO, fontSize: 11, letterSpacing: 2, cursor: "pointer", color: C.accent }}>{saving ? "SAVING..." : editing ? "SAVE" : "EDIT"}</div>
       </div>
 
       {/* PFP + Name */}
@@ -248,8 +247,8 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
               {editing ? (
                 <input value={s.state} onChange={(e) => { s.set(sanitizeHandle(e.target.value)); setIsDirty(true); }} placeholder={s.prefix + "username"} style={{ background: "transparent", border: "none", borderBottom: "1px solid " + C.textDim, color: C.text, fontFamily: SANS, fontSize: 15, width: "100%", padding: "2px 0" }} />
               ) : (
-                (profileRef.current && profileRef.current[s.key]) ? (
-                  <a href={s.url + profileRef.current[s.key].replace(/^@/, "")} target="_blank" rel="noopener noreferrer" style={{ fontFamily: SANS, fontSize: 14, color: C.accent, textDecoration: "none" }}>{s.prefix + profileRef.current[s.key].replace(/^@/, "")}</a>
+                (serverProfile && serverProfile[s.key]) ? (
+                  <a href={s.url + serverProfile[s.key].replace(/^@/, "")} target="_blank" rel="noopener noreferrer" style={{ fontFamily: SANS, fontSize: 14, color: C.accent, textDecoration: "none" }}>{s.prefix + serverProfile[s.key].replace(/^@/, "")}</a>
                 ) : (
                   <div style={{ fontFamily: SANS, fontSize: 14, color: C.textDim }}>Not set</div>
                 )
