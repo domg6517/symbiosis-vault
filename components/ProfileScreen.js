@@ -114,10 +114,8 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       if (!res.ok) { const err = await res.json(); setUsernameError(err.error || "Failed to save"); setSaving(false); return; }
       setServerProfile(prev => ({ ...prev, username: trimmed, instagram: instagram || null, twitter: twitter || null, tiktok: tiktok || null }));
       if (refreshProfile) await refreshProfile(session.user.id);
-      try { var fr = await fetch("/api/users/profile?userId=" + session.user.id + "&t=" + Date.now(), { headers: { "Authorization": "Bearer " + session.access_token }, cache: "no-store" }); if (fr.ok) { var fd = await fr.json(); if (fd && fd.profile) { window.__svProfile = fd.profile; setServerProfile(fd.profile); } } } catch(e) {}
-      setIsDirty(false);
-      setSaving(false);
-      setEditing(false);
+      try { sessionStorage.setItem("returnToProfile", "1"); } catch(e) {}
+      window.location.reload();
     } catch (err) {
       setUsernameError("Network error, try again");
       setSaving(false);
