@@ -237,19 +237,19 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       <div style={{ padding: "0 16px" }}>
         <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 6 }}>SOCIAL LINKS</div>
         {[
-          { icon: "\u{1F4F7}", label: "Instagram", value: editing ? instagram : (profileRef.current && profileRef.current.instagram || ""), set: setInstagram, prefix: "@", url: "https://instagram.com/" },
-          { icon: "\u{1D54F}", label: "X / Twitter", value: editing ? twitter : (profileRef.current && profileRef.current.twitter || ""), set: setTwitter, prefix: "@", url: "https://x.com/" },
-          { icon: "\u{1F3B5}", label: "TikTok", value: editing ? tiktok : (profileRef.current && profileRef.current.tiktok || ""), set: setTiktok, prefix: "@", url: "https://tiktok.com/@" },
+          { icon: "\u{1F4F7}", label: "Instagram", key: "instagram", state: instagram, set: setInstagram, prefix: "@", url: "https://instagram.com/" },
+          { icon: "\u{1D54F}", label: "X / Twitter", key: "twitter", state: twitter, set: setTwitter, prefix: "@", url: "https://x.com/" },
+          { icon: "\u{1F3B5}", label: "TikTok", key: "tiktok", state: tiktok, set: setTiktok, prefix: "@", url: "https://tiktok.com/@" },
         ].map((s) => (
           <div key={s.label} style={{ ...skeuo, borderRadius: 12, padding: "9px 14px", marginBottom: 5, display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ fontSize: 16 }}>{s.icon}</div>
             <div style={{ flex: 1 }}>
               <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginBottom: 1 }}>{s.label}</div>
               {editing ? (
-                <input value={s.value} onChange={(e) => { s.set(sanitizeHandle(e.target.value)); setIsDirty(true); }} placeholder={s.prefix + "username"} style={{ background: "transparent", border: "none", borderBottom: "1px solid " + C.textDim, color: C.text, fontFamily: SANS, fontSize: 15, width: "100%", padding: "2px 0" }} />
+                <input value={s.state} onChange={(e) => { s.set(sanitizeHandle(e.target.value)); setIsDirty(true); }} placeholder={s.prefix + "username"} style={{ background: "transparent", border: "none", borderBottom: "1px solid " + C.textDim, color: C.text, fontFamily: SANS, fontSize: 15, width: "100%", padding: "2px 0" }} />
               ) : (
-                s.value ? (
-                  <a href={s.url + s.value.replace(/^@/, "")} target="_blank" rel="noopener noreferrer" style={{ fontFamily: SANS, fontSize: 14, color: C.accent, textDecoration: "none" }}>{s.prefix + s.value.replace(/^@/, "")}</a>
+                (profileRef.current && profileRef.current[s.key]) ? (
+                  <a href={s.url + profileRef.current[s.key].replace(/^@/, "")} target="_blank" rel="noopener noreferrer" style={{ fontFamily: SANS, fontSize: 14, color: C.accent, textDecoration: "none" }}>{s.prefix + profileRef.current[s.key].replace(/^@/, "")}</a>
                 ) : (
                   <div style={{ fontFamily: SANS, fontSize: 14, color: C.textDim }}>Not set</div>
                 )
