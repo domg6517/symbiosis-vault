@@ -21,6 +21,7 @@ export default function SymbiosisVault() {
   const [screen, setScreen] = useState("loading");
   const [selectedCard, setSelectedCard] = useState(null);
   const [selectedCollector, setSelectedCollector] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const [prevScreen, setPrevScreen] = useState("collection");
   const [ownedCards, setOwnedCards] = useState([]);
   const [termsAccepted, setTermsAccepted] = useState(true);
@@ -31,6 +32,17 @@ export default function SymbiosisVault() {
   const isPopNavRef = useRef(false);
 
   // Browser back button / swipe navigation
+  
+  const loadUserProfile = useCallback(async () => {
+    if (!session?.user?.id || !session?.access_token) return;
+    try {
+      var r = await fetch("/api/users/profile?userId=" + session.user.id + "&t=" + Date.now(), { headers: { "Authorization": "Bearer " + session.access_token }, cache: "no-store" });
+      if (r.ok) { var d = await r.json(); setUserProfile(d); }
+    } catch(e) {}
+  }, [session]);
+
+  useEffect(() => { loadUserProfile(); }, [loadUserProfile]);
+
   useEffect(() => {
     const handlePopState = (e) => {
       const state = e.state;
@@ -288,6 +300,8 @@ export default function SymbiosisVault() {
       )}
       {screen === "profile" && (
         <ProfileScreen
+          userProfile={userProfile}
+          reloadUserProfile={loadUserProfile}
           ownedCards={ownedCards}
           onBack={() => navigateTo("collection")}
           session={session}
