@@ -19,6 +19,16 @@ import TermsScreen from "../components/TermsScreen";
 
 export default function SymbiosisVault() {
   const [screen, setScreen] = useState("loading");
+
+  // Auto-return to profile after save-triggered reload
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem("returnToProfile")) {
+        sessionStorage.removeItem("returnToProfile");
+        setTimeout(() => setScreen("profile"), 500);
+      }
+    } catch(e) {}
+  }, []);
   const [selectedCard, setSelectedCard] = useState(null);
   const [selectedCollector, setSelectedCollector] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
