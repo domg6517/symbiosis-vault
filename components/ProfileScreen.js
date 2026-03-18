@@ -9,7 +9,7 @@ function sanitizeHandle(val) {
   return val.replace(/^@/, "").replace(/[^a-zA-Z0-9_.-]/g, "").slice(0, 30);
 }
 
-export default function ProfileScreen({ ownedCards, onBack, session, onAccountDeleted, refreshProfile, onFAQ, onPrivacy, onTerms }) {
+export default function ProfileScreen({ ownedCards, onBack, session, onAccountDeleted, refreshProfile, onFAQ, onPrivacy, onTerms, userProfile, reloadUserProfile }) {
   const { profile: ctxProfile } = useAuth();
   const [editing, setEditing] = useState(false);
   const [displayName, setDisplayName] = useState(
@@ -50,16 +50,16 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
 
   // Fetch profile from server on mount
   useEffect(function() {
+    if (userProfile && userProfile.username) setDisplayName(userProfile.username);
+  }, [userProfile]);
+
+  useEffect(function() {
     if (!session || !session.user || !session.user.id) return;
     var uid = session.user.id;
     fetch("/api/profile/get?userId=" + uid + "&t=" + Date.now(), { cache: "no-store" })
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(data) {
-        if (data && data.username) {
-          if (typeof window !== "undefined") window.__svProfile = data;
-          setServerProfile(data);
-          if (data.username) setDisplayName(data.username);
-        }
+        // profile loaded from parent
       })
       .catch(function(e) { console.error("profile fetch err", e); });
   }, [session]);
@@ -198,7 +198,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
         <div onClick={() => safeNavigate(onBack)} style={{ ...skeuo, width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 18 }}>{String.fromCodePoint(0x2190)}</div>
         <div style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700 }}>Profile</div>
         <div style={{ flex: 1 }} />
-        <div onClick={() => editing ? handleSave() : (() => { if (serverProfile) { setInstagram(serverProfile.instagram || ""); setTwitter(serverProfile.twitter || ""); setTiktok(serverProfile.tiktok || ""); } setEditing(true); })()} style={{ ...skeuo, padding: "8px 16px", borderRadius: 10, fontFamily: MONO, fontSize: 11, letterSpacing: 2, cursor: "pointer", color: C.accent }}>{saving ? "SAVING..." : editing ? "SAVE" : "EDIT"}</div>
+        <div onClick={() => editing ? handleSave() : (() => { if (userProfile) { setInstagram(userProfile.instagram || ""); setTwitter(userProfile.twitter || ""); setTiktok(userProfile.tiktok || ""); } setEditing(true); })()} style={{ ...skeuo, padding: "8px 16px", borderRadius: 10, fontFamily: MONO, fontSize: 11, letterSpacing: 2, cursor: "pointer", color: C.accent }}>{saving ? "SAVING..." : editing ? "SAVE" : "EDIT"}</div>
       </div>
 
       {/* PFP + Name */}
@@ -261,8 +261,8 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
               {editing ? (
                 <input value={s.state} onChange={(e) => { s.set(sanitizeHandle(e.target.value)); setIsDirty(true); }} placeholder={s.prefix + "username"} style={{ background: "transparent", border: "none", borderBottom: "1px solid " + C.textDim, color: C.text, fontFamily: SANS, fontSize: 15, width: "100%", padding: "2px 0" }} />
               ) : (
-                (serverProfile && serverProfile[s.key]) ? (
-                  <a href={s.url + serverProfile[s.key].replace(/^@/, "")} target="_blank" rel="noopener noreferrer" style={{ fontFamily: SANS, fontSize: 14, color: C.accent, textDecoration: "none" }}>{s.prefix + serverProfile[s.key].replace(/^@/, "")}</a>
+                (userProfile && userProfile[s.key]) ? (
+                  <a href={s.url + userProfile[s.key].replace(/^@/, "")} target="_blank" rel="noopener noreferrer" style={{ fontFamily: SANS, fontSize: 14, color: C.accent, textDecoration: "none" }}>{s.prefix + userProfile[s.key].replace(/^@/, "")}</a>
                 ) : (
                   <div style={{ fontFamily: SANS, fontSize: 14, color: C.textDim }}>Not set</div>
                 )
