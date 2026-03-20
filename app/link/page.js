@@ -160,11 +160,7 @@ function LinkContent() {
                 }}>SET COMPLETE &mdash; BADGE UNLOCKED</div>
               </div>
             )}
-            <button onClick={goToVault} style={{
-              marginTop: 32, padding: "13px 40px", ...skeuo.btnGold,
-              color: C.bg, fontSize: 10, fontFamily: MONO, fontWeight: 600,
-              letterSpacing: 3, cursor: "pointer",
-            }}>OPEN VAULT</button>
+            <button onClick={goToVault} style={{ marginTop: 28, padding: "14px 44px", background: "linear-gradient(145deg, #2A2520, #1E1B17)", color: C.accent, fontFamily: MONO, fontSize: 10, letterSpacing: 4, fontWeight: 400, border: "1px solid " + C.accent, borderRadius: 14, cursor: "pointer" }}>OPEN VAULT</button>
           </div>
         )}
 
