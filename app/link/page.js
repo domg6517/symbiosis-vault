@@ -30,6 +30,7 @@ function LinkContent() {
     // Auto-link the card
     const link = async () => {
       try {
+        setStatus("linking");
         const res = await fetch("/api/cards/link", {
           method: "POST",
           headers: {
@@ -86,6 +87,7 @@ function LinkContent() {
       paddingTop: "env(safe-area-inset-top)",
       paddingBottom: "env(safe-area-inset-bottom)",
     }}>
+      <style>{"@keyframes spin { to { transform: rotate(360deg); } } @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }"}</style>
       <div style={wrapStyle}>
         <FilmGrain opacity={0.04} />
 
@@ -124,7 +126,12 @@ function LinkContent() {
           </div>
         )}
 
-        {status === "success" && (
+        {status === "linking" ? (
+          <div style={{ textAlign: "center", zIndex: 1 }}>
+            <div style={{ width: 48, height: 48, borderRadius: "50%", border: "2px solid " + C.accent + "22", borderTopColor: C.accent, animation: "spin 1s linear infinite", margin: "0 auto" }} />
+            <div style={{ color: C.textDim, fontFamily: MONO, fontSize: 11, letterSpacing: 2, marginTop: 20 }}>LINKING TO VAULT</div>
+          </div>
+        ) : status === "success" && (
           <div style={{ textAlign: "center", zIndex: 1 }}>
             <div style={{
               width: 64, height: 64, ...skeuo, borderRadius: "50%", border: "2px solid " + C.teal,
