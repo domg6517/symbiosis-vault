@@ -40,6 +40,9 @@ export async function GET(request) {
     }
 
     const audioUrl = supabaseUrl + "/storage/v1/object/public/card-media/sample-b/test_snippet sample B.mp3";
+    const cardIds = cards.map(c => c.id);
+    await supabase.from("card_content").delete().in("card_template_id", cardIds);
+
     const rows = [];
 
     for (const card of cards) {
@@ -65,7 +68,7 @@ export async function GET(request) {
 
     const { data: inserted, error: insertErr } = await supabase
       .from("card_content")
-      .upsert(rows, { onConflict: "card_template_id,content_type" })
+      .insert(rows)
       .select("id, card_template_id, content_type");
 
     if (insertErr) {
