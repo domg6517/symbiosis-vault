@@ -92,7 +92,7 @@ function LinkContent() {
         <FilmGrain opacity={0.04} />
 
         {status === "loading" && (
-          <div style={{ textAlign: "center", zIndex: 1 }}>
+          <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
             <div style={circleBase}>
               <NfcIcon size={36} color={C.accent} />
             </div>
