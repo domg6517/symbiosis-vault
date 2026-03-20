@@ -150,7 +150,7 @@ function LinkContent() {
                 <div style={{
                   fontSize: 10, fontFamily: MONO, letterSpacing: 3,
                   color: "#A2A0B4", position: "relative", zIndex: 1,
-                }}>SET COMPLETE &mdash; ULTRA RARE UNLOCKED</div>
+                }}>SET COMPLETE &mdash; BADGE UNLOCKED</div>
               </div>
             )}
             <button onClick={goToVault} style={{
