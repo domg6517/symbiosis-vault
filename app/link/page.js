@@ -133,12 +133,12 @@ function LinkContent() {
             }}>
               <CheckIcon size={24} color={C.teal} />
             </div>
-            <div style={{ fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 20, textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>Card Added</div>
+            <div style={{ fontSize: 24, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 20, textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>Card Added</div>
               {cardResult && (<>
-              <div style={{ fontSize: 16, color: C.cream, fontFamily: SERIF, fontWeight: 400, marginTop: 12 }}>{cardResult.perspective === "J&J" ? "Jack & Jack" : cardResult.perspective}</div>
+              <div style={{ fontSize: 15, color: C.accent, fontFamily: SANS, marginTop: 8 }}>{cardResult.perspective === "J&J" ? "Jack & Jack" : cardResult.perspective}</div>
               <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 6 }}>{cardResult.rarity.toUpperCase()} CARD</div>
-              <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 4 }}>{cardResult.songTitle.toUpperCase()}</div>
-              <div style={{ fontSize: 11, color: C.textDim, fontFamily: SANS, marginTop: 16, opacity: 0.6 }}>Redirecting to vault...</div>
+              <div style={{ fontSize: 9, color: C.textDim, fontFamily: MONO, letterSpacing: 1, marginTop: 8, opacity: 0.5 }}>{cardResult.songTitle.toUpperCase()}</div>
+              <div style={{ fontSize: 9, color: C.textDim, fontFamily: MONO, letterSpacing: 1, marginTop: 16, opacity: 0.4 }}>Redirecting to vault...</div>
               </>
             )}
             {isSetComplete && (
