@@ -133,7 +133,7 @@ function LinkContent() {
               <CheckIcon size={24} color={C.teal} />
             </div>
             <div style={{ fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 20, textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>Card Added</div>
-              {cardResult && <>
+              {cardResult && (<>
               <div style={{ fontSize: 18, color: C.cream, fontFamily: SERIF, fontWeight: 600, marginTop: 16 }}>{cardResult.perspective === "J&J" ? "Jack & Jack" : cardResult.perspective}</div>
               <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 6 }}>{cardResult.rarity.toUpperCase()} SINGLE</div>
               <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 4 }}>{cardResult.songTitle.toUpperCase()}</div>
