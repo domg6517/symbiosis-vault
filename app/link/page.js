@@ -41,6 +41,16 @@ function LinkContent() {
         });
         const data = await res.json();
         if (!res.ok) {
+          if (res.status === 409 && data.card) {
+            setCardResult(data.card);
+            if (data.error && data.error.includes("another")) {
+              setStatus("taken");
+            } else {
+              setStatus("already");
+            }
+            setTimeout(goToVault, 2000);
+            return;
+          }
           setStatus("error");
           setError(data.error || "Failed to link card");
           return;
