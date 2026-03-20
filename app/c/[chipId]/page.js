@@ -76,7 +76,7 @@ export default function ScanLinkPage() {
         window.navigator.vibrate([100, 50, 100]);
       } }
       else if (res.status === 401) {
-        // Session expired Ã¢ÂÂ show login instead of error
+        // Session expired ÃÂ¢ÃÂÃÂ show login instead of error
         if (typeof window !== "undefined") localStorage.setItem("pendingChipId", chipId);
         setStatus("login");
       } else if (res.status === 409) { setCardInfo(data.card); if (data.error && data.error.includes("another account")) { setStatus("taken"); } else { setStatus("already"); };
