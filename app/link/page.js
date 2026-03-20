@@ -149,7 +149,7 @@ function LinkContent() {
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6 }}>{status === "taken" ? "This card is connected to another collector" : "This card is already in your vault"}</div>
             </>)}
             <div style={{ fontFamily: MONO, fontSize: 9, color: C.textDim, letterSpacing: 1, marginTop: 16, opacity: 0.4 }}>Redirecting to vault...</div>
-            <button onClick={goToVault} style={{ marginTop: 28, padding: "14px 44px", background: "linear-gradient(145deg, #2A2520, #1E1B17)", color: C.accent, fontFamily: MONO, fontSize: 10, letterSpacing: 4, fontWeight: 400, border: "1px solid " + C.accent, borderRadius: 14, cursor: "pointer" }}>OPEN VAULT</button>
+            <button onClick={goToVault} style={{ marginTop: 28, padding: "14px 44px", background: "linear-gradient(145deg, #2A2520, #1E1B17)", color: C.accent, fontFamily: MONO, fontSize: 10, letterSpacing: 4, fontWeight: 400, border: "1px solid " + C.accent + "33", borderRadius: 8, cursor: "pointer" }}>OPEN VAULT</button>
           </div>
         ) : status === "linking" ? (
           <div style={{ textAlign: "center", zIndex: 1 }}>
@@ -185,7 +185,7 @@ function LinkContent() {
                 }}>SET COMPLETE &mdash; BADGE UNLOCKED</div>
               </div>
             )}
-            <button onClick={goToVault} style={{ marginTop: 28, padding: "14px 44px", background: "linear-gradient(145deg, #2A2520, #1E1B17)", color: C.accent, fontFamily: MONO, fontSize: 10, letterSpacing: 4, fontWeight: 400, border: "1px solid " + C.accent, borderRadius: 14, cursor: "pointer" }}>OPEN VAULT</button>
+            <button onClick={goToVault} style={{ marginTop: 28, padding: "14px 44px", background: "linear-gradient(145deg, #2A2520, #1E1B17)", color: C.accent, fontFamily: MONO, fontSize: 10, letterSpacing: 4, fontWeight: 400, border: "1px solid " + C.accent + "33", borderRadius: 8, cursor: "pointer" }}>OPEN VAULT</button>
           </div>
         )}
 
