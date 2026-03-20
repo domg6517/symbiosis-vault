@@ -132,20 +132,12 @@ function LinkContent() {
             }}>
               <CheckIcon size={24} color={C.teal} />
             </div>
-            <div style={{
-              fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF,
-              marginTop: 20, textShadow: "0 1px 3px rgba(0,0,0,0.4)",
-            }}>Card linked!</div>
-            {cardResult && (
-              <>
-                <div style={{
-                  fontSize: 15, color: C.accent, fontFamily: SERIF,
-                  fontStyle: "italic", marginTop: 12,
-                }}>{cardResult.songTitle} &mdash; {cardResult.perspective}</div>
-                <div style={{
-                  fontSize: 9, color: C.textDim, fontFamily: MONO,
-                  letterSpacing: 2, marginTop: 6,
-                }}>{cardResult.rarity?.toUpperCase()} &middot; {cardResult.chipId}</div>
+            <div style={{ fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 20, textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>Card Added</div>
+              {cardResult && <>
+              <div style={{ fontSize: 18, color: C.cream, fontFamily: SERIF, fontWeight: 600, marginTop: 16 }}>{cardResult.perspective === "J&J" ? "Jack & Jack" : cardResult.perspective}</div>
+              <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 6 }}>{cardResult.rarity.toUpperCase()} SINGLE</div>
+              <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 4 }}>{cardResult.songTitle.toUpperCase()}</div>
+              <div style={{ fontSize: 11, color: C.textDim, fontFamily: SANS, marginTop: 16, opacity: 0.6 }}>Redirecting to vault...</div>
               </>
             )}
             {isSetComplete && (
@@ -164,7 +156,7 @@ function LinkContent() {
               marginTop: 32, padding: "13px 40px", ...skeuo.btnGold,
               color: C.bg, fontSize: 10, fontFamily: MONO, fontWeight: 600,
               letterSpacing: 3, cursor: "pointer",
-            }}>VIEW COLLECTION</button>
+            }}>OPEN VAULT</button>
           </div>
         )}
 
