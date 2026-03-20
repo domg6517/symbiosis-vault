@@ -126,7 +126,22 @@ function LinkContent() {
           </div>
         )}
 
-        {status === "linking" ? (
+        {(status === "already" || status === "taken") ? (
+          <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(145deg, #2A2520, #1E1B17)", border: "1.5px solid " + C.accent + "44", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+            </div>
+            <div style={{ fontFamily: SERIF, fontSize: 22, color: C.cream, marginTop: 20 }}>{status === "taken" ? "Card Unavailable" : "Already Collected"}</div>
+            {cardResult && (<>
+              <div style={{ fontFamily: SANS, fontSize: 14, color: C.accent, marginTop: 8 }}>{cardResult.perspective} \u00B7 {cardResult.rarity}</div>
+              <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6 }}>{status === "taken" ? "This card is connected to another collector" : "This card is already in your vault"}</div>
+            </>)}
+            <div style={{ fontFamily: MONO, fontSize: 9, color: C.textDim, letterSpacing: 1, marginTop: 16, opacity: 0.4 }}>Redirecting to vault...</div>
+            <button onClick={goToVault} style={{ marginTop: 28, padding: "14px 44px", background: "linear-gradient(145deg, #2A2520, #1E1B17)", color: C.accent, fontFamily: MONO, fontSize: 10, letterSpacing: 4, fontWeight: 400, border: "1px solid " + C.accent, borderRadius: 14, cursor: "pointer" }}>OPEN VAULT</button>
+          </div>
+        ) : status === "linking" ? (
           <div style={{ textAlign: "center", zIndex: 1 }}>
             <div style={{ width: 48, height: 48, borderRadius: "50%", border: "2px solid " + C.accent + "22", borderTopColor: C.accent, animation: "spin 1s linear infinite", margin: "0 auto" }} />
             <div style={{ color: C.textDim, fontFamily: MONO, fontSize: 11, letterSpacing: 2, marginTop: 20 }}>LINKING TO VAULT</div>
