@@ -47,6 +47,7 @@ function LinkContent() {
         // Clear any pending chip
         try { localStorage.removeItem("pendingChip"); } catch(e) {}
         setCardResult(data.card);
+      setTimeout(goToVault, 3000);
         setIsSetComplete(data.setComplete || false);
         setStatus("success");
       } catch (err) {
@@ -126,7 +127,7 @@ function LinkContent() {
         {status === "success" && (
           <div style={{ textAlign: "center", zIndex: 1 }}>
             <div style={{
-              width: 64, height: 64, ...skeuo.card, borderRadius: "50%",
+              width: 64, height: 64, ...skeuo, borderRadius: "50%", border: "2px solid " + C.teal,
               display: "flex", alignItems: "center", justifyContent: "center",
               margin: "0 auto",
             }}>
@@ -134,8 +135,8 @@ function LinkContent() {
             </div>
             <div style={{ fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 20, textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>Card Added</div>
               {cardResult && (<>
-              <div style={{ fontSize: 18, color: C.cream, fontFamily: SERIF, fontWeight: 600, marginTop: 16 }}>{cardResult.perspective === "J&J" ? "Jack & Jack" : cardResult.perspective}</div>
-              <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 6 }}>{cardResult.rarity.toUpperCase()} SINGLE</div>
+              <div style={{ fontSize: 16, color: C.cream, fontFamily: SERIF, fontWeight: 400, marginTop: 12 }}>{cardResult.perspective === "J&J" ? "Jack & Jack" : cardResult.perspective}</div>
+              <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 6 }}>{cardResult.rarity.toUpperCase()} CARD</div>
               <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 4 }}>{cardResult.songTitle.toUpperCase()}</div>
               <div style={{ fontSize: 11, color: C.textDim, fontFamily: SANS, marginTop: 16, opacity: 0.6 }}>Redirecting to vault...</div>
               </>
