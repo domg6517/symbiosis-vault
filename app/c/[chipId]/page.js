@@ -76,7 +76,7 @@ export default function ScanLinkPage() {
         window.navigator.vibrate([100, 50, 100]);
       } }
       else if (res.status === 401) {
-        // Session expired â show login instead of error
+        // Session expired Ã¢ÂÂ show login instead of error
         if (typeof window !== "undefined") localStorage.setItem("pendingChipId", chipId);
         setStatus("login");
       } else if (res.status === 409) { setCardInfo(data.card); if (data.error && data.error.includes("another account")) { setStatus("taken"); } else { setStatus("already"); };
@@ -124,8 +124,8 @@ export default function ScanLinkPage() {
           <div style={{ fontFamily: SERIF, fontSize: 24, color: C.cream, marginTop: 20 }}>Card Added</div>
           {cardInfo && (<>
             <div style={{ fontFamily: SANS, fontSize: 15, color: C.accent, marginTop: 8 }}>{cardInfo.perspective}</div>
-            <div style={{ fontFamily: MONO, fontSize: 10, color: C.textDim, letterSpacing: 2, marginTop: 4, textTransform: "uppercase" }}>{cardInfo.rarity} {cardInfo.type}</div>
-            <div style={{ fontFamily: MONO, fontSize: 9, color: C.textDim, letterSpacing: 1, marginTop: 8, opacity: 0.5 }}>TEST DROP 1</div>
+            <div style={{ fontFamily: MONO, fontSize: 10, color: C.textDim, letterSpacing: 2, marginTop: 4, textTransform: "uppercase" }}>{cardInfo.rarity} CARD</div>
+            <div style={{ fontFamily: MONO, fontSize: 9, color: C.textDim, letterSpacing: 1, marginTop: 8, opacity: 0.5 }}>{cardInfo.songTitle ? cardInfo.songTitle.toUpperCase() : "SAMPLE A"}</div>
           </>)}
           <div style={{ fontFamily: MONO, fontSize: 9, color: C.textDim, letterSpacing: 1, marginTop: 16, opacity: 0.4 }}>Redirecting to vault...</div>
           <Btn onClick={goToApp} label="OPEN VAULT" />
