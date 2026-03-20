@@ -145,7 +145,7 @@ function LinkContent() {
             </div>
             <div style={{ fontFamily: SERIF, fontSize: 22, color: C.cream, marginTop: 20 }}>{status === "taken" ? "Card Unavailable" : "Already Collected"}</div>
             {cardResult && (<>
-              <div style={{ fontFamily: SANS, fontSize: 14, color: C.accent, marginTop: 8 }}>{cardResult.perspective} \u00B7 {cardResult.rarity}</div>
+              <div style={{ fontFamily: SANS, fontSize: 14, color: C.accent, marginTop: 8 }}>{cardResult.perspective} · {cardResult.rarity}</div>
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6 }}>{status === "taken" ? "This card is connected to another collector" : "This card is already in your vault"}</div>
             </>)}
             <div style={{ fontFamily: MONO, fontSize: 9, color: C.textDim, letterSpacing: 1, marginTop: 16, opacity: 0.4 }}>Redirecting to vault...</div>
