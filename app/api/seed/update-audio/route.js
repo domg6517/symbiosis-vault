@@ -5,8 +5,8 @@ export async function GET() {
   try {
     const supabase = createServerClient();
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const oldAudio = supabaseUrl + "/storage/v1/object/public/card-media/sample-b/test_snippet sample B.mp3";
-    const newAudio = supabaseUrl + "/storage/v1/object/public/card-media/sample-b/Test_Snippet_SampleB_Final.MP3";
+    const oldAudio = supabaseUrl + "/storage/v1/object/public/card-media/sample-b/Test_Snippet_SampleB_Final.MP3";
+    const newAudio = supabaseUrl + "/storage/v1/object/public/card-media/sample-b/Test_Snippet_SampleB_Final.mp3";
     const { data, error } = await supabase
       .from("card_content")
       .update({ file_url: newAudio })
