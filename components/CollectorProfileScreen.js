@@ -183,8 +183,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
                   onClick={() => {}}
                 />
                 <div style={{ fontFamily: MONO, fontSize: 7, color: C.textDim, letterSpacing: 1, textAlign: "center", lineHeight: 1.4 }}>
-                  {card.songNum}{"
-"}{card.perspective === "J&J" ? "J&J" : card.perspective.split(" ")[1]}
+                  {card.songNum} {card.perspective === "J&J" ? "J&J" : card.perspective.split(" ")[1]}
                 </div>
               </div>
             ))}
