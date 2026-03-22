@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { useAuth } from "./AuthContext";
+import { MiniPhotoCard } from "./SharedComponents";
 
 function sanitizeHandle(val) {
   if (!val) return "";
@@ -13,22 +14,40 @@ export default function CollectorProfileScreen({ collector, onBack }) {
   if (!collector) return null;
 
   const [profileData, setProfileData] = useState(null);
+  const [fetchedStats, setFetchedStats] = useState(null);
+  const [collectorCards, setCollectorCards] = useState([]);
   const [loadingProfile, setLoadingProfile] = useState(true);
+  const [loadingCards, setLoadingCards] = useState(true);
 
   useEffect(() => {
     if (!collector.user_id) return;
-    async function fetchProfile() {
+    const headers = session?.access_token ? { Authorization: "Bearer " + session.access_token } : {};
+    const needsStats = collector.totalCards === undefined;
+
+    async function fetchAll() {
       try {
-        const res = await fetch("/api/users/profile?userId=" + collector.user_id, { headers: session?.access_token ? { Authorization: "Bearer " + session.access_token } : {} });
-        const data = await res.json();
-        if (res.ok) setProfileData(data);
+        const [profileRes, cardsRes, statsRes] = await Promise.all([
+          fetch("/api/users/profile?userId=" + collector.user_id, { headers }),
+          fetch("/api/users/cards?userId=" + collector.user_id, { headers }),
+          needsStats
+            ? fetch("/api/users/stats?userId=" + collector.user_id, { headers })
+            : Promise.resolve(null),
+        ]);
+
+        if (profileRes.ok) setProfileData(await profileRes.json());
+        if (cardsRes.ok) {
+          const d = await cardsRes.json();
+          setCollectorCards(d.cards || []);
+        }
+        if (statsRes && statsRes.ok) setFetchedStats(await statsRes.json());
       } catch (e) {
-        console.error("Profile fetch error:", e);
+        console.error("Collector profile fetch error:", e);
       } finally {
         setLoadingProfile(false);
+        setLoadingCards(false);
       }
     }
-    fetchProfile();
+    fetchAll();
   }, [collector.user_id]);
 
   const pfpUrl = profileData?.pfp_url || collector.pfp_url || "";
@@ -38,8 +57,14 @@ export default function CollectorProfileScreen({ collector, onBack }) {
   const tk = sanitizeHandle(profileData?.tiktok || collector.tiktok || "");
   const badges = profileData?.badges || [];
 
+  // Use leaderboard-passed data if present, otherwise fall back to fetched stats
+  const totalCards = collector.totalCards !== undefined ? collector.totalCards : (fetchedStats?.totalCards || 0);
+  const uniqueSongs = collector.uniqueSongs !== undefined ? collector.uniqueSongs : (fetchedStats?.uniqueSongs || 0);
+  const rank = collector.rank !== undefined ? collector.rank : (fetchedStats?.rank || null);
+
   return (
     <div style={{ minHeight: "100dvh", background: C.bg, color: C.text, padding: "0 0 100px" }}>
+
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", padding: "18px 16px 10px", gap: 12 }}>
         <div onClick={onBack} style={{
@@ -64,9 +89,9 @@ export default function CollectorProfileScreen({ collector, onBack }) {
           )}
         </div>
         <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700 }}>{name}</div>
-        {collector.rank && (
+        {rank && (
           <div style={{ fontFamily: MONO, fontSize: 11, color: C.textDim, marginTop: 6, letterSpacing: 1 }}>
-            RANK #{collector.rank}
+            RANK #{rank}
           </div>
         )}
       </div>
@@ -79,7 +104,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
               ...skeuo, borderRadius: 20, padding: "6px 14px",
               display: "flex", alignItems: "center", gap: 6,
               border: "1px solid " + C.accent + "33",
-              background: "linear-gradient(180deg, rgba(228,188,74,0.06), transparent)"
+              background: "linear-gradient(180deg, rgba(228,188,74,0.06), transparent)",
             }}>
               <span style={{ fontSize: 14 }}>{b.badge.icon}</span>
               <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 1.5, color: C.accent, fontWeight: 600 }}>
@@ -93,9 +118,9 @@ export default function CollectorProfileScreen({ collector, onBack }) {
       {/* Stats */}
       <div style={{ display: "flex", justifyContent: "center", gap: 20, padding: "0 16px 20px" }}>
         {[
-          { label: "RANK", value: collector.rank ? "#" + collector.rank : "\u2014" },
-          { label: "CARDS", value: collector.totalCards || 0 },
-          { label: "SONGS", value: collector.uniqueSongs || 0 },
+          { label: "RANK", value: rank ? "#" + rank : "—" },
+          { label: "CARDS", value: totalCards },
+          { label: "SONGS", value: uniqueSongs },
         ].map((s) => (
           <div key={s.label} style={{ ...skeuo, borderRadius: 14, padding: "14px 28px", textAlign: "center" }}>
             <div style={{ fontFamily: SERIF, fontSize: 24, fontWeight: 700 }}>{s.value}</div>
@@ -106,12 +131,12 @@ export default function CollectorProfileScreen({ collector, onBack }) {
 
       {/* Social Links (read-only) */}
       {(ig || tw || tk) && (
-        <div style={{ padding: "0 16px" }}>
+        <div style={{ padding: "0 16px 20px" }}>
           <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 10 }}>SOCIAL LINKS</div>
           {[
-            { icon: "\u{1F4F7}", label: "Instagram", value: ig, url: "https://instagram.com/" },
-            { icon: "\u{1D54F}", label: "X / Twitter", value: tw, url: "https://x.com/" },
-            { icon: "\u{1F3B5}", label: "TikTok", value: tk, url: "https://tiktok.com/@" },
+            { icon: "📷", label: "Instagram", value: ig, url: "https://instagram.com/" },
+            { icon: "𝕏", label: "X / Twitter", value: tw, url: "https://x.com/" },
+            { icon: "🎵", label: "TikTok", value: tk, url: "https://tiktok.com/@" },
           ]
             .filter((s) => s.value)
             .map((s) => (
@@ -132,10 +157,41 @@ export default function CollectorProfileScreen({ collector, onBack }) {
 
       {/* No socials message */}
       {!ig && !tw && !tk && !loadingProfile && (
-        <div style={{ textAlign: "center", padding: "20px 16px", fontFamily: SANS, fontSize: 14, color: C.textDim }}>
+        <div style={{ textAlign: "center", padding: "0 16px 20px", fontFamily: SANS, fontSize: 14, color: C.textDim }}>
           This collector hasn&apos;t added any social links yet.
         </div>
       )}
+
+      {/* Cards Grid */}
+      {!loadingCards && collectorCards.length > 0 && (
+        <div style={{ padding: "0 16px" }}>
+          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 14 }}>
+            COLLECTION · {collectorCards.length} CARD{collectorCards.length !== 1 ? "S" : ""}
+          </div>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: 16,
+          }}>
+            {collectorCards.map((card) => (
+              <div key={card.chipId} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, pointerEvents: "none" }}>
+                <MiniPhotoCard
+                  perspective={card.perspective}
+                  rarity={card.rarity}
+                  isBooster={card.type === "booster"}
+                  imageUrl={card.imageUrl}
+                  onClick={() => {}}
+                />
+                <div style={{ fontFamily: MONO, fontSize: 7, color: C.textDim, letterSpacing: 1, textAlign: "center", lineHeight: 1.4 }}>
+                  {card.songNum}{"
+"}{card.perspective === "J&J" ? "J&J" : card.perspective.split(" ")[1]}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
