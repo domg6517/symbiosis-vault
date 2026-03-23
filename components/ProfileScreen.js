@@ -45,6 +45,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
   const pendingNavRef = useRef(null);
 
   const linked = ownedCards.filter((c) => c.linked).length;
+  const [ownedURCount, setOwnedURCount] = useState(0);
 
   
 
@@ -79,6 +80,15 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       }
     }
     fetchBadges();
+  }, [session]);
+
+  // Fetch owned 1/1 ultra rare count
+  useEffect(() => {
+    if (!session?.access_token) return;
+    fetch("/api/ultra-rare/list", { headers: { Authorization: "Bearer " + session.access_token } })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.ultraRares) setOwnedURCount(d.ultraRares.filter(ur => ur.isOwnedByMe).length); })
+      .catch(() => {});
   }, [session]);
 
   const email = session?.user?.email || "";
@@ -234,7 +244,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       {/* Stats */}
       <div style={{ display: "flex", justifyContent: "center", gap: 20, padding: "0 16px 10px" }}>
         {[
-          { label: "CARDS", value: linked },
+          { label: "CARDS", value: linked + ownedURCount },
           { label: "SONGS", value: new Set(ownedCards.filter((c) => c.linked).map((c) => c.songId)).size },
         ].map((s) => (
           <div key={s.label} style={{ ...skeuo, borderRadius: 14, padding: "10px 24px", textAlign: "center" }}>
@@ -269,7 +279,6 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           </div>
         ))}
       </div>
-
       {/* Install App */}
       <div style={{ padding: "10px 16px 0" }}>
         <div onClick={() => setShowInstall(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)" }}>
@@ -320,7 +329,6 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           <div style={{ flex: 1 }}><div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Report a Bug</div><div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Let us know what happened</div></div>
           <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
         </div>
-
         {/* FAQ */}
         <div onClick={() => safeNavigate(() => onFAQ && onFAQ())} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)" }}>
           <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -329,7 +337,6 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           <div style={{ flex: 1 }}><div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>FAQ</div><div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Get answers to questions</div></div>
           <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
         </div>
-
         {/* Export Data */}
         <div onClick={handleExportData} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)" }}>
           <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -338,7 +345,6 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           <div style={{ flex: 1 }}><div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Request My Data</div><div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Request a cory of your data</div></div>
           <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
         </div>
-
         {/* Terms */}
         <div onClick={() => safeNavigate(() => onTerms && onTerms())} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)" }}>
           <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -347,7 +353,6 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           <div style={{ flex: 1 }}><div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Terms of Service</div><div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Our terms and conditions</div></div>
           <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
         </div>
-
         {/* Privacy */}
         <div onClick={() => safeNavigate(() => onPrivacy && onPrivacy())} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid " + C.accent + "22", background: "linear-gradient(180deg, rgba(162,160,180,0.04), transparent)" }}>
           <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid " + C.accent + "33", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -356,7 +361,6 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           <div style={{ flex: 1 }}><div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500 }}>Privacy Policy</div><div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>How we protect your data</div></div>
           <div style={{ fontSize: 18, color: C.textDim }}>{String.fromCodePoint(0x203A)}</div>
         </div>
-
         {/* Delete Account */}
         <div onClick={() => setShowDeleteConfirm(true)} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid rgba(231,76,60,0.25)", background: "linear-gradient(180deg, rgba(162,160,180,0.04), rgba(231,76,60,0.04))" }}>
           <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid rgba(231,76,60,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -364,7 +368,6 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           </div>
           <div style={{ flex: 1 }}><div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500, color: "#e74c3c" }}>Delete Account</div><div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Permanently remove your vault</div></div>
         </div>
-
         {/* Sign Out */}
         <div onClick={async () => { await supabase.auth.signOut(); }} style={{ ...skeuo, borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer", marginBottom: 8, border: "1px solid rgba(231,76,60,0.2)", background: "linear-gradient(180deg, rgba(231,76,60,0.04), transparent)" }}>
           <div style={{ width: 30, height: 30, borderRadius: 8, ...skeuo, border: "1px solid rgba(231,76,60,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -373,18 +376,17 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
           <div style={{ flex: 1 }}><div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 500, color: "#e74c3c" }}>Sign Out</div><div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, marginTop: 2 }}>Log out of your vault</div></div>
         </div>
       </div>
-
       {/* Install App Modal */}
       {showInstall && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, backdropFilter: "blur(14px)" }} onClick={() => setShowInstall(false)}>
           <div onClick={(e) => e.stopPropagation()} style={{ ...skeuo, borderRadius: 22, padding: "24px 20px", maxWidth: 360, width: "100%", maxHeight: "85vh", overflow: "auto", border: "1px solid " + C.accent + "33", boxShadow: "0 0 60px rgba(0,0,0,0.6), 0 0 100px " + C.accent + "0d, inset 0 1px 0 rgba(255,255,255,0.06)" }}>
-            <div onClick={() => setShowInstall(false)} style={{ ...skeuo, width: 34, height: 34, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", border: "1px solid " + C.accent + "22", marginBottom: 12 }}><span style={{ fontSize: 16, color: C.accent }}>{"\u2190"}</span></div>
+            <div onClick={() => setShowInstall(false)} style={{ ...skeuo, width: 34, height: 34, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", border: "1px solid " + C.accent + "22", marginBottom: 12 }}><span style={{ fontSize: 16, color: C.accent }}>{"←"}</span></div>
             <div style={{ textAlign: "center", marginBottom: 20 }}>
               <div style={{ fontFamily: SERIF, fontSize: 21, fontWeight: 700, color: C.cream }}>Install Symbiosis Vault</div>
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6, lineHeight: 1.5 }}>Get the full app experience on your phone.</div>
             </div>
             <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.accent, marginBottom: 14, borderBottom: "1px solid " + C.accent + "22", paddingBottom: 8 }}>iPHONE / iPAD (SAFARI)</div>
-            {[{ n: "1", t: "Tap the Share button", d: "Look for the square with an arrow at the bottom of Safari." }, { n: "2", t: 'Scroll down, tap "Add to Home Screen"', d: "Find the option with the + icon in the share menu." }, { n: "3", t: 'Tap "Add" in the top right', d: "The app icon will appear on your home screen!" }].map((step) => (
+            {[{ n: "1", t: "Tap the Share button", d: "Look for the square with an arrow at the bottom of Safari." }, { n: "2", t: "Scroll down, tap \"Add to Home Screen\"", d: "Find the option with the + icon in the share menu." }, { n: "3", t: "Tap \"Add\" in the top right", d: "The app icon will appear on your home screen!" }].map((step) => (
               <div key={step.n} style={{ ...skeuo, borderRadius: 14, padding: "14px 16px", marginBottom: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
                   <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.accent, color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 14, fontWeight: 800, flexShrink: 0 }}>{step.n}</div>
@@ -398,7 +400,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
               <div style={{ fontFamily: SANS, fontSize: 11, color: C.textDim, lineHeight: 1.5 }}>On iPhone, this only works in Safari.</div>
             </div>
             <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.accent, marginBottom: 14, borderBottom: "1px solid " + C.accent + "22", paddingBottom: 8 }}>ANDROID (CHROME)</div>
-            {[{ n: "1", t: "Tap the three dots in upper right", d: "Open the Chrome menu." }, { n: "2", t: 'Tap "Add to Home screen"', d: "Find this in the dropdown menu." }, { n: "3", t: 'Tap "Add" to confirm', d: "Done! The icon appears on your home screen." }].map((step) => (
+            {[{ n: "1", t: "Tap the three dots in upper right", d: "Open the Chrome menu." }, { n: "2", t: "Tap \"Add to Home screen\"", d: "Find this in the dropdown menu." }, { n: "3", t: "Tap \"Add\" to confirm", d: "Done! The icon appears on your home screen." }].map((step) => (
               <div key={step.n} style={{ ...skeuo, borderRadius: 14, padding: "14px 16px", marginBottom: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
                   <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.accent, color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 14, fontWeight: 800, flexShrink: 0 }}>{step.n}</div>
