@@ -2,13 +2,10 @@ import { createServerClient } from "../../../lib/supabase";
 import { NextResponse } from "next/server";
 import { rateLimit } from "../../../lib/rateLimit";
 
-const RARITY_POINTS = {
-  common: 1,
-  rare: 2,
-  super_rare: 5,
-};
+const RARITY_POINTS = { common: 1, rare: 2, super_rare: 5 };
+const ULTRA_RARE_POINTS = 5;
 
-// In-memory cache to avoid recomputing every request
+// In-memory cache
 let cachedResult = null;
 let cacheTimestamp = 0;
 const CACHE_TTL = 15000; // 15 seconds
@@ -16,44 +13,37 @@ const CACHE_TTL = 15000; // 15 seconds
 export async function GET(request) {
   const supabase = createServerClient();
 
-  // Auth check
   const authHeader = request.headers.get("authorization");
-  if (!authHeader) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  if (!authHeader) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const authToken = authHeader.replace("Bearer ", "");
   const { data: { user }, error: authError } = await supabase.auth.getUser(authToken);
-  if (authError || !user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  if (authError || !user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { allowed } = rateLimit("lb:" + user.id, 5, 60000);
-  if (!allowed) {
-    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-  }
+  if (!allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
-  // Return cached result if fresh
   if (cachedResult && Date.now() - cacheTimestamp < CACHE_TTL) {
     return NextResponse.json({ leaderboard: cachedResult });
   }
 
-  // Fetch all linked cards with rarity + perspective in a single query
+  // Fetch all linked regular cards
   const { data: cards, error } = await supabase
     .from("user_cards")
     .select("user_id, linked, card_template:card_templates (chip_id, song_id, rarity, perspective:perspectives (name))")
     .eq("linked", true);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  // Fetch all owned 1/1 ultra rares
+  const { data: ultraRares } = await supabase
+    .from("user_ultra_rares")
+    .select("user_id, ultra_rare_id")
+    .eq("owned", true);
 
-  // Group by user_id
+  // Group regular cards by user
   const userMap = {};
   (cards || []).forEach((row) => {
     const uid = row.user_id;
-    if (!userMap[uid]) {
-      userMap[uid] = { totalCards: 0, points: 0, uniqueSongs: new Set(), cards: [] };
-    }
+    if (!userMap[uid]) userMap[uid] = { totalCards: 0, points: 0, uniqueSongs: new Set(), cards: [] };
     const rarity = row.card_template?.rarity || "common";
     const pts = RARITY_POINTS[rarity] || 1;
     userMap[uid].totalCards++;
@@ -67,24 +57,26 @@ export async function GET(request) {
     });
   });
 
+  // Add 5 points per owned 1/1 ultra rare
+  (ultraRares || []).forEach((row) => {
+    const uid = row.user_id;
+    if (!userMap[uid]) userMap[uid] = { totalCards: 0, points: 0, uniqueSongs: new Set(), cards: [] };
+    userMap[uid].points += ULTRA_RARE_POINTS;
+    userMap[uid].totalCards++;
+  });
+
   const userIds = Object.keys(userMap);
 
-  // Single batch query for all profile data (replaces N+1 admin.getUserById calls)
+  // Batch fetch profiles
   const profileMap = {};
   if (userIds.length > 0) {
     const { data: profiles } = await supabase
       .from("profiles")
       .select("id, username, avatar_url, instagram, twitter, tiktok")
       .in("id", userIds);
-
-    if (profiles) {
-      profiles.forEach((p) => {
-        profileMap[p.id] = p;
-      });
-    }
+    if (profiles) profiles.forEach((p) => { profileMap[p.id] = p; });
   }
 
-  // Build leaderboard sorted by points
   const leaderboard = Object.entries(userMap)
     .map(([uid, info]) => {
       const p = profileMap[uid] || {};
@@ -105,13 +97,9 @@ export async function GET(request) {
     })
     .sort((a, b) => b.points - a.points || b.totalCards - a.totalCards || b.uniqueSongs - a.uniqueSongs);
 
-  leaderboard.forEach((entry, i) => {
-    entry.rank = i + 1;
-  });
+  leaderboard.forEach((entry, i) => { entry.rank = i + 1; });
 
-  // Cache result
   cachedResult = leaderboard;
   cacheTimestamp = Date.now();
-
   return NextResponse.json({ leaderboard });
 }
