@@ -36,7 +36,9 @@ export default function SampleCLinkPage({ params }) {
           if (res.status === 409) {
             setCardResult(data.card);
             if (data.ownerName) setOwnerName(data.ownerName);
-            setStatus(data.error && data.error.includes("another") ? "taken" : data.error && data.error.includes("1/1") ? "takenUltra" : "already");
+            if (data.error && data.error.includes("another")) setStatus("taken");
+            else if (data.error && data.error.includes("1/1")) setStatus("takenUltra");
+            else setStatus("already");
             setTimeout(goToVault, 3000);
             return;
           }
@@ -70,6 +72,10 @@ export default function SampleCLinkPage({ params }) {
     borderRadius: "50%", border: "1.5px solid " + C.accent + "44",
     display: "flex", alignItems: "center", justifyContent: "center",
   };
+  const headingStyle = {
+    marginTop: 24, fontSize: 18, fontWeight: 300, color: C.cream,
+    fontFamily: SERIF, textShadow: "0 1px 3px rgba(0,0,0,0.4)",
+  };
 
   return (
     <div style={{
@@ -82,23 +88,25 @@ export default function SampleCLinkPage({ params }) {
       <div style={wrapStyle}>
         <FilmGrain opacity={0.04} />
 
-        {(status === "loading" || status === "linking") && (
+        {status === "loading" && (
+          <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
+            <div style={circleBase}><NfcIcon size={36} color={C.accent} /></div>
+            <div style={headingStyle}>Linking card...</div>
+            <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 8 }}>{chipId}</div>
+          </div>
+        )}
+
+        {status === "linking" && (
           <div style={{ textAlign: "center", zIndex: 1 }}>
-            {status === "loading" ? (
-              <div style={circleBase}><NfcIcon size={36} color={C.accent} /></div>
-            ) : (
-              <div style={{ width: 48, height: 48, borderRadius: "50%", border: "2px solid " + C.accent + "22", borderTopColor: C.accent, animation: "spin 1s linear infinite", margin: "0 auto" }} />
-            )}
-            <div style={{ marginTop: 24, fontSize: 18, fontWeight: 300, color: C.cream, fontFamily: SERIF }}>
-              {status === "linking" ? "Claiming card..." : "Linking card..."}
-            </div>
+            <div style={{ width: 48, height: 48, borderRadius: "50%", border: "2px solid " + C.accent + "22", borderTopColor: C.accent, animation: "spin 1s linear infinite", margin: "0 auto" }} />
+            <div style={{ color: C.textDim, fontFamily: MONO, fontSize: 11, letterSpacing: 2, marginTop: 20 }}>LINKING TO VAULT</div>
           </div>
         )}
 
         {status === "needsAuth" && (
           <div style={{ textAlign: "center", zIndex: 1, padding: "0 32px" }}>
             <div style={circleBase}><NfcIcon size={36} color={C.accent} /></div>
-            <div style={{ marginTop: 24, fontSize: 18, fontWeight: 300, color: C.cream, fontFamily: SERIF }}>Sign in to link this card</div>
+            <div style={headingStyle}>Sign in to link this card</div>
             <div style={{ fontSize: 13, color: C.textSec, fontFamily: SANS, marginTop: 8, lineHeight: 1.5 }}>Create an account or sign in, then tap this card again.</div>
             <button onClick={goToVault} style={{ marginTop: 28, padding: "13px 40px", ...skeuo.btnGold, color: C.bg, fontSize: 10, fontFamily: MONO, fontWeight: 600, letterSpacing: 3, cursor: "pointer" }}>SIGN IN</button>
           </div>
@@ -106,22 +114,26 @@ export default function SampleCLinkPage({ params }) {
 
         {(status === "already" || status === "taken" || status === "takenUltra") && (
           <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
-            <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(145deg,#2A2520,#1E1B17)", border: "1.5px solid " + C.accent + "44", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto" }}>
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(145deg,#2A2520,#1E1B17)", border: "1.5px solid " + C.accent + "44", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
             </div>
             <div style={{ fontFamily: SERIF, fontSize: 22, color: C.cream, marginTop: 20 }}>
               {status === "already" ? "Already Collected" : "Card Unavailable"}
             </div>
             {cardResult && (
-              <div style={{ fontFamily: SANS, fontSize: 14, color: C.accent, marginTop: 8 }}>
-                {cardResult.perspective} {status === "takenUltra" ? "1/1" : "· " + cardResult.rarity}
-              </div>
-            )}
-            {(status === "taken" || status === "takenUltra") && ownerName && (
-              <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6 }}>Owned by {ownerName}</div>
+              <>
+                <div style={{ fontFamily: SANS, fontSize: 14, color: C.accent, marginTop: 8 }}>
+                  {cardResult.perspective} {status === "takenUltra" ? "1/1" : "· " + cardResult.rarity}
+                </div>
+                <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6 }}>
+                  {status === "already" ? "This card is already in your vault" : status === "takenUltra" ? (ownerName ? "Owned by " + ownerName : "This card belongs to another collector") : "This card is connected to another collector"}
+                </div>
+              </>
             )}
             <div style={{ fontFamily: MONO, fontSize: 9, color: C.textDim, letterSpacing: 1, marginTop: 16, opacity: 0.4 }}>Redirecting to vault...</div>
-            <button onClick={goToVault} style={{ marginTop: 28, padding: "14px 44px", background: "linear-gradient(145deg,#2A2520,#1E1B17)", color: C.accent, fontFamily: MONO, fontSize: 10, letterSpacing: 4, border: "1px solid " + C.accent + "33", borderRadius: 8, cursor: "pointer" }}>OPEN VAULT</button>
+            <button onClick={goToVault} style={{ marginTop: 28, padding: "14px 44px", background: "linear-gradient(145deg,#2A2520,#1E1B17)", color: C.accent, fontFamily: MONO, fontSize: 10, letterSpacing: 4, fontWeight: 400, border: "1px solid " + C.accent + "33", borderRadius: 8, cursor: "pointer" }}>OPEN VAULT</button>
           </div>
         )}
 
@@ -130,7 +142,7 @@ export default function SampleCLinkPage({ params }) {
             <div style={{ width: 64, height: 64, ...skeuo, borderRadius: "50%", border: "2px solid " + C.teal, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto" }}>
               <CheckIcon size={24} color={C.teal} />
             </div>
-            <div style={{ fontSize: 24, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 20 }}>Card Added</div>
+            <div style={{ fontSize: 24, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 20, textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>Card Added</div>
             {cardResult && (
               <>
                 <div style={{ fontSize: 15, color: C.accent, fontFamily: SANS, marginTop: 8 }}>{cardResult.perspective === "J&J" ? "Jack & Jack" : cardResult.perspective}</div>
@@ -138,7 +150,7 @@ export default function SampleCLinkPage({ params }) {
               </>
             )}
             <div style={{ fontSize: 9, color: C.textDim, fontFamily: MONO, letterSpacing: 1, marginTop: 16, opacity: 0.4 }}>Redirecting to vault...</div>
-            <button onClick={goToVault} style={{ marginTop: 28, padding: "14px 44px", background: "linear-gradient(145deg,#2A2520,#1E1B17)", color: C.accent, fontFamily: MONO, fontSize: 10, letterSpacing: 4, border: "1px solid " + C.accent + "33", borderRadius: 8, cursor: "pointer" }}>OPEN VAULT</button>
+            <button onClick={goToVault} style={{ marginTop: 28, padding: "14px 44px", background: "linear-gradient(145deg,#2A2520,#1E1B17)", color: C.accent, fontFamily: MONO, fontSize: 10, letterSpacing: 4, fontWeight: 400, border: "1px solid " + C.accent + "33", borderRadius: 8, cursor: "pointer" }}>OPEN VAULT</button>
           </div>
         )}
 
@@ -148,7 +160,7 @@ export default function SampleCLinkPage({ params }) {
               <svg width="32" height="32" viewBox="0 0 24 24" fill={C.megaGold}><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
             </div>
             <div style={{ fontSize: 11, fontFamily: MONO, letterSpacing: 4, color: C.megaGold, marginTop: 24 }}>1 OF 1</div>
-            <div style={{ fontSize: 28, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 8 }}>You found it.</div>
+            <div style={{ fontSize: 28, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 8, textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>You found it.</div>
             {cardResult && (
               <>
                 <div style={{ fontSize: 15, color: C.accent, fontFamily: SANS, marginTop: 10 }}>{cardResult.perspective === "J&J" ? "Jack & Jack" : cardResult.perspective} · {cardResult.songTitle}</div>
@@ -156,7 +168,7 @@ export default function SampleCLinkPage({ params }) {
               </>
             )}
             <div style={{ fontSize: 9, color: C.textDim, fontFamily: MONO, letterSpacing: 1, marginTop: 20, opacity: 0.4 }}>Redirecting to vault...</div>
-            <button onClick={goToVault} style={{ marginTop: 28, padding: "14px 44px", background: "linear-gradient(145deg,#2A2520,#1A1714)", color: C.megaGold, fontFamily: MONO, fontSize: 10, letterSpacing: 4, border: "1px solid " + C.megaGold + "55", borderRadius: 8, cursor: "pointer" }}>OPEN VAULT</button>
+            <button onClick={goToVault} style={{ marginTop: 28, padding: "14px 44px", background: "linear-gradient(145deg,#2A2520,#1A1714)", color: C.megaGold, fontFamily: MONO, fontSize: 10, letterSpacing: 4, fontWeight: 400, border: "1px solid " + C.megaGold + "55", borderRadius: 8, cursor: "pointer" }}>OPEN VAULT</button>
           </div>
         )}
 
@@ -165,7 +177,7 @@ export default function SampleCLinkPage({ params }) {
             <div style={{ width: 64, height: 64, ...skeuo.inset, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto", border: "1.5px solid " + C.rose + "33" }}>
               <span style={{ fontSize: 28, color: C.rose }}>!</span>
             </div>
-            <div style={{ fontSize: 18, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 20 }}>Something went wrong</div>
+            <div style={{ fontSize: 18, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 20, textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>Something went wrong</div>
             <div style={{ fontSize: 12, color: C.rose, fontFamily: MONO, letterSpacing: 1, marginTop: 12, maxWidth: 280 }}>{error}</div>
             <button onClick={goToVault} style={{ marginTop: 32, padding: "13px 40px", ...skeuo.btnGhost, color: C.accent, fontSize: 10, fontFamily: MONO, letterSpacing: 3, cursor: "pointer" }}>OPEN VAULT</button>
           </div>
@@ -173,4 +185,4 @@ export default function SampleCLinkPage({ params }) {
       </div>
     </div>
   );
-              }
+                    }
