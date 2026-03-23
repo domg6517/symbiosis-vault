@@ -9,7 +9,7 @@ import ActivityFeed from "./ActivityFeed";
 const BASE_ULTRA_RARES = generateUltraRares();
 
 export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLeaderboard, onProfile, onViewCollector, session }) {
-  const [view, setView] = useState("singles");
+  const [view, setView] = useState("singles")
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -200,7 +200,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
               </div>
             </div>
             {SINGLES.map((song) => {
-              const songURs = ultraRares.filter((ur) => ur.songId === song.id);
+              const songURs = BASE_ULTRA_RARES.filter((ur) => ur.songId === song.id).map(b => ultraRares.find(a => a.id === b.id) || b);
               const songOwnedCount = songURs.filter((ur) => ur.isOwnedByMe || ur.owned).length;
               return (
                 <div key={song.id} style={{ marginBottom: 12 }}>
@@ -272,6 +272,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
       {selectedUR && (
         <div onClick={() => setSelectedUR(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 32px" }}>
           <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 320, ...skeuo.card, borderRadius: 16, padding: 24, textAlign: "center", position: "relative" }}>
+            <div onClick={() => setSelectedUR(null)} style={{ position: "absolute", top: 12, left: 12, ...skeuo.card, width: 32, height: 32, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 16, zIndex: 1 }}>{String.fromCodePoint(0x2190)}</div>
             {selectedUR.imageUrl && (
               <img src={selectedUR.imageUrl} alt="1/1" style={{ width: "100%", borderRadius: 10, marginBottom: 16, display: "block" }} />
             )}
