@@ -17,6 +17,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
   const [ultraRaresData, setUltraRaresData] = useState(null);
   const [selectedUR, setSelectedUR] = useState(null);
   const [disconnecting, setDisconnecting] = useState(false);
+  const [disconnectMsg, setDisconnectMsg] = useState(null);
 
   const linked = ownedCards.filter((c) => c.linked);
   const singleCards = linked.filter((c) => c.type === "single");
@@ -49,6 +50,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
   async function handleDisconnectUR(ur) {
     if (!session?.access_token || disconnecting) return;
     setDisconnecting(true);
+    setDisconnectMsg(null);
     try {
       const res = await fetch("/api/ultra-rare/disconnect", {
         method: "POST",
@@ -57,10 +59,16 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
       });
       if (res.ok) {
         setSelectedUR(null);
+        setDisconnectMsg(null);
         const listRes = await fetch("/api/ultra-rare/list", { headers: { Authorization: "Bearer " + session.access_token } });
         if (listRes.ok) { const d = await listRes.json(); if (d.ultraRares) setUltraRaresData(d.ultraRares); }
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        setDisconnectMsg(errData.error || "Disconnect failed. Try again.");
       }
-    } catch (e) {}
+    } catch (e) {
+      setDisconnectMsg("Connection error. Please try again.");
+    }
     setDisconnecting(false);
   }
 
@@ -298,6 +306,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                   {disconnecting ? "DISCONNECTING..." : "DISCONNECT"}
                 </button>
                 <div style={{ fontSize: 10, fontFamily: SANS, color: C.textDim, marginTop: 8, lineHeight: 1.4 }}>Disconnecting releases the card. The chip becomes available again and you lose 5 pts.</div>
+                {disconnectMsg && <div style={{ fontSize: 11, fontFamily: SANS, color: C.rose, marginTop: 8, fontWeight: 500 }}>{disconnectMsg}</div>}
               </div>
             )}
             {!selectedUR.owner && !selectedUR.isOwnedByMe && (
