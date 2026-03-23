@@ -58,6 +58,11 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
         body: JSON.stringify({ ultraRareId: ur.id }),
       });
       if (res.ok) {
+        // Optimistic update: immediately clear ownership in local state
+        setUltraRaresData(prev => prev
+          ? prev.map(u => u.id === ur.id ? { ...u, isOwnedByMe: false, owner: null } : u)
+          : prev
+        );
         setSelectedUR(null);
         setDisconnectMsg(null);
         const listRes = await fetch("/api/ultra-rare/list", { headers: { Authorization: "Bearer " + session.access_token } });
