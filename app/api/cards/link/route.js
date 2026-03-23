@@ -186,7 +186,7 @@ export async function POST(request) {
       if (ur) {
         const { data: existingUr } = await supabase
           .from("user_ultra_rares")
-          .select("id")
+          .select("id, owned")
           .eq("user_id", user.id)
           .eq("ultra_rare_id", ur.id)
           .single();
@@ -198,6 +198,13 @@ export async function POST(request) {
             owned: true,
             owned_at: new Date().toISOString(),
           });
+          ultraRareUnlocked = ur.id;
+        } else if (!existingUr.owned) {
+          // Re-link a previously disconnected 1/1
+          await supabase
+            .from("user_ultra_rares")
+            .update({ owned: true, owned_at: new Date().toISOString() })
+            .eq("id", existingUr.id);
           ultraRareUnlocked = ur.id;
         }
       }
