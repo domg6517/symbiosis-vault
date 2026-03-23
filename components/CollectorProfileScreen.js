@@ -119,7 +119,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
       <div style={{ display: "flex", justifyContent: "center", gap: 20, padding: "0 16px 24px" }}>
         {[
           { label: "RANK", value: rank ? "#" + rank : "\u2014" },
-          { label: "CARDS", value: totalCards },
+          { label: "CARDS", value: totalCards + collectorURsOwned.length },
           { label: "SONGS", value: uniqueSongs },
         ].map((s) => (
           <div key={s.label} style={{ ...skeuo, borderRadius: 14, padding: "14px 28px", textAlign: "center" }}>
