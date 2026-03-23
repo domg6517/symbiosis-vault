@@ -32,7 +32,7 @@ export async function GET(request) {
     if (ownerIds.length > 0) {
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("id, username, display_name")
+        .select("id, username")
         .in("id", ownerIds);
       (profiles || []).forEach(p => { profilesMap[p.id] = p; });
     }
@@ -43,7 +43,7 @@ export async function GET(request) {
         const profile = profilesMap[o.user_id];
         ownerMap[o.ultra_rare_id] = {
           userId: o.user_id,
-          username: profile?.display_name || profile?.username || "Collector",
+          username: profile?.profile?.username || "Collector",
           isCurrentUser: o.user_id === currentUserId,
         };
       }
