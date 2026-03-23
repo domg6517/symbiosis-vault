@@ -281,9 +281,9 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             </div>
             <div style={{ fontSize: 11, fontFamily: SANS, color: C.textSec, marginTop: 4 }}>{selectedUR.songTitle}</div>
             {selectedUR.owner && !selectedUR.isOwnedByMe && (
-              <div style={{ marginTop: 14, padding: "8px 14px", ...skeuo.inset, borderRadius: 8 }}>
+              <div onClick={() => { setSelectedUR(null); onViewCollector({ user_id: selectedUR.owner.userId, display_name: selectedUR.owner.username }); }} style={{ marginTop: 14, padding: "8px 14px", ...skeuo.inset, borderRadius: 8, cursor: "pointer" }}>
                 <div style={{ fontSize: 9, fontFamily: MONO, color: C.textDim, letterSpacing: 2 }}>OWNED BY</div>
-                <div style={{ fontSize: 14, fontFamily: SANS, color: C.cream, fontWeight: 500, marginTop: 4 }}>{selectedUR.owner.username}</div>
+                <div style={{ fontSize: 14, fontFamily: SANS, color: C.accent, fontWeight: 500, marginTop: 4 }}>{selectedUR.owner.username}</div>
               </div>
             )}
             {selectedUR.isOwnedByMe && (
