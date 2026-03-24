@@ -79,6 +79,7 @@ export async function POST(request) {
     } catch (_) {}
 
     // Badge diff
+    console.log("[DISCORD_DEBUG] Pre-badge section. user=" + user?.id?.substring(0,8));
     let badgesBefore = [];
     try {
       const { data } = await supabase.from("user_badges").select("badge_id").eq("user_id", user.id);
@@ -139,6 +140,7 @@ export async function POST(request) {
 
     // Discord notification
     try {
+      console.log("[DISCORD_DEBUG] Reached card notification. chip=" + cardTemplate?.chip_id + " rarity=" + cardTemplate?.rarity + " ultra=" + ultraRareUnlocked);
       if (ultraRareUnlocked) {
         await notifyDiscord(ultraRareClaimedEmbed({
           username: displayName, chipId: cardTemplate.chip_id,
