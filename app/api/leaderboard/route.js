@@ -2,7 +2,7 @@ import { createServerClient } from "../../../lib/supabase";
 import { NextResponse } from "next/server";
 import { rateLimit } from "../../../lib/rateLimit";
 
-const RARITY_POINTS = { common: 1, rare: 2, super_rare: 5 };
+const RARITY_POINTS = { common: 1, rare: 2, ultra_rare: 5 };
 const ULTRA_RARE_POINTS = 5;
 
 // In-memory cache
