@@ -54,11 +54,9 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
         if (data.ultraRares) {
           const map = {};
           data.ultraRares.forEach((ur) => {
-            map[ur.chipId] = {
-              owner: ur.owner,
-              isOwnedByMe: ur.isOwnedByMe,
-              imageUrl: ur.imageUrl,
-            };
+            const val = { owner: ur.owner, isOwnedByMe: ur.isOwnedByMe, imageUrl: ur.imageUrl };
+            if (ur.chipId) map[ur.chipId] = val;
+            map[ur.songId + "-" + ur.perspective] = val;
           });
           setUrData(map);
         }
@@ -73,6 +71,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
     setSearchQuery(q);
     if (!q.trim()) { setSearchResults([]); return; }
     setSearching(true);
+
     try {
       const res = await fetch("/api/users/search?q=" + encodeURIComponent(q.trim()), {
         headers: session?.access_token ? { Authorization: "Bearer " + session.access_token } : {},
@@ -307,8 +306,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                   <div style={{ display: "flex", gap: 6 }}>
                     {songURs.map((ur) => {
                       const pLabel = ur.perspective === "J&J" ? "J&J" : ur.perspective.split(" ")[1];
-                      // Merge with live owner data
-                      const liveData = ur.chipId ? urData[ur.chipId] : null;
+                      const liveData = ur.chipId ? urData[ur.chipId] : urData[ur.songId + "-" + ur.perspective];
                       const ownerInfo = liveData?.owner || null;
                       const isOwnedByMe = liveData?.isOwnedByMe || false;
                       const liveImageUrl = liveData?.imageUrl || ur.imageUrl;
@@ -327,12 +325,17 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                             position: "relative", overflow: "hidden",
                             borderRadius: 10,
                             cursor: (ur.owned || anyoneOwns) ? "pointer" : "default",
-                            // Gold fill for owned, dark inset for sealed
                             ...(ur.owned
                               ? {
                                   background: "linear-gradient(145deg, #2A2416, #1E1A0E, #2A2416)",
                                   boxShadow: "0 1px 0 rgba(228,188,74,0.15) inset, 0 -1px 0 rgba(0,0,0,0.4) inset, 0 4px 12px rgba(0,0,0,0.5), 0 0 16px rgba(184,160,60,0.12)",
                                   border: "1px solid rgba(228,188,74,0.35)",
+                                }
+                              : anyoneOwns
+                              ? {
+                                  background: "linear-gradient(145deg, #1E1A10, #171410)",
+                                  border: "1px solid rgba(228,188,74,0.18)",
+                                  boxShadow: "0 0 8px rgba(184,160,60,0.06)",
                                 }
                               : skeuo.inset),
                           }}
@@ -340,21 +343,26 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                           {ur.owned ? (
                             <>
                               {liveImageUrl ? (
-                                <div style={{
-                                  width: "100%", aspectRatio: "3/4", overflow: "hidden",
-                                  borderRadius: 6, marginBottom: 6,
-                                }}>
-                                  <img
-                                    src={liveImageUrl}
-                                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                                    alt=""
-                                  />
+                                <div style={{ width: "100%", aspectRatio: "3/4", overflow: "hidden", borderRadius: 6, marginBottom: 6 }}>
+                                  <img src={liveImageUrl} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} alt="" />
                                 </div>
                               ) : (
                                 <StarIcon size={12} />
                               )}
                               <div style={{ fontSize: 11, fontFamily: SERIF, fontWeight: 300, color: "#E4BC4A", marginTop: liveImageUrl ? 0 : 4, position: "relative", zIndex: 1 }}>{pLabel}</div>
                               <div style={{ fontSize: 7, fontFamily: MONO, color: "#C4A030", letterSpacing: 2, marginTop: 3, position: "relative", zIndex: 1 }}>1 OF 1</div>
+                            </>
+                          ) : anyoneOwns ? (
+                            <>
+                              {liveImageUrl ? (
+                                <div style={{ width: "100%", aspectRatio: "3/4", overflow: "hidden", borderRadius: 6, marginBottom: 6 }}>
+                                  <img src={liveImageUrl} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} alt="" />
+                                </div>
+                              ) : (
+                                <StarIcon size={12} />
+                              )}
+                              <div style={{ fontSize: 11, fontFamily: SERIF, fontWeight: 300, color: "#E4BC4A", marginTop: liveImageUrl ? 0 : 4, position: "relative", zIndex: 1 }}>{pLabel}</div>
+                              <div style={{ fontSize: 7, fontFamily: MONO, color: C.textDim, letterSpacing: 1, marginTop: 3, position: "relative", zIndex: 1 }}>{ownerInfo?.username || "OWNED"}</div>
                             </>
                           ) : (
                             <>
@@ -453,12 +461,10 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             borderBottom: "none",
             boxShadow: "0 -4px 40px rgba(0,0,0,0.6)",
           }}>
-            {/* Close pill */}
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
               <div onClick={() => setSelectedUR(null)} style={{ width: 36, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.15)", cursor: "pointer" }} />
             </div>
 
-            {/* Card image */}
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
               {selectedUR.imageUrl ? (
                 <div style={{
@@ -480,7 +486,6 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
               )}
             </div>
 
-            {/* Song + Perspective */}
             <div style={{ textAlign: "center", marginBottom: 24 }}>
               <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700, color: "#E4BC4A", marginBottom: 4 }}>
                 {selectedUR.perspective === "J&J" ? "J&J" : selectedUR.perspective?.split(" ")[1] || selectedUR.perspective}
@@ -491,20 +496,10 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
               <div style={{ fontFamily: MONO, fontSize: 9, color: "#C4A030", letterSpacing: 3, marginTop: 6 }}>1 OF 1</div>
             </div>
 
-            {/* Owner info */}
-            <div style={{
-              ...skeuo.inset,
-              padding: "16px",
-              borderRadius: 14,
-              marginBottom: selectedUR.isOwnedByMe ? 16 : 0,
-            }}>
+            <div style={{ ...skeuo.inset, padding: "16px", borderRadius: 14, marginBottom: selectedUR.isOwnedByMe ? 16 : 0 }}>
               {selectedUR.isOwnedByMe ? (
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <div style={{
-                    width: 8, height: 8, borderRadius: "50%",
-                    background: "#E4BC4A",
-                    boxShadow: "0 0 6px #E4BC4A",
-                  }} />
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#E4BC4A", boxShadow: "0 0 6px #E4BC4A" }} />
                   <div style={{ fontFamily: SANS, fontSize: 14, color: C.cream, fontWeight: 500 }}>You own this</div>
                 </div>
               ) : selectedUR.ownerInfo ? (
@@ -527,19 +522,15 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                   <div style={{ fontSize: 14, color: C.textDim }}>{String.fromCodePoint(0x2197)}</div>
                 </div>
               ) : (
-                <div style={{ fontFamily: SANS, fontSize: 14, color: C.textDim, textAlign: "center" }}>
-                  Unclaimed
-                </div>
+                <div style={{ fontFamily: SANS, fontSize: 14, color: C.textDim, textAlign: "center" }}>Unclaimed</div>
               )}
             </div>
 
-            {/* Disconnect button (only if I own it) */}
             {selectedUR.isOwnedByMe && selectedUR.chipId && (
               <div
                 onClick={() => !disconnecting && handleDisconnectUR(selectedUR.chipId)}
                 style={{
-                  padding: "14px",
-                  borderRadius: 12,
+                  padding: "14px", borderRadius: 12,
                   border: "1px solid rgba(176,114,114,0.3)",
                   background: "linear-gradient(180deg, rgba(176,114,114,0.08), transparent)",
                   textAlign: "center",
