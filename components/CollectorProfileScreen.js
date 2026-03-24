@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { useAuth } from "./AuthContext";
 import { MiniPhotoCard } from "./SharedComponents";
+import { StarIcon } from "./Icons";
 
 function sanitizeHandle(val) {
   if (!val) return "";
@@ -14,30 +15,25 @@ export default function CollectorProfileScreen({ collector, onBack }) {
   if (!collector) return null;
 
   const [profileData, setProfileData] = useState(null);
-  const [fetchedStats, setFetchedStats] = useState(null);
   const [collectorCards, setCollectorCards] = useState([]);
-  const [allUltraRares, setAllUltraRares] = useState([]);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [loadingCards, setLoadingCards] = useState(true);
 
   useEffect(() => {
     if (!collector.user_id) return;
-    const headers = session?.access_token ? { Authorization: "Bearer " + session.access_token } : {};
-    const needsStats = collector.totalCards === undefined;
     async function fetchAll() {
       try {
-        const [profileRes, cardsRes, statsRes, urRes] = await Promise.all([
+        const headers = session?.access_token ? { Authorization: "Bearer " + session.access_token } : {};
+        const [profileRes, cardsRes] = await Promise.all([
           fetch("/api/users/profile?userId=" + collector.user_id, { headers }),
           fetch("/api/users/cards?userId=" + collector.user_id, { headers }),
-          needsStats ? fetch("/api/users/stats?userId=" + collector.user_id, { headers }) : Promise.resolve(null),
-          fetch("/api/ultra-rare/list", { headers }),
         ]);
-        if (profileRes.ok) setProfileData(await profileRes.json());
-        if (cardsRes.ok) { const d = await cardsRes.json(); setCollectorCards(d.cards || []); }
-        if (statsRes && statsRes.ok) setFetchedStats(await statsRes.json());
-        if (urRes && urRes.ok) { const d = await urRes.json(); if (d?.ultraRares) setAllUltraRares(d.ultraRares); }
+        const profileJson = await profileRes.json();
+        const cardsJson = await cardsRes.json();
+        if (profileRes.ok) setProfileData(profileJson);
+        if (cardsJson.cards) setCollectorCards(cardsJson.cards);
       } catch (e) {
-        console.error("Collector profile fetch error:", e);
+        console.error("Profile fetch error:", e);
       } finally {
         setLoadingProfile(false);
         setLoadingCards(false);
@@ -52,10 +48,12 @@ export default function CollectorProfileScreen({ collector, onBack }) {
   const tw = sanitizeHandle(profileData?.twitter || collector.twitter || "");
   const tk = sanitizeHandle(profileData?.tiktok || collector.tiktok || "");
   const badges = profileData?.badges || [];
-  const totalCards = collector.totalCards !== undefined ? collector.totalCards : (fetchedStats?.totalCards || 0);
-  const uniqueSongs = collector.uniqueSongs !== undefined ? collector.uniqueSongs : (fetchedStats?.uniqueSongs || 0);
-  const rank = collector.rank !== undefined ? collector.rank : (fetchedStats?.rank || null);
-  const collectorURsOwned = allUltraRares.filter(ur => ur.owner?.username === name);
+  const rank = profileData?.rank || collector.rank;
+
+  // Split cards: ultra rare gets its own section
+  const ultraRareCards = collectorCards.filter(c => c.rarity === "ultra_rare");
+  const regularCards = collectorCards.filter(c => c.rarity !== "ultra_rare");
+  const uniqueSongs = new Set(regularCards.map(c => c.songId)).size;
 
   return (
     <div style={{ height: "100dvh", overflowY: "auto", background: C.bg, color: C.text, padding: "0 0 100px" }}>
@@ -91,13 +89,13 @@ export default function CollectorProfileScreen({ collector, onBack }) {
             </div>
           )}
           {tw && (
-            <div onClick={() => window.open("https://x.com/" + tw, "_blank")} style={{ width: 46, height: 46, borderRadius: 13, cursor: "pointer", background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div onClick={() => window.open("https://x.com/" + tw, "_blank")} style={{ width: 46, height: 46, borderRadius: 13, cursor: "pointer", background: "#000", border: "1px solid #333", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </div>
           )}
           {tk && (
-            <div onClick={() => window.open("https://tiktok.com/@" + tk, "_blank")} style={{ width: 46, height: 46, borderRadius: 13, cursor: "pointer", background: "#010101", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.43a8.16 8.16 0 0 0 4.77 1.52V7.48a4.85 4.85 0 0 1-1-.79z"/></svg>
+            <div onClick={() => window.open("https://tiktok.com/@" + tk, "_blank")} style={{ width: 46, height: 46, borderRadius: 13, cursor: "pointer", background: "#000", border: "1px solid #333", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.78a4.85 4.85 0 01-1.01-.09z"/></svg>
             </div>
           )}
         </div>
@@ -105,7 +103,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
 
       {/* Badges */}
       {badges.length > 0 && (
-        <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 8, padding: "4px 16px 16px" }}>
+        <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 8, padding: "4px 16px 14px" }}>
           {badges.map((b) => (
             <div key={b.badge.slug} style={{ ...skeuo, borderRadius: 20, padding: "6px 14px", display: "flex", alignItems: "center", gap: 6, border: "1px solid " + C.accent + "33", background: "linear-gradient(180deg, rgba(228,188,74,0.06), transparent)" }}>
               <span style={{ fontSize: 14 }}>{b.badge.icon}</span>
@@ -116,10 +114,10 @@ export default function CollectorProfileScreen({ collector, onBack }) {
       )}
 
       {/* Stats */}
-      <div style={{ display: "flex", justifyContent: "center", gap: 20, padding: "0 16px 24px" }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: 20, padding: "0 16px 20px" }}>
         {[
           { label: "RANK", value: rank ? "#" + rank : "\u2014" },
-          { label: "CARDS", value: totalCards + collectorURsOwned.length },
+          { label: "CARDS", value: collectorCards.length },
           { label: "SONGS", value: uniqueSongs },
         ].map((s) => (
           <div key={s.label} style={{ ...skeuo, borderRadius: 14, padding: "14px 28px", textAlign: "center" }}>
@@ -129,14 +127,81 @@ export default function CollectorProfileScreen({ collector, onBack }) {
         ))}
       </div>
 
+      {/* ✦ 1/1 Ultra Rare Section — Spectacular */}
+      {ultraRareCards.length > 0 && (
+        <div style={{ padding: "0 16px", marginBottom: 28 }}>
+          {/* Section header */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+            <StarIcon size={10} color={C.megaGold} />
+            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.megaGold }}>
+              1 OF 1{ultraRareCards.length > 1 ? " · " + ultraRareCards.length : ""}
+            </div>
+            <StarIcon size={10} color={C.megaGold} />
+          </div>
+
+          {ultraRareCards.map((card) => {
+            const pLabel = card.perspective === "J&J" ? "J&J" : card.perspective.split(" ")[1] || card.perspective;
+            return (
+              <div key={card.chipId} style={{
+                position: "relative",
+                borderRadius: 14,
+                overflow: "hidden",
+                border: "1.5px solid " + C.megaGold + "66",
+                boxShadow: "0 0 32px " + C.megaGold + "18, 0 4px 24px rgba(0,0,0,0.5)",
+                marginBottom: 12,
+              }}>
+                {card.imageUrl ? (
+                  <img
+                    src={card.imageUrl}
+                    alt={card.songTitle + " 1/1"}
+                    style={{ width: "100%", display: "block" }}
+                  />
+                ) : (
+                  <div style={{
+                    width: "100%", aspectRatio: "2/3",
+                    background: "linear-gradient(160deg, #1e1b17, #2a2520)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    <StarIcon size={40} color={C.megaGold} />
+                  </div>
+                )}
+
+                {/* 1 OF 1 badge — top right */}
+                <div style={{
+                  position: "absolute", top: 12, right: 12,
+                  background: "rgba(0,0,0,0.72)",
+                  border: "1px solid " + C.megaGold + "99",
+                  borderRadius: 7, padding: "5px 10px",
+                  fontFamily: MONO, fontSize: 8, letterSpacing: 2.5, color: C.megaGold,
+                }}>1 OF 1</div>
+
+                {/* Info overlay — bottom */}
+                <div style={{
+                  position: "absolute", bottom: 0, left: 0, right: 0,
+                  background: "linear-gradient(transparent, rgba(0,0,0,0.88))",
+                  padding: "40px 16px 16px",
+                }}>
+                  <div style={{ fontFamily: SERIF, fontSize: 17, fontWeight: 300, color: C.cream, marginBottom: 4 }}>
+                    {card.songTitle || card.songNum}
+                  </div>
+                  <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 2, color: C.megaGold }}>
+                    {pLabel.toUpperCase()} PERSPECTIVE
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {/* Regular Cards Grid */}
-      {!loadingCards && collectorCards.length > 0 && (
+      {!loadingCards && regularCards.length > 0 && (
         <div style={{ padding: "0 16px" }}>
           <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 14 }}>
-            COLLECTION &middot; {collectorCards.length} CARD{collectorCards.length !== 1 ? "S" : ""}
+            COLLECTION · {regularCards.length} CARDS
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
-            {collectorCards.map((card) => (
+            {regularCards.map((card) => (
               <div key={card.chipId} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, pointerEvents: "none" }}>
                 <MiniPhotoCard
                   perspective={card.perspective}
@@ -146,40 +211,10 @@ export default function CollectorProfileScreen({ collector, onBack }) {
                   onClick={() => {}}
                 />
                 <div style={{ fontFamily: MONO, fontSize: 7, color: C.textDim, letterSpacing: 1, textAlign: "center", lineHeight: 1.4 }}>
-                  {card.songNum} {card.perspective === "J&J" ? "J&J" : card.perspective.split(" ")[1]}
+                  {card.songNum} {card.perspective === "J&J" ? "J&J" : (card.perspective.split(" ")[1] || card.perspective)}
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* 1/1 Ultra Rare Cards */}
-      {collectorURsOwned.length > 0 && (
-        <div style={{ padding: "0 16px", marginTop: 24, paddingBottom: 16 }}>
-          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.megaGold, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ fontSize: 13 }}>&#x2605;</span>
-            <span>1/1 CARDS &middot; {collectorURsOwned.length}</span>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
-            {collectorURsOwned.map((ur) => {
-              const pLabel = ur.perspective === "J&J" ? "J&J" : (ur.perspective ? ur.perspective.split(" ")[1] : "");
-              return (
-                <div key={ur.id} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
-                  {ur.imageUrl ? (
-                    <img src={ur.imageUrl} alt={pLabel + " 1/1"} style={{ width: "100%", display: "block", borderRadius: 8, border: "1.5px solid " + C.megaGold + "55" }} />
-                  ) : (
-                    <div style={{ width: "100%", aspectRatio: "2/3", ...skeuo, borderRadius: 8, border: "1.5px solid " + C.megaGold + "44", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <span style={{ color: C.megaGold, fontSize: 22 }}>&#x2605;</span>
-                    </div>
-                  )}
-                  <div style={{ fontFamily: MONO, fontSize: 7, color: C.megaGold, letterSpacing: 1, textAlign: "center", lineHeight: 1.4 }}>
-                    {ur.songNum} {pLabel}
-                  </div>
-                  <div style={{ fontFamily: MONO, fontSize: 6, color: C.textDim, letterSpacing: 1, textAlign: "center" }}>1 OF 1</div>
-                </div>
-              );
-            })}
           </div>
         </div>
       )}
