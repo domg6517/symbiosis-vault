@@ -39,7 +39,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
       .then((r) => r.ok ? r.json() : null)
       .then((d) => { if (d?.ultraRares) setUltraRaresData(d.ultraRares); })
       .catch(() => {});
-  }, [view, session]);
+  }, [view, session?.access_token]);
 
   const ultraRares = ultraRaresData || BASE_ULTRA_RARES;
   const ownedUltraCount = ultraRaresData
