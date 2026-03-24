@@ -65,6 +65,8 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
         );
         setSelectedUR(null);
         setDisconnectMsg(null);
+        // Delay re-fetch so DB write propagates before we read — avoids race condition overwriting optimistic update
+        await new Promise(r => setTimeout(r, 800));
         const listRes = await fetch("/api/ultra-rare/list", { headers: { Authorization: "Bearer " + session.access_token } });
         if (listRes.ok) { const d = await listRes.json(); if (d.ultraRares) setUltraRaresData(d.ultraRares); }
       } else {
