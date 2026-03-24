@@ -131,14 +131,14 @@ export default function CollectorProfileScreen({ collector, onBack }) {
         ))}
       </div>
 
-      {/* 1/1 Ultra Rares â same grid as regular cards, slightly larger with gold glow */}
+      {/* 1/1 Ultra Rares Ã¢ÂÂ same grid as regular cards, slightly larger with gold glow */}
       {!loadingCards && ultraRareCards.length > 0 && (
         <div style={{ padding: "0 16px", marginBottom: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 14 }}>
             <style>{"@keyframes goldShimmer{0%{background-position:200% center}100%{background-position:-200% center}}@keyframes starPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.7;transform:scale(1.2)}}"}</style>
             <span style={{ display: "inline-flex", animation: "starPulse 2s ease-in-out infinite" }}><StarIcon size={9} color={C.megaGold} /></span>
             <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, backgroundImage: "linear-gradient(90deg, #C8A030, #E4BC4A 38%, #FFF5C0 50%, #E4BC4A 62%, #C8A030)", backgroundSize: "200% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "goldShimmer 2.5s linear infinite" }}>
-              1 OF 1{ultraRareCards.length > 1 ? " · " + ultraRareCards.length : ""}
+              1 OF 1{ultraRareCards.length > 1 ? " Â· " + ultraRareCards.length : ""}
             </div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
@@ -150,6 +150,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
                     rarity={card.rarity}
                     isBooster={card.type === "booster"}
                     imageUrl={card.imageUrl}
+                    goldFrame={true}
                     onClick={() => {}}
                   />
                 </div>
@@ -166,7 +167,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
       {!loadingCards && regularCards.length > 0 && (
         <div style={{ padding: "0 16px" }}>
           <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 14 }}>
-            COLLECTION · {regularCards.length} CARDS
+            COLLECTION Â· {regularCards.length} CARDS
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
             {regularCards.map((card) => (
