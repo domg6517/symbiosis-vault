@@ -173,8 +173,9 @@ export async function POST(request) {
 
     let ultraRareUnlocked = null;
 
-    // If all 3 perspectives collected, unlock ultra rare
-    if (songPerspectives.size >= 3 && cardTemplate.type === "single") {
+    // If scanning an ultra_rare chip directly, OR if all 3 regular perspectives collected, unlock ultra rare
+    const isUltraRareChip = cardTemplate.rarity === "ultra_rare";
+    if (isUltraRareChip || (songPerspectives.size >= 3 && cardTemplate.type === "single")) {
       const ultraRareId = `UR-${cardTemplate.song.song_number}-${cardTemplate.perspective.id}`;
 
       const { data: ur } = await supabase
