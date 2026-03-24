@@ -2,10 +2,11 @@
 import { useState, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { FilmGrain, NfcIcon, CheckIcon, LockSmall, StarIcon, TrophyIcon, ProfileIcon } from "./Icons";
-import { SINGLES, BOOSTERS, PERSPECTIVES } from "./data";
+import { SINGLES, BOOSTERS, PERSPECTIVES, generateUltraRares } from "./data";
 import { SongRow } from "./SharedComponents";
 import ActivityFeed from "./ActivityFeed";
 
+const BASE_ULTRA_RARES = generateUltraRares();
 
 export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLeaderboard, onProfile, onViewCollector, session }) {
   const [view, setView] = useState("singles")
@@ -13,7 +14,9 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
+  const [ultraRaresData, setUltraRaresData] = useState(null);
   const [selectedUR, setSelectedUR] = useState(null);
+  const [disconnecting, setDisconnecting] = useState(false);
 
   const linked = ownedCards.filter((c) => c.linked);
   const singleCards = linked.filter((c) => c.type === "single");
@@ -28,6 +31,41 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
     const persps = new Set(boosterCards.filter((c) => c.songId === s.id).map((c) => c.perspective));
     return persps.size === 3;
   }).length;
+
+  useEffect(() => {
+    if (view !== "ultra") return;
+    const headers = session?.access_token ? { Authorization: "Bearer " + session.access_token } : {};
+    fetch("/api/ultra-rare/list", { headers })
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => { if (d?.ultraRares) setUltraRaresData(d.ultraRares); })
+      .catch(() => {});
+  }, [view, session?.access_token]);
+
+  const ultraRares = ultraRaresData || BASE_ULTRA_RARES;
+  const ownedUltraCount = ultraRaresData
+    ? ultraRaresData.filter((ur) => ur.isOwnedByMe).length
+    : BASE_ULTRA_RARES.filter((ur) => ur.owned).length;
+
+  async function handleDisconnectUR(ur) {
+    if (!session?.access_token || disconnecting) return;
+    setDisconnecting(true);
+    try {
+      const res = await fetch("/api/ultra-rare/disconnect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + session.access_token },
+        body: JSON.stringify({ ultraRareId: ur.id }),
+      });
+      if (res.ok) {
+        // Mirror how regular card unlinks work: update local state directly, no re-fetch
+        setUltraRaresData(prev => prev
+          ? prev.map(u => u.id === ur.id ? { ...u, isOwnedByMe: false, owner: null } : u)
+          : prev
+        );
+        setSelectedUR(null);
+      }
+    } catch (e) {}
+    setDisconnecting(false);
+  }
 
   async function handleSearch(q) {
     setSearchQuery(q);
@@ -149,86 +187,82 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
 
         {view === "feed" && <ActivityFeed session={session} onViewCollector={onViewCollector} />}
 
-        {view === {view === "ultra" && (
+        {view === "ultra" && (
           <div style={{ padding: "14px 20px" }}>
-            <div style={{
-              fontSize: 13, fontFamily: SANS, color: C.textSec, lineHeight: 1.6, marginBottom: 20,
-            }}>
-              Something special. More details coming soon.
+            <div style={{ fontSize: 13, fontFamily: SANS, color: C.textSec, lineHeight: 1.6, marginBottom: 20 }}>
+              One of a kind. Each 1/1 belongs to a single collector.
             </div>
-
-            {(() => {
-              const ownedURs = linked.filter((c) => c.rarity === "ultra_rare");
-              const ownedURCount = ownedURs.length;
+            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", ...skeuo.card, position: "relative", overflow: "hidden", marginBottom: 16 }}>
+              <div style={skeuo.gloss} />
+              <StarIcon size={14} />
+              <div style={{ flex: 1, fontSize: 12, fontFamily: SANS, color: C.textSec, position: "relative", zIndex: 1 }}>
+                <span style={{ color: C.megaGold, fontFamily: MONO, fontWeight: 600 }}>{ownedUltraCount}</span> discovered
+              </div>
+              <div style={{ height: 4, width: 80, ...skeuo.inset, overflow: "hidden", borderRadius: 4, position: "relative", zIndex: 1 }}>
+                <div style={{ width: (ownedUltraCount / 30) * 100 + "%", height: "100%", background: "linear-gradient(180deg,#A2A0B4,#B8B6D0,#8280A0)", boxShadow: "0 1px 0 rgba(255,255,255,0.25) inset", borderRadius: 4 }} />
+              </div>
+            </div>
+            {SINGLES.map((song) => {
+              const songURs = BASE_ULTRA_RARES.filter((ur) => ur.songId === song.id).map(b => ultraRares.find(a => a.id === b.id) || b);
+              const songOwnedCount = songURs.filter((ur) => ur.isOwnedByMe || ur.owned).length;
               return (
-                <>
-                  <div style={{
-                    display: "flex", alignItems: "center", gap: 10,
-                    padding: "12px 14px", ...skeuo.card, position: "relative", overflow: "hidden",
-                    marginBottom: 16,
-                  }}>
-                    <div style={skeuo.gloss} />
-                    <StarIcon size={14} />
-                    <div style={{ flex: 1, fontSize: 12, fontFamily: SANS, color: C.textSec, position: "relative", zIndex: 1 }}>
-                      <span style={{ color: C.megaGold, fontFamily: MONO, fontWeight: 600 }}>{ownedURCount}</span> discovered
-                    </div>
-                    <div style={{ height: 4, width: 80, ...skeuo.inset, overflow: "hidden", borderRadius: 4, position: "relative", zIndex: 1 }}>
-                      <div style={{ width: `${(ownedURCount / 30) * 100}%`, height: "100%", background: `linear-gradient(180deg, #A2A0B4, #B8B6D0, #8280A0)`, boxShadow: "0 1px 0 rgba(255,255,255,0.25) inset", borderRadius: 4 }} />
-                    </div>
+                <div key={song.id} style={{ marginBottom: 12 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 0 6px" }}>
+                    <div style={{ fontSize: 9, fontFamily: MONO, color: C.textDim, letterSpacing: 1 }}>{song.num}</div>
+                    <div style={{ fontSize: 13, fontFamily: SANS, fontWeight: 500, color: C.textSec, flex: 1 }}>{song.title}</div>
+                    <div style={{ fontSize: 9, fontFamily: MONO, color: songOwnedCount > 0 ? C.megaGold : C.textDim, letterSpacing: 1 }}>{songOwnedCount} found</div>
                   </div>
-
-                  {SINGLES.map((song) => {
-                    const songOwnedURs = ownedURs.filter((c) => c.songId === song.id);
-                    const songOwnedCount = songOwnedURs.length;
-                    return (
-                      <div key={song.id} style={{ marginBottom: 12 }}>
-                        <div style={{
-                          display: "flex", alignItems: "center", gap: 8,
-                          padding: "8px 0 6px",
-                        }}>
-                          <div style={{ fontSize: 9, fontFamily: MONO, color: C.textDim, letterSpacing: 1 }}>{song.num}</div>
-                          <div style={{ fontSize: 13, fontFamily: SANS, fontWeight: 500, color: C.textSec, flex: 1 }}>{song.title}</div>
-                          <div style={{ fontSize: 9, fontFamily: MONO, color: songOwnedCount > 0 ? C.megaGold : C.textDim, letterSpacing: 1 }}>
-                            {songOwnedCount} found
-                          </div>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    {songURs.map((ur) => {
+                      const pLabel = ur.perspective === "J&J" ? "J&J" : ur.perspective ? ur.perspective.split(" ")[1] : "?";
+                      const isOwned = ur.isOwnedByMe || ur.owned;
+                      const hasImage = !!ur.imageUrl;
+                      const isClaimed = !!ur.owner || isOwned;
+                      return (
+                        <div
+                          key={ur.id}
+                          onClick={() => (isClaimed || hasImage) ? setSelectedUR(ur) : null}
+                          style={{
+                            flex: 1, textAlign: "center",
+                            ...(isOwned ? skeuo.card : skeuo.inset),
+                            position: "relative", overflow: "hidden",
+                            border: isOwned ? "1.5px solid " + C.megaGold + "55" : undefined,
+                            cursor: isClaimed ? "pointer" : "default",
+                            padding: hasImage && isClaimed ? 0 : "10px 6px",
+                            borderRadius: 8,
+                          }}
+                        >
+                          {isOwned && !hasImage && <div style={skeuo.gloss} />}
+                          {hasImage && isClaimed ? (
+                            <div style={{ position: "relative" }}>
+                              <img src={ur.imageUrl} alt={pLabel + " 1/1"} style={{ width: "100%", display: "block", borderRadius: 6 }} />
+                              {isOwned && (
+                                <div style={{ position: "absolute", top: 4, right: 4, background: C.megaGold, borderRadius: 4, padding: "2px 5px", fontSize: 7, fontFamily: MONO, letterSpacing: 1, color: "#000", fontWeight: 700 }}>MINE</div>
+                              )}
+                            </div>
+                          ) : isOwned ? (
+                            <>
+                              <StarIcon size={12} />
+                              <div style={{ fontSize: 13, fontFamily: SERIF, fontWeight: 300, color: C.cream, marginTop: 4, position: "relative", zIndex: 1 }}>{pLabel}</div>
+                              <div style={{ fontSize: 7, fontFamily: MONO, color: C.megaGold, letterSpacing: 2, marginTop: 3, position: "relative", zIndex: 1 }}>OWNED</div>
+                            </>
+                          ) : (
+                            <>
+                              <LockSmall color={C.textDim} />
+                              <div style={{ fontSize: 11, fontFamily: SANS, color: C.textDim, marginTop: 4 }}>{pLabel}</div>
+                              <div style={{ fontSize: 7, fontFamily: MONO, color: C.textDim, letterSpacing: 1, marginTop: 3 }}>SEALED</div>
+                            </>
+                          )}
                         </div>
-                        <div style={{ display: "flex", gap: 6 }}>
-                          {PERSPECTIVES.map((persp) => {
-                            const ownedCard = songOwnedURs.find((c) => c.perspective === persp);
-                            const pLabel = persp === "J&J" ? "J&J" : persp.split(" ")[1];
-                            return (
-                              <div key={persp} onClick={() => ownedCard && onCardClick(ownedCard)} style={{
-                                flex: 1, padding: "10px 6px", textAlign: "center",
-                                ...(ownedCard ? skeuo.card : skeuo.inset),
-                                position: "relative", overflow: "hidden",
-                                cursor: ownedCard ? "pointer" : "default",
-                              }}>
-                                {ownedCard && <div style={skeuo.gloss} />}
-                                {ownedCard ? (
-                                  <>
-                                    <StarIcon size={12} />
-                                    <div style={{ fontSize: 13, fontFamily: SERIF, fontWeight: 300, color: C.cream, marginTop: 4, position: "relative", zIndex: 1 }}>{pLabel}</div>
-                                    <div style={{ fontSize: 7, fontFamily: MONO, color: C.megaGold, letterSpacing: 2, marginTop: 3, position: "relative", zIndex: 1 }}>OWNED</div>
-                                  </>
-                                ) : (
-                                  <>
-                                    <LockSmall color={C.textDim} />
-                                    <div style={{ fontSize: 11, fontFamily: SANS, color: C.textDim, marginTop: 4 }}>{pLabel}</div>
-                                    <div style={{ fontSize: 7, fontFamily: MONO, color: C.textDim, letterSpacing: 1, marginTop: 3 }}>SEALED</div>
-                                  </>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </>
+                      );
+                    })}
+                  </div>
+                </div>
               );
-            })()}
+            })}
           </div>
-        )}      </div>
+        )}
+      </div>
 
       <div style={{ display: "flex", justifyContent: "space-evenly", alignItems: "center", padding: "6px 16px 22px", position: "relative", zIndex: 2, background: "linear-gradient(180deg,transparent," + C.bg + " 30%)" }}>
         <div style={{ ...skeuo.badge, padding: "8px 20px", fontSize: 9, fontFamily: MONO, letterSpacing: 2, color: C.accent, cursor: "pointer" }}>VAULT</div>
@@ -259,6 +293,13 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             {selectedUR.isOwnedByMe && (
               <div style={{ marginTop: 14 }}>
                 <div style={{ fontSize: 9, fontFamily: MONO, color: C.megaGold, letterSpacing: 2, marginBottom: 12 }}>YOU OWN THIS</div>
+                <button
+                  onClick={() => handleDisconnectUR(selectedUR)}
+                  disabled={disconnecting}
+                  style={{ width: "100%", padding: "12px", background: "transparent", border: "1px solid " + C.rose + "66", borderRadius: 8, color: C.rose, fontFamily: MONO, fontSize: 10, letterSpacing: 3, cursor: disconnecting ? "default" : "pointer", opacity: disconnecting ? 0.5 : 1 }}
+                >
+                  {disconnecting ? "DISCONNECTING..." : "DISCONNECT"}
+                </button>
                 <div style={{ fontSize: 10, fontFamily: SANS, color: C.textDim, marginTop: 8, lineHeight: 1.4 }}>Disconnecting releases the card. The chip becomes available again and you lose 5 pts.</div>
               </div>
             )}
