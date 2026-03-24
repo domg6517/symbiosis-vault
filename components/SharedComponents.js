@@ -3,18 +3,25 @@ import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { LockSmall } from "./Icons";
 import { PERSPECTIVES } from "./data";
 
-// ─── MINI PHOTO CARD (SKEUOMORPHIC) ──────────
-export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster = false, imageUrl = null, editionNum = null }) => {
+// âââ MINI PHOTO CARD (SKEUOMORPHIC) ââââââââââ
+export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster = false, imageUrl = null, editionNum = null, goldFrame = false }) => {
   const label = perspective === "J&J" ? "J&J" : perspective.split(" ")[1];
   const isRare = rarity === "rare";
   return (
     <div onClick={onClick} style={{
       width: 52, height: 66, flexShrink: 0,
-      background: `linear-gradient(170deg, ${isBooster ? "#EBE8E0" : "#F0EBE2"}, ${isBooster ? "#DDD9CF" : "#E4DDD0"})`,
+      background: goldFrame
+        ? "linear-gradient(135deg, #EDD870 0%, #C89020 40%, #F5E88A 55%, #C89020 70%, #EDD870 100%)"
+        : `linear-gradient(170deg, ${isBooster ? "#EBE8E0" : "#F0EBE2"}, ${isBooster ? "#DDD9CF" : "#E4DDD0"})`,
+      backgroundSize: goldFrame ? "250% 250%" : "100%",
       padding: 3, cursor: "pointer", position: "relative",
-      boxShadow: "0 1px 0 rgba(255,255,255,0.15) inset, 0 2px 6px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15)",
+      boxShadow: goldFrame
+        ? "0 1px 0 rgba(255,230,80,0.5) inset, 0 2px 10px rgba(180,130,0,0.4), 0 1px 2px rgba(0,0,0,0.2)"
+        : "0 1px 0 rgba(255,255,255,0.15) inset, 0 2px 6px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15)",
       borderRadius: 2,
+      animation: goldFrame ? "goldFrameShine 2.5s ease-in-out infinite" : undefined,
     }}>
+      {goldFrame && <style>{"@keyframes goldFrameShine{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}"}</style>}
       <div style={{
         width: "100%", height: "70%",
         background: isBooster
@@ -39,7 +46,7 @@ export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster =
       </div>
       <div style={{
         textAlign: "center", paddingTop: 2,
-        fontSize: 6, fontFamily: SERIF, fontStyle: "italic", color: "#5A5550",
+        fontSize: 6, fontFamily: SERIF, fontStyle: "italic", color: goldFrame ? "#7A6010" : "#5A5550",
       }}>{label}</div>
     </div>
   );
@@ -53,7 +60,7 @@ export const EmptyCell = () => (
   }}><LockSmall /></div>
 );
 
-// ─── SONG ROW (SKEUOMORPHIC) ─────────────────
+// âââ SONG ROW (SKEUOMORPHIC) âââââââââââââââââ
 export const SongRow = ({ song, ownedCards, onCardClick, isBooster = false, isLast = false }) => {
   const songCards = ownedCards.filter((c) => c.songId === song.id && c.linked);
   const uniquePerspectives = new Set(songCards.map((c) => c.perspective)).size;
