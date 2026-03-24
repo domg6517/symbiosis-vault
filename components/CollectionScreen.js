@@ -220,7 +220,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
               <div style={{ width: 80, flexShrink: 0 }} />
               <div style={{ flex: 1, display: "flex", fontSize: 9, fontFamily: MONO, letterSpacing: 2, color: C.textDim }}>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>G</div>
-                <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>G</div>
+                <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J&J</div>
               </div>
               <div style={{ width: 32, flexShrink: 0 }} />
