@@ -31,6 +31,7 @@ const RARITY_COLORS = {
   rare: "#60a5fa",
   epic: "#c084fc",
   legendary: C.accent,
+  ultra_rare: "#FFD700",
 };
 
 function formatEventAction(item) {
