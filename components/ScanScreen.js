@@ -181,7 +181,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
                 <div style={{
                   fontSize: 9, color: C.textDim, fontFamily: MONO,
                   letterSpacing: 2, marginTop: 6,
-                }}>{cardResult.rarity.toUpperCase()} &middot; {cardResult.chipId}</div>
+                }}>{cardResult.rarity.replace(/_/g, " ").toUpperCase()} &middot; {cardResult.chipId}</div>
               </>
             )}
             {isSetComplete && (
