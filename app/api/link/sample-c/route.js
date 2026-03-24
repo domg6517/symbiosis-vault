@@ -1,6 +1,7 @@
 import { createServerClient } from "../../../../lib/supabase";
 import { NextResponse } from "next/server";
 import { rateLimit } from "../../../../lib/rateLimit";
+import { notifyDiscord, cardLinkedEmbed, ultraRareClaimedEmbed, badgeEarnedEmbed } from "../../../../lib/discord";
 
 export const dynamic = "force-dynamic";
 
@@ -66,19 +67,58 @@ export async function POST(request) {
         await supabase.from("user_cards").insert({ user_id: user.id, card_template_id: cardTemplate.id, linked: true });
       }
 
+      // Fetch display name (used by both activity feed and Discord)
+      let displayName = "Collector";
+      try {
+        const { data: profile } = await supabase.from("profiles").select("username").eq("id", user.id).single();
+        if (profile?.username) displayName = profile.username;
+      } catch (_) {}
+
+      // Badge diff: snapshot before, recalculate, snapshot after, find new ones
+      let badgesBefore = [];
+      try {
+        const { data } = await supabase.from("user_badges").select("badge_id").eq("user_id", user.id);
+        badgesBefore = (data || []).map((b) => b.badge_id);
+      } catch (_) {}
+
       try { await supabase.rpc("recalculate_badges", { p_user_id: user.id }); } catch (e) {}
 
       try {
-        let displayName = "Collector";
-        const { data: profile } = await supabase.from("profiles").select("username").eq("id", user.id).single();
-        if (profile?.username) displayName = profile.username;
+        const { data: badgesAfter } = await supabase
+          .from("user_badges")
+          .select("badge_id, badge:badges(icon, label)")
+          .eq("user_id", user.id);
+        const newBadges = (badgesAfter || []).filter((b) => !badgesBefore.includes(b.badge_id));
+        for (const b of newBadges) {
+          await notifyDiscord(badgeEarnedEmbed({ username: displayName, badgeIcon: b.badge.icon, badgeLabel: b.badge.label }));
+        }
+      } catch (_) {}
+
+      // Activity feed
+      try {
         await supabase.from("activity_feed").insert({
           user_id: user.id, event_type: "card_linked",
           card_chip_id: cardTemplate.chip_id, card_perspective: cardTemplate.perspective.name,
           card_rarity: cardTemplate.rarity, card_type: cardTemplate.type,
           card_song_title: cardTemplate.song.title, display_name: displayName,
         });
-      } catch (e) {}
+      } catch (_) {}
+
+      // Discord notification
+      try {
+        if (isUltra) {
+          await notifyDiscord(ultraRareClaimedEmbed({
+            username: displayName, chipId: cardTemplate.chip_id,
+            perspective: cardTemplate.perspective.name, songTitle: cardTemplate.song.title,
+          }));
+        } else {
+          await notifyDiscord(cardLinkedEmbed({
+            username: displayName, chipId: cardTemplate.chip_id,
+            perspective: cardTemplate.perspective.name,
+            rarity: cardTemplate.rarity, songTitle: cardTemplate.song.title,
+          }));
+        }
+      } catch (_) {}
 
       const { data: songCards } = await supabase
         .from("user_cards")
@@ -146,19 +186,50 @@ export async function POST(request) {
       await supabase.from("user_ultra_rares").insert({ user_id: user.id, ultra_rare_id: ultraRare.id, owned: true, owned_at: new Date().toISOString() });
     }
 
+    // Fetch display name
+    let displayNameUR = "Collector";
+    try {
+      const { data: profile } = await supabase.from("profiles").select("username").eq("id", user.id).single();
+      if (profile?.username) displayNameUR = profile.username;
+    } catch (_) {}
+
+    // Badge diff for ultra_rares path
+    let badgesBeforeUR = [];
+    try {
+      const { data } = await supabase.from("user_badges").select("badge_id").eq("user_id", user.id);
+      badgesBeforeUR = (data || []).map((b) => b.badge_id);
+    } catch (_) {}
+
     try { await supabase.rpc("recalculate_badges", { p_user_id: user.id }); } catch (e) {}
 
     try {
-      let displayName = "Collector";
-      const { data: profile } = await supabase.from("profiles").select("username").eq("id", user.id).single();
-      if (profile?.username) displayName = profile.username;
+      const { data: badgesAfterUR } = await supabase
+        .from("user_badges")
+        .select("badge_id, badge:badges(icon, label)")
+        .eq("user_id", user.id);
+      const newBadgesUR = (badgesAfterUR || []).filter((b) => !badgesBeforeUR.includes(b.badge_id));
+      for (const b of newBadgesUR) {
+        await notifyDiscord(badgeEarnedEmbed({ username: displayNameUR, badgeIcon: b.badge.icon, badgeLabel: b.badge.label }));
+      }
+    } catch (_) {}
+
+    // Activity feed
+    try {
       await supabase.from("activity_feed").insert({
         user_id: user.id, event_type: "card_linked",
         card_chip_id: chipId, card_perspective: ultraRare.perspective.name,
         card_rarity: "super_rare", card_type: "ultra_rare",
-        card_song_title: ultraRare.song.title, display_name: displayName,
+        card_song_title: ultraRare.song.title, display_name: displayNameUR,
       });
-    } catch (e) {}
+    } catch (_) {}
+
+    // Discord — ultra rare notification
+    try {
+      await notifyDiscord(ultraRareClaimedEmbed({
+        username: displayNameUR, chipId,
+        perspective: ultraRare.perspective.name, songTitle: ultraRare.song.title,
+      }));
+    } catch (_) {}
 
     return NextResponse.json({
       message: "1/1 claimed!",
