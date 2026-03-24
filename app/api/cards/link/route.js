@@ -2,6 +2,7 @@ import { createServerClient } from "../../../../lib/supabase";
 import { NextResponse } from "next/server";
 import { rateLimit } from "../../../../lib/rateLimit";
 import { logAuditEvent } from "../../../../lib/auditLog";
+import { notifyDiscord, cardLinkedEmbed, ultraRareClaimedEmbed, badgeEarnedEmbed } from "../../../../lib/discord";
 
 export async function POST(request) {
   try {
@@ -20,7 +21,6 @@ export async function POST(request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Enforce email verification
     if (!user.email_confirmed_at) {
       return NextResponse.json(
         { error: "Please verify your email before linking cards." },
@@ -35,13 +35,9 @@ export async function POST(request) {
 
     const { chipId } = await request.json();
     if (!chipId) {
-      return NextResponse.json(
-        { error: "chipId is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "chipId is required" }, { status: 400 });
     }
 
-    // Find the card template by chip ID
     const { data: cardTemplate, error: findError } = await supabase
       .from("card_templates")
       .select(`
@@ -56,7 +52,6 @@ export async function POST(request) {
       .single();
 
     if (findError || !cardTemplate) {
-      // Track failed chip lookups per IP to prevent brute-force chip ID guessing
       const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
       const { allowed: ipAllowed } = rateLimit("chip-miss:" + ip, 5, 300000);
       if (!ipAllowed) {
@@ -71,7 +66,6 @@ export async function POST(request) {
       );
     }
 
-    // Check if this card is already linked by ANY user
     const { data: alreadyLinked } = await supabase
       .from("user_cards")
       .select("id, user_id")
@@ -86,7 +80,6 @@ export async function POST(request) {
       );
     }
 
-    // Check if already linked by this user
     const { data: existing } = await supabase
       .from("user_cards")
       .select("id, linked")
@@ -96,23 +89,15 @@ export async function POST(request) {
 
     if (existing && existing.linked) {
       return NextResponse.json(
-        {
-          error: "Already collected!",
-          card: formatCard(cardTemplate),
-        },
+        { error: "Already collected!", card: formatCard(cardTemplate) },
         { status: 409 }
       );
     }
 
-    // Link the card (upsert - re-link if previously unlinked)
     if (existing) {
       await supabase
         .from("user_cards")
-        .update({
-          linked: true,
-          linked_at: new Date().toISOString(),
-          unlinked_at: null,
-        })
+        .update({ linked: true, linked_at: new Date().toISOString(), unlinked_at: null })
         .eq("id", existing.id);
     } else {
       await supabase.from("user_cards").insert({
@@ -122,26 +107,44 @@ export async function POST(request) {
       });
     }
 
-    // Recalculate all badges for this user
+    // Fetch display name early — used by activity feed and Discord
+    let displayName = "Collector";
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", user.id)
+        .single();
+      if (profile?.username) displayName = profile.username;
+    } catch (_) {}
+
+    // Badge diff: snapshot before, recalculate, snapshot after
+    let badgesBefore = [];
+    try {
+      const { data } = await supabase.from("user_badges").select("badge_id").eq("user_id", user.id);
+      badgesBefore = (data || []).map((b) => b.badge_id);
+    } catch (_) {}
+
     try {
       await supabase.rpc("recalculate_badges", { p_user_id: user.id });
     } catch (badgeErr) {
       console.error("Badge recalculation error:", badgeErr);
     }
 
-    // Log activity to feed
+    // Fire badge notifications for newly earned badges
     try {
-      // Use profile username instead of email prefix
-      let displayName = "Collector";
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("username")
-        .eq("id", user.id)
-        .single();
-      if (profile?.username) {
-        displayName = profile.username;
+      const { data: badgesAfter } = await supabase
+        .from("user_badges")
+        .select("badge_id, badge:badges(icon, label)")
+        .eq("user_id", user.id);
+      const newBadges = (badgesAfter || []).filter((b) => !badgesBefore.includes(b.badge_id));
+      for (const b of newBadges) {
+        await notifyDiscord(badgeEarnedEmbed({ username: displayName, badgeIcon: b.badge.icon, badgeLabel: b.badge.label }));
       }
+    } catch (_) {}
 
+    // Activity feed
+    try {
       await supabase.from("activity_feed").insert({
         user_id: user.id,
         event_type: "card_linked",
@@ -173,7 +176,6 @@ export async function POST(request) {
 
     let ultraRareUnlocked = null;
 
-    // If scanning an ultra_rare chip directly, OR if all 3 regular perspectives collected, unlock ultra rare
     const isUltraRareChip = cardTemplate.rarity === "ultra_rare";
     if (isUltraRareChip || (songPerspectives.size >= 3 && cardTemplate.type === "single")) {
       const ultraRareId = `UR-${cardTemplate.song.song_number}-${cardTemplate.perspective.id}`;
@@ -201,7 +203,6 @@ export async function POST(request) {
           });
           ultraRareUnlocked = ur.id;
         } else if (!existingUr.owned) {
-          // Re-link a previously disconnected 1/1
           await supabase
             .from("user_ultra_rares")
             .update({ owned: true, owned_at: new Date().toISOString() })
@@ -211,6 +212,26 @@ export async function POST(request) {
       }
     }
 
+    // Discord: card linked notification
+    try {
+      if (ultraRareUnlocked) {
+        await notifyDiscord(ultraRareClaimedEmbed({
+          username: displayName,
+          chipId: cardTemplate.chip_id,
+          perspective: cardTemplate.perspective.name,
+          songTitle: cardTemplate.song.title,
+        }));
+      } else {
+        await notifyDiscord(cardLinkedEmbed({
+          username: displayName,
+          chipId: cardTemplate.chip_id,
+          perspective: cardTemplate.perspective.name,
+          rarity: cardTemplate.rarity,
+          songTitle: cardTemplate.song.title,
+        }));
+      }
+    } catch (_) {}
+
     return NextResponse.json({
       message: "Card linked successfully!",
       card: formatCard(cardTemplate),
@@ -219,10 +240,7 @@ export async function POST(request) {
     });
   } catch (err) {
     console.error("Link card error:", err);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
