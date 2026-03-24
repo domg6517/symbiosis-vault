@@ -30,18 +30,14 @@ export async function POST(request) {
     const { data: cardTemplate } = await supabase
       .from("card_templates")
       .select("id, chip_id, rarity, type, song:songs(id, title, song_number, type), perspective:perspectives(id, name)")
-      .eq("chip_id", chipId)
-      .single();
+      .eq("chip_id", chipId).single();
 
     if (cardTemplate) {
       const isUltra = cardTemplate.rarity === "ultra_rare";
 
       const { data: alreadyLinked } = await supabase
-        .from("user_cards")
-        .select("id, user_id")
-        .eq("card_template_id", cardTemplate.id)
-        .eq("linked", true)
-        .single();
+        .from("user_cards").select("id, user_id")
+        .eq("card_template_id", cardTemplate.id).eq("linked", true).single();
 
       if (alreadyLinked && alreadyLinked.user_id !== user.id) {
         return NextResponse.json(
@@ -51,11 +47,8 @@ export async function POST(request) {
       }
 
       const { data: existing } = await supabase
-        .from("user_cards")
-        .select("id, linked")
-        .eq("user_id", user.id)
-        .eq("card_template_id", cardTemplate.id)
-        .single();
+        .from("user_cards").select("id, linked")
+        .eq("user_id", user.id).eq("card_template_id", cardTemplate.id).single();
 
       if (existing?.linked) {
         return NextResponse.json({ error: isUltra ? "You already own this 1/1!" : "Already collected!", card: formatCard(cardTemplate) }, { status: 409 });
@@ -67,14 +60,23 @@ export async function POST(request) {
         await supabase.from("user_cards").insert({ user_id: user.id, card_template_id: cardTemplate.id, linked: true });
       }
 
-      // Fetch display name (used by both activity feed and Discord)
+      // Fetch display name
       let displayName = "Collector";
       try {
         const { data: profile } = await supabase.from("profiles").select("username").eq("id", user.id).single();
         if (profile?.username) displayName = profile.username;
       } catch (_) {}
 
-      // Badge diff: snapshot before, recalculate, snapshot after, find new ones
+      // Fetch card image
+      let cardImageUrl = null;
+      try {
+        const { data: cc } = await supabase
+          .from("card_content").select("file_url")
+          .eq("card_template_id", cardTemplate.id).eq("content_type", "image").single();
+        cardImageUrl = cc?.file_url || null;
+      } catch (_) {}
+
+      // Badge diff
       let badgesBefore = [];
       try {
         const { data } = await supabase.from("user_badges").select("badge_id").eq("user_id", user.id);
@@ -85,16 +87,13 @@ export async function POST(request) {
 
       try {
         const { data: badgesAfter } = await supabase
-          .from("user_badges")
-          .select("badge_id, badge:badges(icon, label)")
-          .eq("user_id", user.id);
+          .from("user_badges").select("badge_id, badge:badges(icon, label)").eq("user_id", user.id);
         const newBadges = (badgesAfter || []).filter((b) => !badgesBefore.includes(b.badge_id));
         for (const b of newBadges) {
           await notifyDiscord(badgeEarnedEmbed({ username: displayName, badgeIcon: b.badge.icon, badgeLabel: b.badge.label }));
         }
       } catch (_) {}
 
-      // Activity feed
       try {
         await supabase.from("activity_feed").insert({
           user_id: user.id, event_type: "card_linked",
@@ -104,27 +103,26 @@ export async function POST(request) {
         });
       } catch (_) {}
 
-      // Discord notification
+      // Discord
       try {
         if (isUltra) {
           await notifyDiscord(ultraRareClaimedEmbed({
             username: displayName, chipId: cardTemplate.chip_id,
             perspective: cardTemplate.perspective.name, songTitle: cardTemplate.song.title,
+            imageUrl: cardImageUrl,
           }));
         } else {
           await notifyDiscord(cardLinkedEmbed({
             username: displayName, chipId: cardTemplate.chip_id,
-            perspective: cardTemplate.perspective.name,
-            rarity: cardTemplate.rarity, songTitle: cardTemplate.song.title,
+            perspective: cardTemplate.perspective.name, rarity: cardTemplate.rarity,
+            songTitle: cardTemplate.song.title, imageUrl: cardImageUrl,
           }));
         }
       } catch (_) {}
 
       const { data: songCards } = await supabase
-        .from("user_cards")
-        .select("card_template:card_templates(song_id, perspective_id)")
-        .eq("user_id", user.id)
-        .eq("linked", true);
+        .from("user_cards").select("card_template:card_templates(song_id, perspective_id)")
+        .eq("user_id", user.id).eq("linked", true);
       const songPerspectives = new Set();
       songCards?.forEach((c) => {
         if (c.card_template.song_id === cardTemplate.song.id) songPerspectives.add(c.card_template.perspective_id);
@@ -142,8 +140,7 @@ export async function POST(request) {
     const { data: ultraRare } = await supabase
       .from("ultra_rares")
       .select("id, song_id, perspective_id, image_url, song:songs(id, title, song_number), perspective:perspectives(id, name)")
-      .eq("chip_id", chipId)
-      .single();
+      .eq("chip_id", chipId).single();
 
     if (!ultraRare) {
       const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
@@ -152,21 +149,15 @@ export async function POST(request) {
     }
 
     const { data: existingOwner } = await supabase
-      .from("user_ultra_rares")
-      .select("id, user_id, owned")
-      .eq("ultra_rare_id", ultraRare.id)
-      .eq("owned", true)
-      .single();
+      .from("user_ultra_rares").select("id, user_id, owned")
+      .eq("ultra_rare_id", ultraRare.id).eq("owned", true).single();
 
     if (existingOwner && existingOwner.user_id !== user.id) {
       let ownerName = "another collector";
       const { data: ownerProfile } = await supabase.from("profiles").select("username, display_name").eq("id", existingOwner.user_id).single();
       if (ownerProfile?.display_name) ownerName = ownerProfile.display_name;
       else if (ownerProfile?.username) ownerName = ownerProfile.username;
-      return NextResponse.json(
-        { error: "This 1/1 is already claimed.", ownerName, card: formatUltraRare(ultraRare) },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: "This 1/1 is already claimed.", ownerName, card: formatUltraRare(ultraRare) }, { status: 409 });
     }
 
     if (existingOwner && existingOwner.user_id === user.id) {
@@ -174,11 +165,7 @@ export async function POST(request) {
     }
 
     const { data: existingRow } = await supabase
-      .from("user_ultra_rares")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("ultra_rare_id", ultraRare.id)
-      .single();
+      .from("user_ultra_rares").select("id").eq("user_id", user.id).eq("ultra_rare_id", ultraRare.id).single();
 
     if (existingRow) {
       await supabase.from("user_ultra_rares").update({ owned: true, owned_at: new Date().toISOString() }).eq("id", existingRow.id);
@@ -186,14 +173,12 @@ export async function POST(request) {
       await supabase.from("user_ultra_rares").insert({ user_id: user.id, ultra_rare_id: ultraRare.id, owned: true, owned_at: new Date().toISOString() });
     }
 
-    // Fetch display name
     let displayNameUR = "Collector";
     try {
       const { data: profile } = await supabase.from("profiles").select("username").eq("id", user.id).single();
       if (profile?.username) displayNameUR = profile.username;
     } catch (_) {}
 
-    // Badge diff for ultra_rares path
     let badgesBeforeUR = [];
     try {
       const { data } = await supabase.from("user_badges").select("badge_id").eq("user_id", user.id);
@@ -204,16 +189,13 @@ export async function POST(request) {
 
     try {
       const { data: badgesAfterUR } = await supabase
-        .from("user_badges")
-        .select("badge_id, badge:badges(icon, label)")
-        .eq("user_id", user.id);
+        .from("user_badges").select("badge_id, badge:badges(icon, label)").eq("user_id", user.id);
       const newBadgesUR = (badgesAfterUR || []).filter((b) => !badgesBeforeUR.includes(b.badge_id));
       for (const b of newBadgesUR) {
         await notifyDiscord(badgeEarnedEmbed({ username: displayNameUR, badgeIcon: b.badge.icon, badgeLabel: b.badge.label }));
       }
     } catch (_) {}
 
-    // Activity feed
     try {
       await supabase.from("activity_feed").insert({
         user_id: user.id, event_type: "card_linked",
@@ -223,19 +205,15 @@ export async function POST(request) {
       });
     } catch (_) {}
 
-    // Discord — ultra rare notification
     try {
       await notifyDiscord(ultraRareClaimedEmbed({
         username: displayNameUR, chipId,
         perspective: ultraRare.perspective.name, songTitle: ultraRare.song.title,
+        imageUrl: ultraRare.image_url || null,
       }));
     } catch (_) {}
 
-    return NextResponse.json({
-      message: "1/1 claimed!",
-      card: formatUltraRare(ultraRare),
-      cardType: "ultra_rare",
-    });
+    return NextResponse.json({ message: "1/1 claimed!", card: formatUltraRare(ultraRare), cardType: "ultra_rare" });
   } catch (err) {
     console.error("Sample C link error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -244,25 +222,15 @@ export async function POST(request) {
 
 function formatCard(template) {
   return {
-    chipId: template.chip_id,
-    songId: template.song.id,
-    songTitle: template.song.title,
-    songNum: template.song.song_number,
-    perspective: template.perspective.name,
-    rarity: template.rarity,
-    type: template.type,
+    chipId: template.chip_id, songId: template.song.id, songTitle: template.song.title,
+    songNum: template.song.song_number, perspective: template.perspective.name,
+    rarity: template.rarity, type: template.type,
   };
 }
 
 function formatUltraRare(ur) {
   return {
-    id: ur.id,
-    songId: ur.song.id,
-    songTitle: ur.song.title,
-    songNum: ur.song.song_number,
-    perspective: ur.perspective.name,
-    rarity: "super_rare",
-    type: "ultra_rare",
-    imageUrl: ur.image_url,
+    id: ur.id, songId: ur.song.id, songTitle: ur.song.title, songNum: ur.song.song_number,
+    perspective: ur.perspective.name, rarity: "super_rare", type: "ultra_rare", imageUrl: ur.image_url,
   };
 }
