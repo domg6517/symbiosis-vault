@@ -163,16 +163,18 @@ export default function ScanScreen({ session, onBack, onScanned }) {
           (cardResult && cardResult.rarity === 'ultra_rare') ? (
             <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.6s ease", padding: "0 20px" }}>
               <div style={{
-                width: 90, height: 90, borderRadius: "50%",
-                background: "radial-gradient(circle, rgba(228,188,74,0.3) 0%, rgba(228,188,74,0.05) 70%)",
+            width: 110, height: 110, borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(228,188,74,0.4) 0%, rgba(228,188,74,0.08) 70%)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 margin: "0 auto",
-                boxShadow: "0 0 40px rgba(228,188,74,0.4), 0 0 80px rgba(228,188,74,0.15)",
+            boxShadow: "0 0 60px rgba(228,188,74,0.55), 0 0 120px rgba(228,188,74,0.25)",
               }}>
-                <StarIcon size={36} color={C.megaGold} />
+            <StarIcon size={44} color={C.megaGold} />
               </div>
-              <div style={{ fontFamily: MONO, fontSize: 11, letterSpacing: 5, color: C.megaGold, marginTop: 18 }}>1 OF 1</div>
-              <div style={{ fontSize: 26, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 8, textShadow: "0 0 20px rgba(228,188,74,0.5)" }}>Ultra Rare Linked!</div>
+          <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 6, color: C.megaGold, marginTop: 20, opacity: 0.75 }}>1 OF 1  |  ULTRA RARE</div>
+          <div style={{ fontFamily: MONO, fontSize: 22, letterSpacing: 4, color: C.megaGold, marginTop: 10, fontWeight: 700, textShadow: "0 0 30px rgba(228,188,74,0.9), 0 0 60px rgba(228,188,74,0.4)" }}>YOU FOUND IT</div>
+          <div style={{ fontSize: 14, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 6, fontStyle: "italic" }}>Ultra Rare Linked.</div>
+          <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 2, color: C.textDim, marginTop: 6, opacity: 0.7 }}>This card exists nowhere else.</div>
               {cardResult.imageUrl && (
                 <div style={{
                   width: 130, height: 175, borderRadius: 10, overflow: "hidden",
