@@ -51,8 +51,18 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
 
   // Fetch profile from server on mount
   useEffect(function() {
-    if (userProfile && userProfile.username) setDisplayName(userProfile.username);
+    if (userProfile) {
+    if (userProfile.username) setDisplayName(userProfile.username);
+    if (userProfile.pfp_url) setPfpUrl(userProfile.pfp_url);
+    if (!editing) {
+      if (userProfile.instagram !== undefined) setInstagram(userProfile.instagram || "");
+      if (userProfile.twitter !== undefined) setTwitter(userProfile.twitter || "");
+      if (userProfile.tiktok !== undefined) setTiktok(userProfile.tiktok || "");
+    }
+  }
   }, [userProfile]);
+  // Always reload profile on mount to ensure fresh pfp and data
+  useEffect(() => { if (reloadUserProfile) reloadUserProfile(); }, []);
 
   useEffect(function() {
     if (!session || !session.user || !session.user.id) return;
@@ -89,7 +99,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (d?.ultraRares) setOwnedURCount(d.ultraRares.filter(ur => ur.isOwnedByMe).length); })
       .catch(() => {});
-  }, [session]);
+  }, [session?.access_token]);
 
   const email = session?.user?.email || "";
 
