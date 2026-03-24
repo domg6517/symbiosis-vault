@@ -133,31 +133,24 @@ export default function CollectorProfileScreen({ collector, onBack }) {
               1 OF 1{ultraRareCards.length > 1 ? " · " + ultraRareCards.length : ""}
             </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10 }}>
             {ultraRareCards.map((card) => {
               const pLabel = card.perspective === "J&J" ? "J&J" : (card.perspective.split(" ")[1] || card.perspective);
               return (
-                <div key={card.chipId} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, pointerEvents: "none" }}>
-                  {/* Gold-framed mini card */}
-                  <div style={{
-                    borderRadius: 8,
-                    border: "1.5px solid " + C.megaGold + "99",
-                    boxShadow: "0 0 10px " + C.megaGold + "22",
-                    overflow: "hidden",
-                    width: "100%",
-                  }}>
-                    <MiniPhotoCard
-                      perspective={card.perspective}
-                      rarity={card.rarity}
-                      isBooster={false}
-                      imageUrl={card.imageUrl}
-                      onClick={() => {}}
-                    />
+                <div key={card.chipId} style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                  <div style={{ borderRadius: 8, overflow: "hidden", aspectRatio: "3/4" }}>
+                    {card.imageUrl ? (
+                      <img src={card.imageUrl} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} alt="" />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", background: "linear-gradient(145deg, #2A2416, #1E1A0E)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <StarIcon size={14} color={C.megaGold} />
+                      </div>
+                    )}
                   </div>
-                  <div style={{ fontFamily: MONO, fontSize: 7, color: C.megaGold, letterSpacing: 1, textAlign: "center", lineHeight: 1.4 }}>
-                    {card.songNum} {pLabel}
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontFamily: SERIF, fontSize: 11, color: "#E4BC4A", fontWeight: 500 }}>{pLabel}</div>
+                    <div style={{ fontFamily: MONO, fontSize: 7, color: "#C4A030", letterSpacing: 1, marginTop: 2 }}>1 OF 1</div>
                   </div>
-                  <div style={{ fontFamily: MONO, fontSize: 6, color: C.textDim, letterSpacing: 1, textAlign: "center" }}>1 OF 1</div>
                 </div>
               );
             })}
