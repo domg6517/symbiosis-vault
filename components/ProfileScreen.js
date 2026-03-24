@@ -254,7 +254,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       {/* Stats */}
       <div style={{ display: "flex", justifyContent: "center", gap: 20, padding: "0 16px 10px" }}>
         {[
-          { label: "CARDS", value: linked + ownedURCount },
+          { label: "CARDS", value: linked },
           { label: "SONGS", value: new Set(ownedCards.filter((c) => c.linked).map((c) => c.songId)).size },
         ].map((s) => (
           <div key={s.label} style={{ ...skeuo, borderRadius: 14, padding: "10px 24px", textAlign: "center" }}>
@@ -390,7 +390,7 @@ export default function ProfileScreen({ ownedCards, onBack, session, onAccountDe
       {showInstall && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, backdropFilter: "blur(14px)" }} onClick={() => setShowInstall(false)}>
           <div onClick={(e) => e.stopPropagation()} style={{ ...skeuo, borderRadius: 22, padding: "24px 20px", maxWidth: 360, width: "100%", maxHeight: "85vh", overflow: "auto", border: "1px solid " + C.accent + "33", boxShadow: "0 0 60px rgba(0,0,0,0.6), 0 0 100px " + C.accent + "0d, inset 0 1px 0 rgba(255,255,255,0.06)" }}>
-            <div onClick={() => setShowInstall(false)} style={{ ...skeuo, width: 34, height: 34, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", border: "1px solid " + C.accent + "22", marginBottom: 12 }}><span style={{ fontSize: 16, color: C.accent }}>{"←"}</span></div>
+            <div onClick={() => setShowInstall(false)} style={{ ...skeuo, width: 34, height: 34, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", border: "1px solid " + C.accent + "22", marginBottom: 12 }}><span style={{ fontSize: 16, color: C.accent }}>{"â"}</span></div>
             <div style={{ textAlign: "center", marginBottom: 20 }}>
               <div style={{ fontFamily: SERIF, fontSize: 21, fontWeight: 700, color: C.cream }}>Install Symbiosis Vault</div>
               <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6, lineHeight: 1.5 }}>Get the full app experience on your phone.</div>
