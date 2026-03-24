@@ -50,7 +50,6 @@ export default function CollectorProfileScreen({ collector, onBack }) {
   const badges = profileData?.badges || [];
   const rank = profileData?.rank || collector.rank;
 
-  // Split cards: ultra rare gets its own section
   const ultraRareCards = collectorCards.filter(c => c.rarity === "ultra_rare");
   const regularCards = collectorCards.filter(c => c.rarity !== "ultra_rare");
   const uniqueSongs = new Set(regularCards.map(c => c.songId)).size;
@@ -74,9 +73,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
         </div>
         <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{name}</div>
         {rank && (
-          <div style={{ fontFamily: MONO, fontSize: 11, color: C.textDim, letterSpacing: 1 }}>
-            RANK #{rank}
-          </div>
+          <div style={{ fontFamily: MONO, fontSize: 11, color: C.textDim, letterSpacing: 1 }}>RANK #{rank}</div>
         )}
       </div>
 
@@ -127,70 +124,44 @@ export default function CollectorProfileScreen({ collector, onBack }) {
         ))}
       </div>
 
-      {/* ✦ 1/1 Ultra Rare Section — Spectacular */}
-      {ultraRareCards.length > 0 && (
-        <div style={{ padding: "0 16px", marginBottom: 28 }}>
-          {/* Section header */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-            <StarIcon size={10} color={C.megaGold} />
+      {/* 1/1 Ultra Rares — same grid size as regular cards, gold frame */}
+      {!loadingCards && ultraRareCards.length > 0 && (
+        <div style={{ padding: "0 16px", marginBottom: 24 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 14 }}>
+            <StarIcon size={9} color={C.megaGold} />
             <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.megaGold }}>
               1 OF 1{ultraRareCards.length > 1 ? " · " + ultraRareCards.length : ""}
             </div>
-            <StarIcon size={10} color={C.megaGold} />
           </div>
-
-          {ultraRareCards.map((card) => {
-            const pLabel = card.perspective === "J&J" ? "J&J" : card.perspective.split(" ")[1] || card.perspective;
-            return (
-              <div key={card.chipId} style={{
-                position: "relative",
-                borderRadius: 14,
-                overflow: "hidden",
-                border: "1.5px solid " + C.megaGold + "66",
-                boxShadow: "0 0 32px " + C.megaGold + "18, 0 4px 24px rgba(0,0,0,0.5)",
-                marginBottom: 12,
-              }}>
-                {card.imageUrl ? (
-                  <img
-                    src={card.imageUrl}
-                    alt={card.songTitle + " 1/1"}
-                    style={{ width: "100%", display: "block" }}
-                  />
-                ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+            {ultraRareCards.map((card) => {
+              const pLabel = card.perspective === "J&J" ? "J&J" : (card.perspective.split(" ")[1] || card.perspective);
+              return (
+                <div key={card.chipId} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, pointerEvents: "none" }}>
+                  {/* Gold-framed mini card */}
                   <div style={{
-                    width: "100%", aspectRatio: "2/3",
-                    background: "linear-gradient(160deg, #1e1b17, #2a2520)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
+                    borderRadius: 8,
+                    border: "1.5px solid " + C.megaGold + "99",
+                    boxShadow: "0 0 10px " + C.megaGold + "22",
+                    overflow: "hidden",
+                    width: "100%",
                   }}>
-                    <StarIcon size={40} color={C.megaGold} />
+                    <MiniPhotoCard
+                      perspective={card.perspective}
+                      rarity={card.rarity}
+                      isBooster={false}
+                      imageUrl={card.imageUrl}
+                      onClick={() => {}}
+                    />
                   </div>
-                )}
-
-                {/* 1 OF 1 badge — top right */}
-                <div style={{
-                  position: "absolute", top: 12, right: 12,
-                  background: "rgba(0,0,0,0.72)",
-                  border: "1px solid " + C.megaGold + "99",
-                  borderRadius: 7, padding: "5px 10px",
-                  fontFamily: MONO, fontSize: 8, letterSpacing: 2.5, color: C.megaGold,
-                }}>1 OF 1</div>
-
-                {/* Info overlay — bottom */}
-                <div style={{
-                  position: "absolute", bottom: 0, left: 0, right: 0,
-                  background: "linear-gradient(transparent, rgba(0,0,0,0.88))",
-                  padding: "40px 16px 16px",
-                }}>
-                  <div style={{ fontFamily: SERIF, fontSize: 17, fontWeight: 300, color: C.cream, marginBottom: 4 }}>
-                    {card.songTitle || card.songNum}
+                  <div style={{ fontFamily: MONO, fontSize: 7, color: C.megaGold, letterSpacing: 1, textAlign: "center", lineHeight: 1.4 }}>
+                    {card.songNum} {pLabel}
                   </div>
-                  <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 2, color: C.megaGold }}>
-                    {pLabel.toUpperCase()} PERSPECTIVE
-                  </div>
+                  <div style={{ fontFamily: MONO, fontSize: 6, color: C.textDim, letterSpacing: 1, textAlign: "center" }}>1 OF 1</div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       )}
 
