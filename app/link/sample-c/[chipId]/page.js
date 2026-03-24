@@ -122,7 +122,7 @@ export default function SampleCLinkPage({ params }) {
       <div style={wrapStyle}>
         <FilmGrain opacity={showUltraReveal ? 0.03 : 0.04} />
 
-        {/* ── ULTRA RARE REVEAL (successUltra + takenUltra) ── */}
+        {/* ââ ULTRA RARE REVEAL (successUltra + takenUltra) ââ */}
         {showUltraReveal && (
           <>
             {/* Radial gold glow */}
@@ -159,7 +159,7 @@ export default function SampleCLinkPage({ params }) {
                 position: "absolute", color: "#E4BC4A", fontSize: s.sz,
                 left: s.x, top: s.y, pointerEvents: "none",
                 animation: `sparkleDance ${s.dur} ease-in-out ${s.delay} infinite`,
-              }}>✦</div>
+              }}>â¦</div>
             ))}
 
             {/* Badge pill */}
@@ -172,7 +172,7 @@ export default function SampleCLinkPage({ params }) {
               animation: "fadeDown 0.5s ease 0.4s both",
             }}>
               <svg width="8" height="8" viewBox="0 0 24 24" fill="#E4BC4A"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: "#E4BC4A", fontWeight: 600 }}>1 OF 1 \u00b7 ULTRA RARE</span>
+              <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: "#E4BC4A", fontWeight: 600 }}>1 OF 1 · ULTRA RARE</span>
             </div>
 
             {/* Card with rings */}
@@ -232,7 +232,7 @@ export default function SampleCLinkPage({ params }) {
             {/* Song meta */}
             {cardResult && (
               <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 2.5, color: C.textDim, marginBottom: 20, position: "relative", zIndex: 10, animation: "fadeUp 0.55s ease 1.3s both" }}>
-                ULTRA RARE \u00b7 {(cardResult.songTitle || "").toUpperCase()}
+                ULTRA RARE · {(cardResult.songTitle || "").toUpperCase()}
               </div>
             )}
 
@@ -251,7 +251,7 @@ export default function SampleCLinkPage({ params }) {
           </>
         )}
 
-        {/* ── LOADING ── */}
+        {/* ââ LOADING ââ */}
         {status === "loading" && (
           <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
             <div style={circleBase}><NfcIcon size={36} color={C.accent} /></div>
@@ -260,7 +260,7 @@ export default function SampleCLinkPage({ params }) {
           </div>
         )}
 
-        {/* ── LINKING ── */}
+        {/* ââ LINKING ââ */}
         {status === "linking" && (
           <div style={{ textAlign: "center", zIndex: 1 }}>
             <div style={{ width: 48, height: 48, borderRadius: "50%", border: "2px solid " + C.accent + "22", borderTopColor: C.accent, animation: "spin 1s linear infinite", margin: "0 auto" }} />
@@ -268,7 +268,7 @@ export default function SampleCLinkPage({ params }) {
           </div>
         )}
 
-        {/* ── NEEDS AUTH ── */}
+        {/* ââ NEEDS AUTH ââ */}
         {status === "needsAuth" && (
           <div style={{ textAlign: "center", zIndex: 1, padding: "0 32px" }}>
             <div style={circleBase}><NfcIcon size={36} color={C.accent} /></div>
@@ -278,7 +278,7 @@ export default function SampleCLinkPage({ params }) {
           </div>
         )}
 
-        {/* ── ALREADY / TAKEN ── */}
+        {/* ââ ALREADY / TAKEN ââ */}
         {(status === "already" || status === "taken") && (
           <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
             <div style={{ display: "flex", justifyContent: "center" }}>
@@ -292,7 +292,7 @@ export default function SampleCLinkPage({ params }) {
             {cardResult && (
               <>
                 <div style={{ fontFamily: SANS, fontSize: 14, color: C.accent, marginTop: 8 }}>
-                  {cardResult.perspective} \u00b7 {cardResult.rarity}
+                  {cardResult.perspective} · {cardResult.rarity}
                 </div>
                 <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6 }}>
                   {status === "already" ? "This card is already in your vault" : "This card is connected to another collector"}
@@ -304,7 +304,7 @@ export default function SampleCLinkPage({ params }) {
           </div>
         )}
 
-        {/* ── SUCCESS (regular card) ── */}
+        {/* ââ SUCCESS (regular card) ââ */}
         {status === "success" && (
           <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
             <div style={{ width: 64, height: 64, ...skeuo, borderRadius: "50%", border: "2px solid " + C.teal, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto" }}>
@@ -314,7 +314,7 @@ export default function SampleCLinkPage({ params }) {
             {cardResult && (
               <>
                 <div style={{ fontSize: 15, color: C.accent, fontFamily: SANS, marginTop: 8 }}>{cardResult.perspective === "J&J" ? "Jack & Jack" : cardResult.perspective}</div>
-                <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 6 }}>{cardResult.rarity.toUpperCase()} \u00b7 {cardResult.songTitle.toUpperCase()}</div>
+                <div style={{ fontSize: 10, color: C.textDim, fontFamily: MONO, letterSpacing: 2, marginTop: 6 }}>{cardResult.rarity.toUpperCase()} · {cardResult.songTitle.toUpperCase()}</div>
               </>
             )}
             <div style={{ fontSize: 9, color: C.textDim, fontFamily: MONO, letterSpacing: 1, marginTop: 16, opacity: 0.4 }}>Redirecting to vault...</div>
@@ -322,7 +322,7 @@ export default function SampleCLinkPage({ params }) {
           </div>
         )}
 
-        {/* ── ERROR ── */}
+        {/* ââ ERROR ââ */}
         {status === "error" && (
           <div style={{ textAlign: "center", zIndex: 1, padding: "0 32px" }}>
             <div style={{ width: 64, height: 64, ...skeuo.inset, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto", border: "1.5px solid " + C.rose + "33" }}>
