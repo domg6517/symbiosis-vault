@@ -163,7 +163,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
           {[
             { key: "singles", label: "I" },
             { key: "boosters", label: "II" },
-            { key: "ultra", label: "III" },
+            { key: "ultra", label: "1/1" },
             { key: "feed", label: "FEED" },
           ].map((tab) => (
             <button key={tab.key} onClick={() => setView(tab.key)} style={{
