@@ -43,7 +43,7 @@ function formatEventAction(item) {
       if (song && perspective) {
         return { text: "scanned", detail: song + " \u2022 " + perspective, rarity };
       }
-      return { text: "scanned a " + rarity + " card", detail: null, rarity };
+      return { text: "scanned a " + (rarity ? rarity.replace(/_/g, " ") : "") + " card", detail: null, rarity };
     }
     case "card_unlinked": {
       const song = item.card_song_title || "";
