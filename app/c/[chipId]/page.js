@@ -29,14 +29,16 @@ export default function ScanLinkPage() {
     handleScan();
   }, [chipId]);
 
+  // Auto-redirect — give ultra rare owners extra time to enjoy the reveal
   useEffect(() => {
     if (status === "success" || status === "already" || status === "taken") {
+      const isUR = cardInfo?.rarity === "ultra_rare" && (status === "success" || status === "already");
       const timer = setTimeout(() => {
         if (typeof window !== "undefined") window.location.href = "/?from=scan";
-      }, 2000);
+      }, isUR ? 5000 : 2000);
       return () => clearTimeout(timer);
     }
-  }, [status]);
+  }, [status, cardInfo]);
 
   async function handleScan() {
     try {
@@ -80,7 +82,9 @@ export default function ScanLinkPage() {
       } else if (res.status === 409) {
         setCardInfo(data.card);
         if (data.error && data.error.includes("another account")) { setStatus("taken"); } else { setStatus("already"); }
-        if (typeof window !== "undefined" && window.navigator?.vibrate) { window.navigator.vibrate(50); }
+        if (typeof window !== "undefined" && window.navigator?.vibrate) {
+          window.navigator.vibrate(data.card?.rarity === "ultra_rare" ? [80, 40, 80, 40, 200] : 50);
+        }
       } else if (res.status === 404) { setStatus("error"); setError("Card not recognized"); }
       else { setStatus("error"); setError(data.error || "Something went wrong"); }
     } catch (err) { setStatus("error"); setError("Connection error"); }
@@ -104,7 +108,6 @@ export default function ScanLinkPage() {
     </button>
   );
 
-  // Sparkle positions for ultra rare reveal
   const SPARKLES = [
     { x:"8%",  y:"12%", sz:13, dur:3.2, delay:0.8 },
     { x:"82%", y:"16%", sz:9,  dur:2.7, delay:1.3 },
@@ -116,20 +119,20 @@ export default function ScanLinkPage() {
     { x:"38%", y:"88%", sz:9,  dur:2.8, delay:0.6 },
   ];
 
+  // Show spectacular reveal for ultra rare — both on first scan AND re-scan
+  const showUltraReveal = cardInfo?.rarity === "ultra_rare" && (status === "success" || status === "already");
+  const ultraHeadline = status === "success" ? "You Found It" : "Your 1 of 1";
+
   return (
     <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflowY: "auto", background: `radial-gradient(ellipse at 50% 30%, #1A1816 0%, ${C.bg} 70%)`, fontFamily: SANS, textAlign: "center", padding: "0 32px" }}>
 
       {(status === "loading") && (<><Spinner /><div style={{ color: C.textSec, fontFamily: MONO, fontSize: 11, letterSpacing: 2, marginTop: 20 }}>READING CARD...</div></>)}
       {(status === "linking") && (<><Spinner /><div style={{ color: C.textSec, fontFamily: MONO, fontSize: 11, letterSpacing: 2, marginTop: 20 }}>LINKING TO VAULT...</div></>)}
 
-      {/* ── ULTRA RARE success ── */}
-      {status === "success" && cardInfo?.rarity === "ultra_rare" && (
+      {/* ── Ultra Rare spectacular reveal (first scan + re-scan) ── */}
+      {showUltraReveal && (
         <div style={{ position: "fixed", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "0 28px", overflow: "hidden" }}>
-
-          {/* Gold radial glow */}
           <div style={{ position: "absolute", width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle, rgba(228,188,74,0.14) 0%, rgba(228,188,74,0.04) 45%, transparent 70%)", top: "50%", left: "50%", transform: "translate(-50%,-50%)", animation: "glowPulse 3s ease-in-out infinite" }} />
-
-          {/* Starburst lines */}
           <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", animation: "burstIn 1.2s cubic-bezier(0.22,1,0.36,1) both" }} viewBox="0 0 390 844" fill="none">
             <line x1="195" y1="422" x2="195" y2="0"   stroke="rgba(228,188,74,0.05)" strokeWidth="1"/>
             <line x1="195" y1="422" x2="195" y2="844"  stroke="rgba(228,188,74,0.05)" strokeWidth="1"/>
@@ -140,43 +143,31 @@ export default function ScanLinkPage() {
             <line x1="195" y1="422" x2="0"   y2="844"  stroke="rgba(228,188,74,0.04)" strokeWidth="1"/>
             <line x1="195" y1="422" x2="390" y2="844"  stroke="rgba(228,188,74,0.04)" strokeWidth="1"/>
           </svg>
-
-          {/* Floating sparkles */}
           {SPARKLES.map((s, i) => (
             <span key={i} style={{ position: "absolute", color: C.gold, fontSize: s.sz, left: s.x, top: s.y, pointerEvents: "none", animation: `sparkleDance ${s.dur}s ease-in-out ${s.delay}s infinite` }}>✦</span>
           ))}
-
-          {/* Main content */}
           <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center" }}>
-
-            {/* Badge pill */}
             <div style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "6px 16px", borderRadius: 100, background: "linear-gradient(135deg, rgba(228,188,74,0.14), rgba(228,188,74,0.04))", border: "1px solid rgba(228,188,74,0.45)", marginBottom: 22, animation: "fadeDown 0.5s ease 0.4s both" }}>
               <svg width="10" height="10" viewBox="0 0 24 24" fill={C.gold}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 3, color: C.gold, fontWeight: 600 }}>1 OF 1 &nbsp;·&nbsp; ULTRA RARE</span>
               <svg width="10" height="10" viewBox="0 0 24 24" fill={C.gold}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             </div>
-
-            {/* Card with rings */}
             <div style={{ position: "relative", marginBottom: 28, animation: "cardReveal 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.6s both" }}>
               <div style={{ position: "absolute", inset: -18, borderRadius: 30, border: "1px solid rgba(228,188,74,0.2)", animation: "ringPulse 2.5s ease-in-out 1.5s infinite" }} />
               <div style={{ position: "absolute", inset: -8, borderRadius: 22, border: "1.5px solid rgba(228,188,74,0.45)", boxShadow: "0 0 20px rgba(228,188,74,0.15)", animation: "ringPulse 2.5s ease-in-out 1.7s infinite" }} />
               <div style={{ width: 150, height: 200, borderRadius: 14, background: "linear-gradient(145deg, #2A2416, #1E1A0E, #2A2416)", border: "1px solid rgba(228,188,74,0.35)", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", boxShadow: "0 0 40px rgba(228,188,74,0.25), 0 24px 60px rgba(0,0,0,0.9)" }}>
-                {/* Corner ornaments */}
-                {[["8px","8px","top","left"],["8px","auto","top","right"],["auto","8px","bottom","left"],["auto","auto","bottom","right"]].map(([t,r,b,l], i) => (
-                  <div key={i} style={{ position: "absolute", width: 14, height: 14, top: t==="8px"?8:undefined, bottom: t==="auto"?8:undefined, left: l==="8px"?8:undefined, right: r==="8px"?8:undefined, borderColor: "rgba(228,188,74,0.6)", borderStyle: "solid", borderWidth: 0, ...(t==="8px"&&l==="8px" ? {borderTopWidth:1.5,borderLeftWidth:1.5} : t==="8px"&&r==="8px" ? {borderTopWidth:1.5,borderRightWidth:1.5} : t==="auto"&&l==="8px" ? {borderBottomWidth:1.5,borderLeftWidth:1.5} : {borderBottomWidth:1.5,borderRightWidth:1.5}) }} />
+                {[["8px",null,"8px",null],["8px",null,null,"8px"],[null,"8px","8px",null],[null,"8px",null,"8px"]].map(([t,r,b,l],i) => (
+                  <div key={i} style={{ position:"absolute", width:14, height:14, top:t||undefined, right:r||undefined, bottom:b||undefined, left:l||undefined, borderColor:"rgba(228,188,74,0.6)", borderStyle:"solid", borderWidth:0, ...(t&&l?{borderTopWidth:1.5,borderLeftWidth:1.5}:t&&r?{borderTopWidth:1.5,borderRightWidth:1.5}:b&&l?{borderBottomWidth:1.5,borderLeftWidth:1.5}:{borderBottomWidth:1.5,borderRightWidth:1.5}) }} />
                 ))}
                 {cardInfo?.imageUrl ? (
-                  <img src={cardInfo.imageUrl} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} alt="" />
+                  <img src={cardInfo.imageUrl} style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} alt="" />
                 ) : (
                   <svg style={{ animation: "starSpin 8s linear infinite" }} width="52" height="52" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="1.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                 )}
-                {/* Shimmer sweep */}
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(105deg, transparent 30%, rgba(228,188,74,0.18) 48%, rgba(255,255,220,0.12) 50%, rgba(228,188,74,0.18) 52%, transparent 70%)", backgroundSize: "250% 100%", animation: "shimmer 2.8s ease 1.2s infinite" }} />
+                <div style={{ position:"absolute", inset:0, background:"linear-gradient(105deg, transparent 30%, rgba(228,188,74,0.18) 48%, rgba(255,255,220,0.12) 50%, rgba(228,188,74,0.18) 52%, transparent 70%)", backgroundSize:"250% 100%", animation:"shimmer 2.8s ease 1.2s infinite" }} />
               </div>
             </div>
-
-            {/* Text */}
-            <div style={{ fontFamily: MONO, fontSize: 22, fontWeight: 600, letterSpacing: 5, textTransform: "uppercase", color: C.cream, lineHeight: 1.1, marginBottom: 10, animation: "fadeUp 0.55s ease 1.1s both" }}>You Found It</div>
+            <div style={{ fontFamily: MONO, fontSize: 22, fontWeight: 600, letterSpacing: 5, textTransform: "uppercase", color: C.cream, lineHeight: 1.1, marginBottom: 10, animation: "fadeUp 0.55s ease 1.1s both" }}>{ultraHeadline}</div>
             <div style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 700, color: C.gold, marginBottom: 6, animation: "fadeUp 0.55s ease 1.2s both" }}>{cardInfo?.perspective}</div>
             <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: "2.5px", color: "#5A5248", marginBottom: 20, animation: "fadeUp 0.55s ease 1.3s both", textTransform: "uppercase" }}>ULTRA RARE · {cardInfo?.songTitle || "1 OF 1"}</div>
             <div style={{ fontFamily: MONO, fontSize: 9, letterSpacing: 1, color: "#4A4540", marginBottom: 22, opacity: 0.6, animation: "fadeUp 0.55s ease 1.4s both" }}>Redirecting to vault...</div>
@@ -186,7 +177,7 @@ export default function ScanLinkPage() {
       )}
 
       {/* ── Normal card success ── */}
-      {status === "success" && cardInfo?.rarity !== "ultra_rare" && (
+      {status === "success" && !showUltraReveal && (
         <div style={{ animation: "fadeUp 0.5s ease" }}>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Icon borderColor={C.teal}>
@@ -204,16 +195,32 @@ export default function ScanLinkPage() {
         </div>
       )}
 
-      {(status === "already" || status === "taken") && (
+      {/* ── Already collected (non-ultra-rare) ── */}
+      {status === "already" && !showUltraReveal && (
         <div style={{ animation: "fadeUp 0.5s ease" }}>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Icon>
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
             </Icon>
           </div>
-          <div style={{ fontFamily: SERIF, fontSize: 22, color: C.cream, marginTop: 20 }}>{status === "taken" ? "Card Unavailable" : "Already Collected"}</div>
+          <div style={{ fontFamily: SERIF, fontSize: 22, color: C.cream, marginTop: 20 }}>Already Collected</div>
           {cardInfo && (<div style={{ fontFamily: SANS, fontSize: 14, color: C.accent, marginTop: 8 }}>{cardInfo.perspective} &middot; {cardInfo.rarity}</div>)}
-          <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6 }}>{status === "taken" ? "This card is connected to another collector" : "This card is already in your vault"}</div>
+          <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6 }}>This card is already in your vault</div>
+          <div style={{ fontFamily: MONO, fontSize: 9, color: C.textDim, letterSpacing: 1, marginTop: 16, opacity: 0.4 }}>Redirecting to vault...</div>
+          <Btn onClick={goToApp} label="OPEN VAULT" />
+        </div>
+      )}
+
+      {status === "taken" && (
+        <div style={{ animation: "fadeUp 0.5s ease" }}>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Icon>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+            </Icon>
+          </div>
+          <div style={{ fontFamily: SERIF, fontSize: 22, color: C.cream, marginTop: 20 }}>Card Unavailable</div>
+          {cardInfo && (<div style={{ fontFamily: SANS, fontSize: 14, color: C.accent, marginTop: 8 }}>{cardInfo.perspective} &middot; {cardInfo.rarity}</div>)}
+          <div style={{ fontFamily: SANS, fontSize: 13, color: C.textDim, marginTop: 6 }}>This card is connected to another collector</div>
           <div style={{ fontFamily: MONO, fontSize: 9, color: C.textDim, letterSpacing: 1, marginTop: 16, opacity: 0.4 }}>Redirecting to vault...</div>
           <Btn onClick={goToApp} label="OPEN VAULT" />
         </div>
