@@ -53,11 +53,28 @@ export async function GET(request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    // For ultra_rare cards, fetch the proper hi-res image from ultra_rares table
+    const ultraRareChipIds = userCards
+      .filter(uc => uc.card_template.rarity === "ultra_rare")
+      .map(uc => uc.card_template.chip_id);
+
+    const ultraRareImageMap = {};
+    if (ultraRareChipIds.length > 0) {
+      const { data: urData } = await supabase
+        .from("ultra_rares")
+        .select("chip_id, image_url")
+        .in("chip_id", ultraRareChipIds);
+      if (urData) {
+        urData.forEach(ur => { ultraRareImageMap[ur.chip_id] = ur.image_url; });
+      }
+    }
+
     // Transform to match frontend expected format
     const cards = userCards.map((uc) => {
       const content = uc.card_template.content || [];
       const imageContent = content.find((c) => c.content_type === "image");
       const audioContent = content.find((c) => c.content_type === "audio");
+      const isUltraRare = uc.card_template.rarity === "ultra_rare";
       return {
         chipId: uc.card_template.chip_id,
         songId: uc.card_template.song.id,
@@ -68,7 +85,9 @@ export async function GET(request) {
         linked: uc.linked,
         type: uc.card_template.type,
         linkedAt: uc.linked_at,
-        imageUrl: imageContent?.file_url || null,
+        imageUrl: isUltraRare
+          ? (ultraRareImageMap[uc.card_template.chip_id] || imageContent?.file_url || null)
+          : (imageContent?.file_url || null),
         audioUrl: audioContent?.file_url || null,
       };
     });
