@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
-import { FilmGrain, Divider, ChevronLeft, NfcIcon, CheckIcon } from "./Icons";
+import { FilmGrain, Divider, ChevronLeft, NfcIcon, CheckIcon, StarIcon } from "./Icons";
 
 export default function ScanScreen({ session, onBack, onScanned }) {
   const [scanning, setScanning] = useState(false);
@@ -9,6 +9,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
   const [cardResult, setCardResult] = useState(null);
   const [error, setError] = useState("");
   const [isSetComplete, setIsSetComplete] = useState(false);
+  const [isUltraRare, setIsUltraRare] = useState(false);
   const [hasNfc] = useState(() => typeof window !== "undefined" && "NDEFReader" in window);
 
   const linkCard = async (chipId) => {
@@ -63,7 +64,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
         @keyframes scanSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes scanBounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes gentlePulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+        @keyframes goldGlow { 0%, 100% { box-shadow: 0 0 20px rgba(228,188,74,0.2), 0 0 40px rgba(228,188,74,0.1); } 50% { box-shadow: 0 0 50px rgba(228,188,74,0.5), 0 0 80px rgba(228,188,74,0.25); } } @keyframes starFloat { 0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; } 50% { transform: translateY(-6px) scale(1.1); opacity: 1; } } @keyframes gentlePulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
       ` }} />
       <div style={{
         minHeight: "100%", display: "flex", flexDirection: "column",
