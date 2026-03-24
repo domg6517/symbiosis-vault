@@ -17,7 +17,6 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
   const [ultraRaresData, setUltraRaresData] = useState(null);
   const [selectedUR, setSelectedUR] = useState(null);
   const [disconnecting, setDisconnecting] = useState(false);
-  const [disconnectMsg, setDisconnectMsg] = useState(null);
 
   const linked = ownedCards.filter((c) => c.linked);
   const singleCards = linked.filter((c) => c.type === "single");
@@ -50,7 +49,6 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
   async function handleDisconnectUR(ur) {
     if (!session?.access_token || disconnecting) return;
     setDisconnecting(true);
-    setDisconnectMsg(null);
     try {
       const res = await fetch("/api/ultra-rare/disconnect", {
         method: "POST",
@@ -58,24 +56,11 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
         body: JSON.stringify({ ultraRareId: ur.id }),
       });
       if (res.ok) {
-        // Optimistic update: immediately clear ownership in local state
-        setUltraRaresData(prev => prev
-          ? prev.map(u => u.id === ur.id ? { ...u, isOwnedByMe: false, owner: null } : u)
-          : prev
-        );
         setSelectedUR(null);
-        setDisconnectMsg(null);
-        // Delay re-fetch so DB write propagates before we read — avoids race condition overwriting optimistic update
-        await new Promise(r => setTimeout(r, 800));
         const listRes = await fetch("/api/ultra-rare/list", { headers: { Authorization: "Bearer " + session.access_token } });
         if (listRes.ok) { const d = await listRes.json(); if (d.ultraRares) setUltraRaresData(d.ultraRares); }
-      } else {
-        const errData = await res.json().catch(() => ({}));
-        setDisconnectMsg(errData.error || "Disconnect failed. Try again.");
       }
-    } catch (e) {
-      setDisconnectMsg("Connection error. Please try again.");
-    }
+    } catch (e) {}
     setDisconnecting(false);
   }
 
@@ -225,7 +210,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                     <div style={{ fontSize: 9, fontFamily: MONO, color: songOwnedCount > 0 ? C.megaGold : C.textDim, letterSpacing: 1 }}>{songOwnedCount} found</div>
                   </div>
                   <div style={{ display: "flex", gap: 6 }}>
-                    {songURs.filter(ur => !!ur.owner || (ur.isOwnedByMe || ur.owned)).map((ur) => {
+                    {songURs.map((ur) => {
                       const pLabel = ur.perspective === "J&J" ? "J&J" : ur.perspective ? ur.perspective.split(" ")[1] : "?";
                       const isOwned = ur.isOwnedByMe || ur.owned;
                       const hasImage = !!ur.imageUrl;
@@ -313,7 +298,6 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                   {disconnecting ? "DISCONNECTING..." : "DISCONNECT"}
                 </button>
                 <div style={{ fontSize: 10, fontFamily: SANS, color: C.textDim, marginTop: 8, lineHeight: 1.4 }}>Disconnecting releases the card. The chip becomes available again and you lose 5 pts.</div>
-                {disconnectMsg && <div style={{ fontSize: 11, fontFamily: SANS, color: C.rose, marginTop: 8, fontWeight: 500 }}>{disconnectMsg}</div>}
               </div>
             )}
             {!selectedUR.owner && !selectedUR.isOwnedByMe && (
