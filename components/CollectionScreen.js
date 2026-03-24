@@ -203,8 +203,9 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
               </div>
             </div>
             {SINGLES.map((song) => {
-              const songURs = BASE_ULTRA_RARES.filter((ur) => ur.songId === song.id).map(b => ultraRares.find(a => a.id === b.id) || b);
+              const songURs = BASE_ULTRA_RARES.filter((ur) => ur.songId === song.id).map(b => ultraRares.find(a => a.id === b.id) || b).filter(ur => ur.isOwnedByMe || ur.owned);
               const songOwnedCount = songURs.filter((ur) => ur.isOwnedByMe || ur.owned).length;
+              if (songURs.length === 0) return null;
               return (
                 <div key={song.id} style={{ marginBottom: 12 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 0 6px" }}>
