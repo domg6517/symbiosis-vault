@@ -225,7 +225,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                     <div style={{ fontSize: 9, fontFamily: MONO, color: songOwnedCount > 0 ? C.megaGold : C.textDim, letterSpacing: 1 }}>{songOwnedCount} found</div>
                   </div>
                   <div style={{ display: "flex", gap: 6 }}>
-                    {songURs.map((ur) => {
+                    {songURs.filter(ur => !!ur.owner || (ur.isOwnedByMe || ur.owned)).map((ur) => {
                       const pLabel = ur.perspective === "J&J" ? "J&J" : ur.perspective ? ur.perspective.split(" ")[1] : "?";
                       const isOwned = ur.isOwnedByMe || ur.owned;
                       const hasImage = !!ur.imageUrl;
