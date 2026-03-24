@@ -486,7 +486,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                 {selectedUR.perspective === "J&J" ? "J&J" : selectedUR.perspective?.split(" ")[1] || selectedUR.perspective}
               </div>
               <div style={{ fontFamily: MONO, fontSize: 10, color: C.textDim, letterSpacing: 2 }}>
-                {selectedUR.songNum} Â· {selectedUR.songTitle}
+                {selectedUR.songNum} · {selectedUR.songTitle}
               </div>
               <div style={{ fontFamily: MONO, fontSize: 9, color: "#C4A030", letterSpacing: 3, marginTop: 6 }}>1 OF 1</div>
             </div>
