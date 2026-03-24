@@ -291,6 +291,7 @@ export default function SymbiosisVault() {
               navigateTo("collectorProfile", { selectedCollector: c, prevScreen: "collection" });
             }}
             session={session}
+          onRefresh={fetchCards}
         />
       )}
       {screen === "detail" && selectedCard && (
