@@ -52,7 +52,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
 
   const ultraRareCards = collectorCards.filter(c => c.rarity === "ultra_rare");
   const regularCards = collectorCards.filter(c => c.rarity !== "ultra_rare");
-  const uniqueSongs = new Set(regularCards.map(c => c.songId)).size;
+  const uniqueSongs = new Set(collectorCards.map(c => c.songId)).size;
 
   return (
     <div style={{ height: "100dvh", overflowY: "auto", background: C.bg, color: C.text, padding: "0 0 100px" }}>
@@ -124,13 +124,13 @@ export default function CollectorProfileScreen({ collector, onBack }) {
         ))}
       </div>
 
-      {/* 1/1 Ultra Rares — same grid size as regular cards, gold frame */}
+      {/* 1/1 Ultra Rares â same grid size as regular cards, gold frame */}
       {!loadingCards && ultraRareCards.length > 0 && (
         <div style={{ padding: "0 16px", marginBottom: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 14 }}>
             <StarIcon size={9} color={C.megaGold} />
             <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.megaGold }}>
-              1 OF 1{ultraRareCards.length > 1 ? " · " + ultraRareCards.length : ""}
+              1 OF 1{ultraRareCards.length > 1 ? " Â· " + ultraRareCards.length : ""}
             </div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10 }}>
