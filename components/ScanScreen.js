@@ -160,7 +160,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
             )}
           </>
         ) : (
-          {(cardResult && cardResult.rarity === 'ultra_rare') ? (
+          (cardResult && cardResult.rarity === 'ultra_rare') ? (
             <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.6s ease", padding: "0 20px" }}>
               <div style={{
                 width: 90, height: 90, borderRadius: "50%",
@@ -228,7 +228,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
               )}
               <button onClick={onScanned} style={{ marginTop: 32, padding: "13px 40px", ...skeu.btnGold, color: C.bg, fontSize: 10, fontFamily: MONO, fontWeight: 600, letterSpacing: 3, cursor: "pointer" }}>VIEW COLLECTION</button>
             </div>
-          )}
+          )
         )}
       </div>
     </>
