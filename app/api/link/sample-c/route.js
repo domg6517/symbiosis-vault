@@ -33,6 +33,8 @@ export async function POST(request) {
       .single();
 
     if (cardTemplate) {
+      const isUltra = cardTemplate.rarity === "ultra_rare";
+
       const { data: alreadyLinked } = await supabase
         .from("user_cards")
         .select("id, user_id")
@@ -42,7 +44,7 @@ export async function POST(request) {
 
       if (alreadyLinked && alreadyLinked.user_id !== user.id) {
         return NextResponse.json(
-          { error: "This card is connected to another account.", card: formatCard(cardTemplate) },
+          { error: isUltra ? "This 1/1 belongs to another collector." : "This card is connected to another account.", card: formatCard(cardTemplate) },
           { status: 409 }
         );
       }
@@ -55,7 +57,7 @@ export async function POST(request) {
         .single();
 
       if (existing?.linked) {
-        return NextResponse.json({ error: "Already collected!", card: formatCard(cardTemplate) }, { status: 409 });
+        return NextResponse.json({ error: isUltra ? "You already own this 1/1!" : "Already collected!", card: formatCard(cardTemplate) }, { status: 409 });
       }
 
       if (existing) {
@@ -89,14 +91,14 @@ export async function POST(request) {
       });
 
       return NextResponse.json({
-        message: "Card linked successfully!",
+        message: isUltra ? "1/1 claimed!" : "Card linked successfully!",
         card: formatCard(cardTemplate),
         setComplete: songPerspectives.size >= 3,
-        cardType: "regular",
+        cardType: isUltra ? "ultra_rare" : "regular",
       });
     }
 
-    // --- Try ultra_rares (1/1 chips) ---
+    // --- Try ultra_rares (1/1 chips not in card_templates) ---
     const { data: ultraRare } = await supabase
       .from("ultra_rares")
       .select("id, song_id, perspective_id, image_url, song:songs(id, title, song_number), perspective:perspectives(id, name)")
