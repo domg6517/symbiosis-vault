@@ -56,9 +56,12 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
         body: JSON.stringify({ ultraRareId: ur.id }),
       });
       if (res.ok) {
+        // Mirror how regular card unlinks work: update local state directly, no re-fetch
+        setUltraRaresData(prev => prev
+          ? prev.map(u => u.id === ur.id ? { ...u, isOwnedByMe: false, owner: null } : u)
+          : prev
+        );
         setSelectedUR(null);
-        const listRes = await fetch("/api/ultra-rare/list", { headers: { Authorization: "Bearer " + session.access_token } });
-        if (listRes.ok) { const d = await listRes.json(); if (d.ultraRares) setUltraRaresData(d.ultraRares); }
       }
     } catch (e) {}
     setDisconnecting(false);
