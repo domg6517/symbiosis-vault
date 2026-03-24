@@ -7,19 +7,26 @@ import { PERSPECTIVES } from "./data";
 export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster = false, imageUrl = null, editionNum = null }) => {
   const label = perspective === "J&J" ? "J&J" : perspective.split(" ")[1];
   const isRare = rarity === "rare";
+  const isUltraRare = rarity === "ultra_rare";
   return (
     <div onClick={onClick} style={{
       width: 52, height: 66, flexShrink: 0,
-      background: `linear-gradient(170deg, ${isBooster ? "#EBE8E0" : "#F0EBE2"}, ${isBooster ? "#DDD9CF" : "#E4DDD0"})`,
+      background: isUltraRare
+        ? `linear-gradient(170deg, #3A2E18, #2C2210)`
+        : `linear-gradient(170deg, ${isBooster ? "#EBE8E0" : "#F0EBE2"}, ${isBooster ? "#DDD9CF" : "#E4DDD0"})`,
       padding: 3, cursor: "pointer", position: "relative",
-      boxShadow: "0 1px 0 rgba(255,255,255,0.15) inset, 0 2px 6px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15)",
+      boxShadow: isUltraRare
+        ? "0 0 0 1px rgba(212,164,58,0.5), 0 1px 0 rgba(255,255,255,0.12) inset, 0 2px 8px rgba(0,0,0,0.35)"
+        : "0 1px 0 rgba(255,255,255,0.15) inset, 0 2px 6px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15)",
       borderRadius: 2,
     }}>
       <div style={{
         width: "100%", height: "70%",
-        background: isBooster
-          ? `linear-gradient(140deg, #141C17, #1A221D)`
-          : `linear-gradient(140deg, #1A1714, #1E1C17)`,
+        background: isUltraRare
+          ? `linear-gradient(140deg, #1A1408, #201A0E)`
+          : isBooster
+            ? `linear-gradient(140deg, #141C17, #1A221D)`
+            : `linear-gradient(140deg, #1A1714, #1E1C17)`,
         display: "flex", alignItems: "center", justifyContent: "center",
         position: "relative", overflow: "hidden",
         boxShadow: "0 1px 3px rgba(0,0,0,0.3) inset",
@@ -28,19 +35,32 @@ export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster =
         {imageUrl ? (
           <img src={imageUrl} alt={label} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0, zIndex: 1 }} />
         ) : (
-          <div style={{ fontSize: 12, fontWeight: 300, color: C.cream, fontFamily: SERIF, zIndex: 1, letterSpacing: 1 }}>{label}</div>
+          <div style={{ fontSize: 12, fontWeight: 300, color: isUltraRare ? "#D4A43A" : C.cream, fontFamily: SERIF, zIndex: 1, letterSpacing: 1 }}>{label}</div>
         )}
         {isRare && (
           <div style={{ position: "absolute", top: 2, right: 3, fontSize: 6, color: C.purple, fontFamily: MONO }}>R</div>
         )}
-        {isBooster && (
+        {isBooster && !isUltraRare && (
           <div style={{ position: "absolute", bottom: 2, left: 3, fontSize: 5, color: C.booster, fontFamily: MONO, letterSpacing: 1 }}>B</div>
+        )}
+        {isUltraRare && (
+          <div style={{ position: "absolute", top: 2, left: 3, fontSize: 6, color: "#D4A43A", fontFamily: MONO, fontWeight: 700, zIndex: 2, letterSpacing: 0.5 }}>1/1</div>
         )}
       </div>
       <div style={{
         textAlign: "center", paddingTop: 2,
-        fontSize: 6, fontFamily: SERIF, fontStyle: "italic", color: "#5A5550",
+        fontSize: 6, fontFamily: SERIF, fontStyle: "italic",
+        color: isUltraRare ? "#8A7040" : "#5A5550",
       }}>{label}</div>
+      {count > 1 && (
+        <div style={{
+          position: "absolute", top: -4, right: -4,
+          width: 16, height: 16, borderRadius: "50%",
+          ...skeuo.btnGold,
+          color: C.bg, fontSize: 9, fontFamily: MONO, fontWeight: 700,
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>{count}</div>
+      )}
     </div>
   );
 };
