@@ -160,49 +160,75 @@ export default function ScanScreen({ session, onBack, onScanned }) {
             )}
           </>
         ) : (
-          <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
-            <div style={{
-              width: 64, height: 64, ...skeuo.card, borderRadius: "50%",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              margin: "0 auto",
-            }}>
-              <CheckIcon size={24} color={C.teal} />
-            </div>
-            <div style={{
-              fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF,
-              marginTop: 20, textShadow: "0 1px 3px rgba(0,0,0,0.4)",
-            }}>Card linked!</div>
-            <Divider style={{ width: 100, margin: "14px auto" }} />
-            {cardResult && (
-              <>
-                <div style={{
-                  fontSize: 15, color: C.accent, fontFamily: SERIF,
-                  fontStyle: "italic",
-                }}>{cardResult.songTitle} &mdash; {cardResult.perspective}</div>
-                <div style={{
-                  fontSize: 9, color: C.textDim, fontFamily: MONO,
-                  letterSpacing: 2, marginTop: 6,
-                }}>{cardResult.rarity.replace(/_/g, " ").toUpperCase()} &middot; {cardResult.chipId}</div>
-              </>
-            )}
-            {isSetComplete && (
+          {cardResult?.rarity === 'ultra_rare' ? (
+            <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.6s ease", padding: "0 20px" }}>
               <div style={{
-                marginTop: 16, padding: "10px 20px", ...skeuo.card,
-                position: "relative", overflow: "hidden",
+                width: 90, height: 90, borderRadius: "50%",
+                background: "radial-gradient(circle, rgba(228,188,74,0.3) 0%, rgba(228,188,74,0.05) 70%)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                margin: "0 auto",
+                boxShadow: "0 0 40px rgba(228,188,74,0.4), 0 0 80px rgba(228,188,74,0.15)",
               }}>
-                <div style={skeuo.gloss} />
-                <div style={{
-                  fontSize: 10, fontFamily: MONO, letterSpacing: 3,
-                  color: "#A2A0B4", position: "relative", zIndex: 1,
-                }}>SET COMPLETE &mdash; ULTRA RARE UNLOCKED</div>
+                <StarIcon size={36} color={C.megaGold} />
               </div>
-            )}
-            <button onClick={onScanned} style={{
-              marginTop: 32, padding: "13px 40px", ...skeuo.btnGold,
-              color: C.bg, fontSize: 10, fontFamily: MONO, fontWeight: 600,
-              letterSpacing: 3, cursor: "pointer",
-            }}>VIEW COLLECTION</button>
-          </div>
+              <div style={{ fontFamily: MONO, fontSize: 11, letterSpacing: 5, color: C.megaGold, marginTop: 18 }}>1 OF 1</div>
+              <div style={{ fontSize: 26, fontWeight: 300, color: C.cream, fontFamily: SERIF, marginTop: 8, textShadow: "0 0 20px rgba(228,188,74,0.5)" }}>Ultra Rare Linked!</div>
+              {cardResult.imageUrl && (
+                <div style={{
+                  width: 130, height: 175, borderRadius: 10, overflow: "hidden",
+                  margin: "18px auto 0",
+                  boxShadow: "0 0 30px rgba(228,188,74,0.5), 0 8px 32px rgba(0,0,0,0.6)",
+                  border: "1.5px solid rgba(228,188,74,0.6)",
+                }}>
+                  <img src={cardResult.imageUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" />
+                </div>
+              )}
+              {cardResult.songTitle && (
+                <div style={{ fontFamily: SERIF, fontSize: 15, color: C.accent, fontStyle: "italic", marginTop: 16 }}>{cardResult.songTitle}</div>
+              )}
+              <div style={{ fontFamily: MONO, fontSize: 9, color: C.megaGold, letterSpacing: 2, marginTop: 8, opacity: 0.8 }}>{cardResult.chipId}</div>
+              <button onClick={onScanned} style={{ marginTop: 32, padding: "13px 40px", ...skeu.btnGold, color: C.bg, fontSize: 10, fontFamily: MONO, fontWeight: 600, letterSpacing: 3, cursor: "pointer" }}>VIEW COLLECTION</button>
+            </div>
+          ) : (
+            <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
+              <div style={{
+                width: 64, height: 64, ...skeu.card, borderRadius: "50%",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <CheckIcon size={24} color={C.teal} />
+              </div>
+              <div style={{
+                fontSize: 22, fontWeight: 300, color: C.cream, fontFamily: SERIF,
+                marginTop: 20, textShadow: "0 1px 3px rgba(0,0,0,0.4)",
+              }}>Card linked!</div>
+              <Divider style={{ width: 100, margin: "14px auto" }} />
+              {cardResult && (
+                <>
+                  <div style={{
+                    fontSize: 15, color: C.accent, fontFamily: SERIF,
+                    fontStyle: "italic",
+                  }}>{cardResult.songTitle} &mdash; {cardResult.perspective}</div>
+                  <div style={{
+                    fontSize: 9, color: C.textDim, fontFamily: MONO,
+                    letterSpacing: 2, marginTop: 6,
+                  }}>{cardResult.rarity.replace(/_/g, " ").toUpperCase()} · {cardResult.chipId}</div>
+                </>
+              )}
+              {isSetComplete && (
+                <div style={{
+                  marginTop: 16, padding: "10px 20px", ...skeu.card,
+                  position: "relative", overflow: "hidden",
+                }}>
+                  <div style={skeu.gloss} />
+                  <div style={{
+                    fontSize: 10, fontFamily: MONO, letterSpacing: 3,
+                    color: "#A2A0B4", position: "relative", zIndex: 1,
+                  }}>SET COMPLETE &mdash; ULTRA RARE UNLOCKED</div>
+                </div>
+              )}
+              <button onClick={onScanned} style={{ marginTop: 32, padding: "13px 40px", ...skeu.btnGold, color: C.bg, fontSize: 10, fontFamily: MONO, fontWeight: 600, letterSpacing: 3, cursor: "pointer" }}>VIEW COLLECTION</button>
+            </div>
+          )}
         )}
       </div>
     </>
