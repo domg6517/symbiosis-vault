@@ -57,12 +57,11 @@ export async function GET(request) {
     });
   });
 
-  // Add 5 points per owned 1/1 ultra rare
+  // Add 5 bonus points per owned 1/1 ultra rare (card already counted via user_cards)
   (ultraRares || []).forEach((row) => {
     const uid = row.user_id;
     if (!userMap[uid]) userMap[uid] = { totalCards: 0, points: 0, uniqueSongs: new Set(), cards: [] };
     userMap[uid].points += ULTRA_RARE_POINTS;
-    userMap[uid].totalCards++;
   });
 
   const userIds = Object.keys(userMap);
