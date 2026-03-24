@@ -19,7 +19,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
   const [disconnecting, setDisconnecting] = useState(false);
 
   const linked = ownedCards.filter((c) => c.linked);
-  const singleCards = linked.filter((c) => c.type === "single");
+  const singleCards = linked.filter((c) => c.type === "single" && c.rarity !== "ultra_rare");
   const boosterCards = linked.filter((c) => c.type === "booster");
 
   const completeSingles = SINGLES.filter((s) => {
@@ -162,7 +162,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
               <div style={{ width: 32, flexShrink: 0 }} />
             </div>
             {SINGLES.map((song, idx) => (
-              <SongRow key={song.id} song={song} ownedCards={ownedCards.filter((c) => c.type === "single")} onCardClick={onCardClick} isLast={idx === SINGLES.length - 1} />
+              <SongRow key={song.id} song={song} ownedCards={ownedCards.filter((c) => c.type === "single" && c.rarity !== "ultra_rare")} onCardClick={onCardClick} isLast={idx === SINGLES.length - 1} />
             ))}
           </div>
         )}
