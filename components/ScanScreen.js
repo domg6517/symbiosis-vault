@@ -160,7 +160,7 @@ export default function ScanScreen({ session, onBack, onScanned }) {
             )}
           </>
         ) : (
-          {cardResult && cardResult.rarity === 'ultra_rare' ? (
+          {(cardResult && cardResult.rarity === 'ultra_rare') ? (
             <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.6s ease", padding: "0 20px" }}>
               <div style={{
                 width: 90, height: 90, borderRadius: "50%",
