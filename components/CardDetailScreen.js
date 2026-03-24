@@ -24,6 +24,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
   const uniquePerspectives = new Set(songCards.map((c) => c.perspective)).size;
   const complete = uniquePerspectives === 3;
   const isRare = card.rarity === "rare";
+  const isUltraRare = card.rarity === "ultra_rare";
 
   const handleDisconnect = () => {
     setDisconnecting(true);
@@ -87,7 +88,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
                   letterSpacing: -1, textTransform: "uppercase",
                   userSelect: "none",
                 }}>
-                  {isRare ? "RARE" : "COMMON"}
+                  {isUltraRare ? "ULTRA RARE" : isRare ? "RARE" : "COMMON"}
                 </div>
                 <div style={{
                   position: "absolute", bottom: 8, right: 10,
@@ -108,7 +109,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
       <div style={{ padding: "0 22px", zIndex: 1 }}>
         <div style={{ fontSize: 20, fontFamily: SERIF, fontWeight: 300, color: C.cream, marginBottom: 3, textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>{song?.title}</div>
         <div style={{ fontSize: 12, fontFamily: SANS, color: C.textSec, marginBottom: 16 }}>
-          {card.perspective} {"\u00B7"} {isRare ? "Rare" : "Common"} {"\u00B7"} {card.chipId}
+          {card.perspective} {"\u00B7"} {isUltraRare ? "Ultra Rare" : isRare ? "Rare" : "Common"} {"\u00B7"} {card.chipId}
         </div>
 
         {/* Unlock */}
@@ -255,7 +256,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
         }}>
           <span>NFC VERIFIED</span>
           <span>{card.chipId}</span>
-          <span>{card.rarity.toUpperCase()}</span>
+          <span>{card.rarity.replace(/_/g, " ").toUpperCase()}</span>
         </div>
       </div>
     </div>
