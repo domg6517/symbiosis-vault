@@ -57,12 +57,8 @@ export async function GET(request) {
     });
   });
 
-  // Add 5 bonus points per owned 1/1 ultra rare (card already counted via user_cards)
-  (ultraRares || []).forEach((row) => {
-    const uid = row.user_id;
-    if (!userMap[uid]) userMap[uid] = { totalCards: 0, points: 0, uniqueSongs: new Set(), cards: [] };
-    userMap[uid].points += ULTRA_RARE_POINTS;
-  });
+  // ultra_rare cards are already scored via RARITY_POINTS in user_cards above
+  // user_ultra_rares only tracks which specific 1/1 chip was linked (no extra points)
 
   const userIds = Object.keys(userMap);
 
