@@ -36,6 +36,36 @@ export async function POST(request) {
 
     try { await supabase.rpc("recalculate_badges", { p_user_id: user.id }); } catch (e) {}
 
+    // Log to activity feed
+    try {
+      let displayName = "Collector";
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", user.id)
+        .single();
+      if (profile?.username) displayName = profile.username;
+
+      const { data: urData } = await supabase
+        .from("ultra_rares")
+        .select("chip_id, song:songs(title), perspective:perspectives(name)")
+        .eq("id", ultraRareId)
+        .single();
+
+      if (urData) {
+        await supabase.from("activity_feed").insert({
+          user_id: user.id,
+          event_type: "card_unlinked",
+          card_chip_id: urData.chip_id,
+          card_perspective: urData.perspective?.name || null,
+          card_rarity: "ultra_rare",
+          card_type: "single",
+          card_song_title: urData.song?.title || null,
+          display_name: displayName,
+        });
+      }
+    } catch (e) { /* non-critical */ }
+
     return NextResponse.json({ success: true, message: "1/1 disconnected. The chip is available again." });
   } catch (err) {
     console.error("Ultra rare disconnect error:", err);
