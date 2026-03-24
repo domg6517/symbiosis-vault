@@ -18,20 +18,27 @@ export default function CollectorProfileScreen({ collector, onBack }) {
   const [collectorCards, setCollectorCards] = useState([]);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [loadingCards, setLoadingCards] = useState(true);
+  const [resolvedRank, setResolvedRank] = useState(null);
 
   useEffect(() => {
     if (!collector.user_id) return;
     async function fetchAll() {
       try {
         const headers = session?.access_token ? { Authorization: "Bearer " + session.access_token } : {};
-        const [profileRes, cardsRes] = await Promise.all([
+        const [profileRes, cardsRes, lbRes] = await Promise.all([
           fetch("/api/users/profile?userId=" + collector.user_id, { headers }),
           fetch("/api/users/cards?userId=" + collector.user_id, { headers }),
+          fetch("/api/leaderboard", { headers }),
         ]);
         const profileJson = await profileRes.json();
         const cardsJson = await cardsRes.json();
+        const lbJson = await lbRes.json();
         if (profileRes.ok) setProfileData(profileJson);
         if (cardsJson.cards) setCollectorCards(cardsJson.cards);
+        if (lbJson.leaderboard) {
+          const lbEntry = lbJson.leaderboard.find(e => e.user_id === collector.user_id);
+          if (lbEntry) setResolvedRank(lbEntry.rank);
+        }
       } catch (e) {
         console.error("Profile fetch error:", e);
       } finally {
@@ -48,7 +55,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
   const tw = sanitizeHandle(profileData?.twitter || collector.twitter || "");
   const tk = sanitizeHandle(profileData?.tiktok || collector.tiktok || "");
   const badges = profileData?.badges || [];
-  const rank = profileData?.rank || collector.rank;
+  const rank = resolvedRank || collector.rank;
 
   const ultraRareCards = collectorCards.filter(c => c.rarity === "ultra_rare");
   const regularCards = collectorCards.filter(c => c.rarity !== "ultra_rare");
@@ -124,36 +131,32 @@ export default function CollectorProfileScreen({ collector, onBack }) {
         ))}
       </div>
 
-      {/* 1/1 Ultra Rares â same grid size as regular cards, gold frame */}
+      {/* 1/1 Ultra Rares — same grid as regular cards, slightly larger with gold glow */}
       {!loadingCards && ultraRareCards.length > 0 && (
         <div style={{ padding: "0 16px", marginBottom: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 14 }}>
             <StarIcon size={9} color={C.megaGold} />
             <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.megaGold }}>
-              1 OF 1{ultraRareCards.length > 1 ? " Â· " + ultraRareCards.length : ""}
+              1 OF 1{ultraRareCards.length > 1 ? " \u00b7 " + ultraRareCards.length : ""}
             </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10 }}>
-            {ultraRareCards.map((card) => {
-              const pLabel = card.perspective === "J&J" ? "J&J" : (card.perspective.split(" ")[1] || card.perspective);
-              return (
-                <div key={card.chipId} style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-                  <div style={{ borderRadius: 8, overflow: "hidden", aspectRatio: "3/4" }}>
-                    {card.imageUrl ? (
-                      <img src={card.imageUrl} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} alt="" />
-                    ) : (
-                      <div style={{ width: "100%", height: "100%", background: "linear-gradient(145deg, #2A2416, #1E1A0E)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <StarIcon size={14} color={C.megaGold} />
-                      </div>
-                    )}
-                  </div>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontFamily: SERIF, fontSize: 11, color: "#E4BC4A", fontWeight: 500 }}>{pLabel}</div>
-                    <div style={{ fontFamily: MONO, fontSize: 7, color: "#C4A030", letterSpacing: 1, marginTop: 2 }}>1 OF 1</div>
-                  </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+            {ultraRareCards.map((card) => (
+              <div key={card.chipId} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, pointerEvents: "none" }}>
+                <div style={{ transform: "scale(1.1)", filter: "drop-shadow(0 0 6px rgba(228,188,74,0.55))" }}>
+                  <MiniPhotoCard
+                    perspective={card.perspective}
+                    rarity={card.rarity}
+                    isBooster={card.type === "booster"}
+                    imageUrl={card.imageUrl}
+                    onClick={() => {}}
+                  />
                 </div>
-              );
-            })}
+                <div style={{ fontFamily: MONO, fontSize: 7, color: C.megaGold, letterSpacing: 1, textAlign: "center", lineHeight: 1.4, marginTop: 4 }}>
+                  {card.songNum} {card.perspective === "J&J" ? "J&J" : (card.perspective.split(" ")[1] || card.perspective)}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -162,7 +165,7 @@ export default function CollectorProfileScreen({ collector, onBack }) {
       {!loadingCards && regularCards.length > 0 && (
         <div style={{ padding: "0 16px" }}>
           <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 3, color: C.textDim, marginBottom: 14 }}>
-            COLLECTION · {regularCards.length} CARDS
+            COLLECTION \u00b7 {regularCards.length} CARDS
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
             {regularCards.map((card) => (
