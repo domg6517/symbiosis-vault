@@ -70,12 +70,12 @@ export async function POST(request) {
     } catch (_) {}
 
     // Fetch card image from card_content
-    let cardImageUrl = data?.file_url ? encodeURI(data.file_url) : null = null;
+    let cardImageUrl = null;
     try {
       const { data: cc } = await supabase
         .from("card_content").select("file_url")
         .eq("card_template_id", cardTemplate.id).eq("content_type", "image").single();
-      cardImageUrl = data?.file_url ? encodeURI(data.file_url) : null = cc?.file_url || null;
+      cardImageUrl = cc?.file_url ? encodeURI(cc.file_url) : null;
     } catch (_) {}
 
     // Badge diff
