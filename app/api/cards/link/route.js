@@ -145,13 +145,13 @@ export async function POST(request) {
         await notifyDiscord(ultraRareClaimedEmbed({
           username: displayName, chipId: cardTemplate.chip_id,
           perspective: cardTemplate.perspective.name, songTitle: cardTemplate.song.title,
-          imageUrl: cardImageUrl = data?.file_url ? encodeURI(data.file_url) : null,
+          imageUrl: cardImageUrl,
         }));
       } else {
         await notifyDiscord(cardLinkedEmbed({
           username: displayName, chipId: cardTemplate.chip_id,
           perspective: cardTemplate.perspective.name, rarity: cardTemplate.rarity,
-          songTitle: cardTemplate.song.title, imageUrl: cardImageUrl = data?.file_url ? encodeURI(data.file_url) : null,
+          songTitle: cardTemplate.song.title, imageUrl: cardImageUrl,
         }));
       }
     } catch (_) {}
