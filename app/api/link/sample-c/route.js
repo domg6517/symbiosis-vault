@@ -73,21 +73,22 @@ export async function POST(request) {
         const { data: cc } = await supabase
           .from("card_content").select("file_url")
           .eq("card_template_id", cardTemplate.id).eq("content_type", "image").single();
-        cardImageUrl = cc?.file_url ? encodeURI(cc.file_url) : null;
+        cardImageUrl = cc?.file_url || null;
       } catch (_) {}
+
       // For ultra rare cards, fall back to same song+perspective regular card image
-      if (!cardImageUrl && cardTemplate.rarity === 'ultra_rare') {
+      if (!cardImageUrl && cardTemplate.rarity === "ultra_rare") {
         try {
           const { data: regCard } = await supabase
-            .from('card_templates').select('id')
-            .eq('song_id', cardTemplate.song.id)
-            .eq('perspective_id', cardTemplate.perspective.id)
-            .neq('rarity', 'ultra_rare').limit(1).single();
+            .from("card_templates").select("id")
+            .eq("song_id", cardTemplate.song.id)
+            .eq("perspective_id", cardTemplate.perspective.id)
+            .neq("rarity", "ultra_rare").limit(1).single();
           if (regCard) {
             const { data: urFallback } = await supabase
-              .from('card_content').select('file_url')
-              .eq('card_template_id', regCard.id).eq('content_type', 'image').single();
-            if (urFallback?.file_url) cardImageUrl = encodeURI(urFallback.file_url);
+              .from("card_content").select("file_url")
+              .eq("card_template_id", regCard.id).eq("content_type", "image").single();
+            if (urFallback?.file_url) cardImageUrl = urFallback.file_url;
           }
         } catch (_) {}
       }
@@ -105,9 +106,7 @@ export async function POST(request) {
         const { data: badgesAfter } = await supabase
           .from("user_badges").select("badge_id, badge:badges(icon, label)").eq("user_id", user.id);
         const newBadges = (badgesAfter || []).filter((b) => !badgesBefore.includes(b.badge_id));
-        for (const b of newBadges) {
-          await notifyDiscord(badgeEarnedEmbed({ username: displayName, badgeIcon: b.badge.icon, badgeLabel: b.badge.label }));
-        }
+        // Badge Discord notifications disabled
       } catch (_) {}
 
       try {
@@ -220,22 +219,23 @@ export async function POST(request) {
     } catch (_) {}
 
     // Fetch image for ultra rare Discord embed
-    let urImageUrl = ultraRare.image_url ? encodeURI(ultraRare.image_url) : null;
+    let urImageUrl = ultraRare.image_url || null;
     if (!urImageUrl) {
       try {
         const { data: urRegCard } = await supabase
-          .from('card_templates').select('id')
-          .eq('song_id', ultraRare.song_id)
-          .eq('perspective_id', ultraRare.perspective_id)
-          .neq('rarity', 'ultra_rare').limit(1).single();
+          .from("card_templates").select("id")
+          .eq("song_id", ultraRare.song_id)
+          .eq("perspective_id", ultraRare.perspective_id)
+          .neq("rarity", "ultra_rare").limit(1).single();
         if (urRegCard) {
           const { data: urFallbackImg } = await supabase
-            .from('card_content').select('file_url')
-            .eq('card_template_id', urRegCard.id).eq('content_type', 'image').single();
-          if (urFallbackImg?.file_url) urImageUrl = encodeURI(urFallbackImg.file_url);
+            .from("card_content").select("file_url")
+            .eq("card_template_id", urRegCard.id).eq("content_type", "image").single();
+          if (urFallbackImg?.file_url) urImageUrl = urFallbackImg.file_url;
         }
       } catch (_) {}
     }
+
     try {
       await notifyDiscord(ultraRareClaimedEmbed({
         username: displayNameUR, chipId,
