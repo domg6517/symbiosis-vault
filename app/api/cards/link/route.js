@@ -70,12 +70,12 @@ export async function POST(request) {
     } catch (_) {}
 
     // Fetch card image from card_content
-    let cardImageUrl = null;
+    let cardImageUrl = data?.file_url ? encodeURI(data.file_url) : null = null;
     try {
       const { data: cc } = await supabase
         .from("card_content").select("file_url")
         .eq("card_template_id", cardTemplate.id).eq("content_type", "image").single();
-      cardImageUrl = cc?.file_url || null;
+      cardImageUrl = data?.file_url ? encodeURI(data.file_url) : null = cc?.file_url || null;
     } catch (_) {}
 
     // Badge diff
@@ -145,13 +145,13 @@ export async function POST(request) {
         await notifyDiscord(ultraRareClaimedEmbed({
           username: displayName, chipId: cardTemplate.chip_id,
           perspective: cardTemplate.perspective.name, songTitle: cardTemplate.song.title,
-          imageUrl: cardImageUrl,
+          imageUrl: cardImageUrl = data?.file_url ? encodeURI(data.file_url) : null,
         }));
       } else {
         await notifyDiscord(cardLinkedEmbed({
           username: displayName, chipId: cardTemplate.chip_id,
           perspective: cardTemplate.perspective.name, rarity: cardTemplate.rarity,
-          songTitle: cardTemplate.song.title, imageUrl: cardImageUrl,
+          songTitle: cardTemplate.song.title, imageUrl: cardImageUrl = data?.file_url ? encodeURI(data.file_url) : null,
         }));
       }
     } catch (_) {}
