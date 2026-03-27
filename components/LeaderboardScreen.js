@@ -33,18 +33,13 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
   }, [fetchLeaderboard]);
 
   const medal = (rank) =>
-    rank === 1
-      ? "🥇"
-      : rank === 2
-        ? "🥈"
-        : rank === 3
-          ? "🥉"
-          : rank;
+    rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : rank;
 
   return (
     <div
       style={{
-        minHeight: "100dvh",
+        height: "100dvh",
+        overflowY: "auto",
         background: C.bg,
         color: C.text,
         padding: "0 0 100px",
@@ -173,10 +168,7 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
                 display: "flex",
                 alignItems: "center",
                 gap: 14,
-                border:
-                  entry.rank <= 3
-                    ? "1px solid " + C.accent
-                    : undefined,
+                border: entry.rank <= 3 ? "1px solid " + C.accent : undefined,
                 cursor: "pointer",
               }}
             >
@@ -192,6 +184,7 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
               >
                 {medal(entry.rank)}
               </div>
+
               {/* PFP */}
               <div
                 style={{
@@ -223,6 +216,7 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
                   (entry.display || "C").charAt(0).toUpperCase()
                 )}
               </div>
+
               {/* Info */}
               <div style={{ flex: 1 }}>
                 <div
@@ -244,14 +238,12 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
                   }}
                 >
                   {entry.points || entry.totalCards} PTS ·{" "}
-                  {entry.totalCards} CARD
-                  {entry.totalCards !== 1 ? "S" : ""}
+                  {entry.totalCards} CARD{entry.totalCards !== 1 ? "S" : ""}
                 </div>
               </div>
+
               {/* Arrow */}
-              <div style={{ fontSize: 16, color: C.textDim }}>
-                ›
-              </div>
+              <div style={{ fontSize: 16, color: C.textDim }}>›</div>
             </div>
           ))}
         </div>
