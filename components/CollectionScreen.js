@@ -160,8 +160,8 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
           overflowX: "auto", scrollbarWidth: "none",
         }}>
           {[
-            { key: "singles", label: "I" },
-            { key: "boosters", label: "II" },
+            { key: "singles", label: "SINGLES" },
+            { key: "boosters", label: "BOOSTER PACKS" },
             { key: "ultra", label: "1/1" },
             { key: "feed", label: "FEED" },
           ].map((tab) => (
