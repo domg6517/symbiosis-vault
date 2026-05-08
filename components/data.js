@@ -1,8 +1,6 @@
 // ── SONG DATA ──────────────────────────────────────────────
 export const SINGLES = [
-  { id: 1, title: "Sample A", num: "00A" },
-  { id: 34, title: "Sample B", num: "00B" },
-  { id: 35, title: "Sample C", num: "00C" },
+  { id: 36, title: "Hideaway", num: "01" },
   { id: 3, title: "[REDACTED]", num: "02" },
   { id: 4, title: "[REDACTED]", num: "03" },
   { id: 5, title: "[REDACTED]", num: "04" },
