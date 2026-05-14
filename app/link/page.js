@@ -114,6 +114,7 @@ function LinkContent() {
     fontFamily: SERIF, textShadow: "0 1px 3px rgba(0,0,0,0.4)",
   };
 
+  // ─── Ultra Rare animated rings ─────────────────────────────────────────────
   const UltraRareRings = () => (
     <>
       {[{ size: 160, delay: "0.1s", opacity: 0.5 }, { size: 240, delay: "0.4s", opacity: 0.25 }, { size: 340, delay: "0.7s", opacity: 0.12 }].map(({ size, delay, opacity }) => (
@@ -151,10 +152,12 @@ function LinkContent() {
       <div style={wrapStyle}>
         <FilmGrain opacity={0.04} />
 
+        {/* Ultra Rare rings — rendered behind all content */}
         {isUltraRare && (status === "success" || status === "already" || status === "taken") && (
           <UltraRareRings />
         )}
 
+        {/* ── Loading ── */}
         {status === "loading" && (
           <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
             <div style={circleBase}>
@@ -165,6 +168,7 @@ function LinkContent() {
           </div>
         )}
 
+        {/* ── Needs Auth ── */}
         {status === "needsAuth" && (
           <div style={{ textAlign: "center", zIndex: 1, padding: "0 32px" }}>
             <div style={circleBase}>
@@ -177,11 +181,13 @@ function LinkContent() {
           </div>
         )}
 
+        {/* ── Already / Taken ── */}
         {(status === "already" || status === "taken") && (
           isUltraRare ? (
+            // ── Ultra Rare already collected ──
             <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
               <div style={{ display: "flex", justifyContent: "center" }}>
-                <div style={{ width: 80, height: 80, borderRadius: "50%", background: "linear-gradient(145deg, #2A2210, #1A160A)", border: "1.5px solid rgba(196,163,73,0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: 80, height: 80, borderRadius: "50%", background: "linear-gradient(145deg, #2A2210, #1A160A)", border: `1.5px solid rgba(196,163,73,0.35)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <DiamondIcon dim />
                 </div>
               </div>
@@ -191,7 +197,7 @@ function LinkContent() {
               </div>
               {cardResult && (
                 <>
-                  <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: "rgba(196,163,73,0.5)", marginTop: 8 }}>{cardResult.perspective} · {cardResult.songTitle}</div>
+                  <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: 2, color: `rgba(196,163,73,0.5)`, marginTop: 8 }}>{cardResult.perspective} · Hideaway</div>
                   <div style={{ fontFamily: SANS, fontSize: 12, color: C.textDim, marginTop: 6, lineHeight: 1.5 }}>
                     {status === "taken" ? "This card is connected to another collector" : "This ultra rare is already in your vault"}
                   </div>
@@ -201,6 +207,7 @@ function LinkContent() {
               <button onClick={goToVault} style={goldBtnStyle}>OPEN VAULT</button>
             </div>
           ) : (
+            // ── Standard already collected ──
             <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(145deg, #2A2520, #1E1B17)", border: "1.5px solid " + C.accent + "44", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -220,6 +227,7 @@ function LinkContent() {
           )
         )}
 
+        {/* ── Linking spinner ── */}
         {status === "linking" && (
           <div style={{ textAlign: "center", zIndex: 1 }}>
             <div style={{ width: 48, height: 48, borderRadius: "50%", border: "2px solid " + C.accent + "22", borderTopColor: C.accent, animation: "spin 1s linear infinite", margin: "0 auto" }} />
@@ -227,11 +235,13 @@ function LinkContent() {
           </div>
         )}
 
+        {/* ── Success ── */}
         {status === "success" && (
           isUltraRare ? (
+            // ── Ultra Rare success ──
             <div style={{ textAlign: "center", zIndex: 1, animation: "fadeUp 0.5s ease" }}>
               <div style={{ display: "flex", justifyContent: "center" }}>
-                <div style={{ width: 80, height: 80, borderRadius: "50%", background: "linear-gradient(145deg, #2A2210, #1A160A)", border: "1.5px solid rgba(196,163,73,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: 80, height: 80, borderRadius: "50%", background: "linear-gradient(145deg, #2A2210, #1A160A)", border: `1.5px solid rgba(196,163,73,0.5)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <DiamondIcon />
                 </div>
               </div>
@@ -249,6 +259,7 @@ function LinkContent() {
               <button onClick={goToVault} style={goldBtnStyle}>OPEN VAULT</button>
             </div>
           ) : (
+            // ── Standard success ──
             <div style={{ textAlign: "center", zIndex: 1 }}>
               <div style={{ width: 64, height: 64, ...skeuo, borderRadius: "50%", border: "2px solid " + C.teal, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto" }}>
                 <CheckIcon size={24} color={C.teal} />
@@ -273,6 +284,7 @@ function LinkContent() {
           )
         )}
 
+        {/* ── Error ── */}
         {status === "error" && (
           <div style={{ textAlign: "center", zIndex: 1, padding: "0 32px" }}>
             <div style={{ width: 64, height: 64, ...skeuo.inset, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto", border: `1.5px solid ${C.rose}33` }}>
@@ -294,4 +306,4 @@ export default function LinkPage() {
       <LinkContent />
     </Suspense>
   );
-            }
+}
