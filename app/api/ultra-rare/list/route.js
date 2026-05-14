@@ -16,74 +16,82 @@ export async function GET(request) {
       if (user) currentUserId = user.id;
     }
 
-    // Fetch all linked ultra_rare user_cards with template + content
-    const { data: urCards, error } = await supabase
-      .from("user_cards")
+    // Fetch ALL ultra_rare card templates with song, perspective, and content
+    const { data: templates, error: tplError } = await supabase
+      .from("card_templates")
       .select(`
-        user_id,
-        linked,
-        card_template:card_templates (
+        id,
+        chip_id,
+        rarity,
+        song:songs (
           id,
-          chip_id,
-          rarity,
-          song:songs (
-            id,
-            title,
-            song_number
-          ),
-          perspective:perspectives (
-            id,
-            name
-          ),
-          content:card_content (
-            content_type,
-            file_url
-          )
+          title,
+          song_number
+        ),
+        perspective:perspectives (
+          id,
+          name
+        ),
+        content:card_content (
+          content_type,
+          file_url
         )
       `)
-      .eq("linked", true);
+      .eq("rarity", "ultra_rare");
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (tplError) {
+      return NextResponse.json({ error: tplError.message }, { status: 500 });
     }
 
-    // Filter to only ultra_rare cards in JS (Supabase can't filter on related table columns)
-    const validCards = (urCards || []).filter(
-      (uc) => uc.card_template && uc.card_template.rarity === "ultra_rare"
-    );
+    // Fetch ownership: which templates are currently linked by someone
+    const templateIds = (templates || []).map((t) => t.id);
+    let ownershipMap = {}; // template_id -> { user_id, username }
 
-    // Collect unique user_ids to fetch profiles in one query
-    const userIds = [...new Set(validCards.map((uc) => uc.user_id))];
+    if (templateIds.length > 0) {
+      const { data: ownedCards } = await supabase
+        .from("user_cards")
+        .select("user_id, card_template_id")
+        .in("card_template_id", templateIds)
+        .eq("linked", true);
 
-    let profileMap = {};
-    if (userIds.length > 0) {
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("id, username")
-        .in("id", userIds);
+      if (ownedCards && ownedCards.length > 0) {
+        const userIds = [...new Set(ownedCards.map((uc) => uc.user_id))];
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("id, username")
+          .in("id", userIds);
 
-      if (profiles) {
-        for (const p of profiles) {
-          profileMap[p.id] = p.username;
+        const profileMap = {};
+        if (profiles) {
+          for (const p of profiles) {
+            profileMap[p.id] = p.username;
+          }
+        }
+
+        for (const oc of ownedCards) {
+          ownershipMap[oc.card_template_id] = {
+            user_id: oc.user_id,
+            username: profileMap[oc.user_id] || null,
+          };
         }
       }
     }
 
-    // Build array in the shape CollectionScreen expects
+    // Build full catalog: all templates + ownership info
     const ultraRares = [];
-    for (const uc of validCards) {
-      const ct = uc.card_template;
+    for (const ct of templates || []) {
       const content = ct.content || [];
       const imageContent = content.find((c) => c.content_type === "image");
+      const ownerData = ownershipMap[ct.id] || null;
 
       ultraRares.push({
         chipId: ct.chip_id || null,
         songId: ct.song?.id || null,
+        songTitle: ct.song?.title || null,
+        songNum: ct.song?.song_number || null,
         perspective: ct.perspective?.name || null,
-        owner: {
-          username: profileMap[uc.user_id] || null,
-        },
-        isOwnedByMe: currentUserId ? uc.user_id === currentUserId : false,
+        owner: ownerData ? { username: ownerData.username } : null,
+        isOwnedByMe: ownerData ? ownerData.user_id === currentUserId : false,
         imageUrl: imageContent?.file_url || null,
       });
     }
