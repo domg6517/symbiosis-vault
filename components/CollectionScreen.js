@@ -13,12 +13,16 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [urData, setUrData] = useState({}); // chipId -> { owner, isOwnedByMe, imageUrl }
+  const [urCatalog, setUrCatalog] = useState([]); // full catalog from API
   const [selectedUR, setSelectedUR] = useState(null);
   const [disconnecting, setDisconnecting] = useState(false);
 
   // Derive owned ultra rares from ownedCards prop
   const ownedURCards = ownedCards.filter((c) => c.rarity === "ultra_rare" && c.linked);
-  const ULTRA_RARES = generateUltraRares().map((ur) => {
+  const ULTRA_RARES = (urCatalog.length > 0 ? urCatalog : generateUltraRares()).map((ur) => {
+    if (urCatalog.length > 0) {
+      return { ...ur, id: ur.songId + "-" + ur.perspective, owned: !!ur.owner, imageUrl: ur.imageUrl || null, chipId: ur.chipId || null };
+    }
     const match = ownedURCards.find(
       (c) => c.songId === ur.songId && c.perspective === ur.perspective
     );
@@ -59,6 +63,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             map[ur.songId + "-" + ur.perspective] = val;
           });
           setUrData(map);
+          setUrCatalog(data.ultraRares);
         }
       } catch (e) {
         console.error("UR data fetch error:", e);
