@@ -5,89 +5,94 @@ export async function GET(request) {
   try {
     const supabase = createServerClient();
 
-    // Optional auth for isOwnedByMe check
+    // Optional auth — used to determine isOwnedByMe
     let currentUserId = null;
     const authHeader = request.headers.get("authorization");
     if (authHeader) {
       const token = authHeader.replace("Bearer ", "");
-      const { data: { user } } = await supabase.auth.getUser(token);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser(token);
       if (user) currentUserId = user.id;
     }
 
-    // Get all ultra rare records with song + perspective info
-    const { data: ultraRares, error } = await supabase
-      .from("ultra_rares")
+    // Fetch all linked ultra_rare user_cards with template + content
+    const { data: urCards, error } = await supabase
+      .from("user_cards")
       .select(`
-        chip_id,
-        image_url,
-        song:songs (id, title, song_number),
-        perspective:perspectives (id, name)
-      `);
+        user_id,
+        linked,
+        card_template:card_templates (
+          id,
+          chip_id,
+          rarity,
+          song:songs (
+            id,
+            title,
+            song_number
+          ),
+          perspective:perspectives (
+            id,
+            name
+          ),
+          content:card_content (
+            content_type,
+            file_url
+          )
+        )
+      `)
+      .eq("linked", true)
+      .eq("card_template.rarity", "ultra_rare");
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    const chipIds = (ultraRares || []).map((ur) => ur.chip_id);
+    // Filter out any rows where card_template is null (join produced no match)
+    const validCards = (urCards || []).filter(
+      (uc) => uc.card_template && uc.card_template.rarity === "ultra_rare"
+    );
 
-    // Build owner map: chip_id -> { userId, username }
-    let ownerMap = {};
-    if (chipIds.length > 0) {
-      const { data: templates } = await supabase
-        .from("card_templates")
-        .select("id, chip_id")
-        .in("chip_id", chipIds);
+    // Collect unique user_ids to fetch profiles in one query
+    const userIds = [...new Set(validCards.map((uc) => uc.user_id))];
 
-      if (templates && templates.length > 0) {
-        const templateIds = templates.map((t) => t.id);
-        const chipByTemplateId = {};
-        templates.forEach((t) => { chipByTemplateId[t.id] = t.chip_id; });
+    let profileMap = {};
+    if (userIds.length > 0) {
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, username")
+        .in("id", userIds);
 
-        const { data: userCards } = await supabase
-          .from("user_cards")
-          .select("card_template_id, user_id")
-          .in("card_template_id", templateIds)
-          .eq("linked", true);
-
-        if (userCards && userCards.length > 0) {
-          const ownerIds = [...new Set(userCards.map((uc) => uc.user_id))];
-          const { data: profiles } = await supabase
-            .from("profiles")
-            .select("id, username")
-            .in("id", ownerIds);
-
-          const profileMap = {};
-          if (profiles) profiles.forEach((p) => { profileMap[p.id] = p.username; });
-
-          userCards.forEach((uc) => {
-            const chipId = chipByTemplateId[uc.card_template_id];
-            if (chipId) {
-              ownerMap[chipId] = {
-                userId: uc.user_id,
-                username: profileMap[uc.user_id] || "Collector",
-              };
-            }
-          });
+      if (profiles) {
+        for (const p of profiles) {
+          profileMap[p.id] = p.username;
         }
       }
     }
 
-    const result = (ultraRares || []).map((ur) => ({
-      chipId: ur.chip_id,
-      imageUrl: ur.image_url,
-      songId: ur.song?.id,
-      songTitle: ur.song?.title,
-      songNum: ur.song?.song_number,
-      perspective: ur.perspective?.name,
-      owner: ownerMap[ur.chip_id] || null,
-      isOwnedByMe: currentUserId
-        ? ownerMap[ur.chip_id]?.userId === currentUserId
-        : false,
-    }));
+    // Build chipId-keyed map
+    const result = {};
+    for (const uc of validCards) {
+      const ct = uc.card_template;
+      if (!ct?.chip_id) continue;
 
-    return NextResponse.json({ ultraRares: result });
+      const content = ct.content || [];
+      const imageContent = content.find((c) => c.content_type === "image");
+
+      result[ct.chip_id] = {
+        owner: {
+          username: profileMap[uc.user_id] || null,
+        },
+        isOwnedByMe: currentUserId ? uc.user_id === currentUserId : false,
+        imageUrl: imageContent?.file_url || null,
+        songTitle: ct.song?.title || null,
+        songNumber: ct.song?.song_number || null,
+        perspective: ct.perspective?.name || null,
+      };
+    }
+
+    return NextResponse.json(result);
   } catch (err) {
-    console.error("Ultra rare list error:", err);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
