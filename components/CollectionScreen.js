@@ -14,6 +14,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
   const [searching, setSearching] = useState(false);
   const [urData, setUrData] = useState({}); // chipId -> { owner, isOwnedByMe, imageUrl }
   const [urCatalog, setUrCatalog] = useState([]); // full catalog from API
+  const [urCatalog, setUrCatalog] = useState([]); // full catalog from API
   const [selectedUR, setSelectedUR] = useState(null);
   const [disconnecting, setDisconnecting] = useState(false);
 
@@ -63,6 +64,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
             map[ur.songId + "-" + ur.perspective] = val;
           });
           setUrData(map);
+          setUrCatalog(data.ultraRares);
           setUrCatalog(data.ultraRares);
         }
       } catch (e) {
