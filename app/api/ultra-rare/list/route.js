@@ -41,14 +41,13 @@ export async function GET(request) {
           )
         )
       `)
-      .eq("linked", true)
-      .eq("card_template.rarity", "ultra_rare");
+      .eq("linked", true);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Filter out any rows where card_template is null (join produced no match)
+    // Filter to only ultra_rare cards in JS (Supabase can't filter on related table columns)
     const validCards = (urCards || []).filter(
       (uc) => uc.card_template && uc.card_template.rarity === "ultra_rare"
     );
