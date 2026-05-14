@@ -69,28 +69,26 @@ export async function GET(request) {
       }
     }
 
-    // Build chipId-keyed map
-    const result = {};
+    // Build array in the shape CollectionScreen expects
+    const ultraRares = [];
     for (const uc of validCards) {
       const ct = uc.card_template;
-      if (!ct?.chip_id) continue;
-
       const content = ct.content || [];
       const imageContent = content.find((c) => c.content_type === "image");
 
-      result[ct.chip_id] = {
+      ultraRares.push({
+        chipId: ct.chip_id || null,
+        songId: ct.song?.id || null,
+        perspective: ct.perspective?.name || null,
         owner: {
           username: profileMap[uc.user_id] || null,
         },
         isOwnedByMe: currentUserId ? uc.user_id === currentUserId : false,
         imageUrl: imageContent?.file_url || null,
-        songTitle: ct.song?.title || null,
-        songNumber: ct.song?.song_number || null,
-        perspective: ct.perspective?.name || null,
-      };
+      });
     }
 
-    return NextResponse.json(result);
+    return NextResponse.json({ ultraRares });
   } catch (err) {
     return NextResponse.json(
       { error: "Internal server error" },
