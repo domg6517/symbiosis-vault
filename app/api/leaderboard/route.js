@@ -93,8 +93,9 @@ export async function GET(request) {
     .sort((a, b) => b.points - a.points || b.totalCards - a.totalCards || b.uniqueSongs - a.uniqueSongs);
 
   leaderboard.forEach((entry, i) => { entry.rank = i + 1; });
-
-  cachedResult = leaderboard;
+  const top100 = leaderboard.slice(0, 100);
+  cachedResult = top100;
   cacheTimestamp = Date.now();
-  return NextResponse.json({ leaderboard });
+
+  return NextResponse.json({ leaderboard: top100 });
 }
