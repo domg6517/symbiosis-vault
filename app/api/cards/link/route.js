@@ -108,7 +108,15 @@ export async function POST(request) {
       const { data: badgesAfter } = await supabase
         .from("user_badges").select("badge_id, badge:badges(icon, label)").eq("user_id", user.id);
       const newBadges = (badgesAfter || []).filter((b) => !badgesBefore.includes(b.badge_id));
-      // Badge Discord notifications disabled
+      for (const b of newBadges) {
+        if (b.badge?.icon && b.badge?.label) {
+          await notifyDiscord(badgeEarnedEmbed({
+            username: displayName,
+            badgeIcon: b.badge.icon,
+            badgeLabel: b.badge.label,
+          }));
+        }
+      }
     } catch (_) {}
 
     // Activity feed
@@ -155,7 +163,7 @@ export async function POST(request) {
     // Discord notification
     try {
       console.log("[DISCORD_DEBUG] Reached card notification. chip=" + cardTemplate?.chip_id + " rarity=" + cardTemplate?.rarity + " ultra=" + ultraRareUnlocked);
-      if (ultraRareUnlocked) {
+      if (ultraRareUnlocked && isUltraRareChip) {
         await notifyDiscord(ultraRareClaimedEmbed({
           username: displayName, chipId: cardTemplate.chip_id,
           perspective: cardTemplate.perspective.name, songTitle: cardTemplate.song.title,
