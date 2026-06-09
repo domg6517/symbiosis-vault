@@ -13,6 +13,7 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
     if (isRefresh) setRefreshing(true);
     try {
       const r = await fetch("/api/leaderboard", {
+        cache: "no-store",
         headers: session?.access_token
           ? { Authorization: "Bearer " + session.access_token }
           : {},
@@ -30,6 +31,14 @@ export default function LeaderboardScreen({ onBack, onViewCollector }) {
 
   useEffect(() => {
     fetchLeaderboard();
+  }, [fetchLeaderboard]);
+
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") fetchLeaderboard();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
   }, [fetchLeaderboard]);
 
   const medal = (rank) =>
