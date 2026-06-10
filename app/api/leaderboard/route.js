@@ -30,7 +30,8 @@ export async function GET(request) {
   const { data: cards, error } = await supabase
     .from("user_cards")
     .select("user_id, linked, card_template:card_templates (chip_id, song_id, rarity, perspective:perspectives (name))")
-    .eq("linked", true);
+    .eq("linked", true)
+    .range(0, 49999);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   // Fetch all owned 1/1 ultra rares
