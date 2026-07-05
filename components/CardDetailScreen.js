@@ -5,7 +5,7 @@ import {
     FilmGrain, Divider, ChevronLeft, MusicIcon, CheckIcon,
     LinkIcon, UnlinkIcon, LockSmall,
 } from "./Icons";
-import { SINGLES, BOOSTERS, PERSPECTIVES } from "./data";
+import { SINGLES, BOOSTERS, PERSPECTIVES, BOOSTER_PERSPECTIVES } from "./data";
 
 export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnect }) {
   const [showDisconnect, setShowDisconnect] = useState(false);
@@ -17,12 +17,14 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
   useEffect(() => { setTimeout(() => setShow(true), 80); }, []);
 
   const isBooster = card.type === "booster";
+  const activePerspectives = isBooster ? BOOSTER_PERSPECTIVES : PERSPECTIVES;
+  const totalPerspectives = activePerspectives.length;
   const allSongs = isBooster ? BOOSTERS : SINGLES;
   const song = allSongs.find((s) => s.id === card.songId);
-  const perspLabel = card.perspective === "J&J" ? "J & J" : card.perspective.split(" ")[1];
+  const perspLabel = card.perspective === "J&J" ? "J & J" : card.perspective.includes(" ") ? card.perspective.split(" ")[1] : card.perspective;
   const songCards = ownedCards.filter((c) => c.songId === card.songId && c.linked && c.type === card.type);
   const uniquePerspectives = new Set(songCards.map((c) => c.perspective)).size;
-  const complete = uniquePerspectives === 3;
+  const complete = uniquePerspectives === totalPerspectives;
   const isRare = card.rarity === "rare";
   const isUltraRare = card.rarity === "ultra_rare";
 
@@ -144,9 +146,9 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
           {(song?.title || "").toUpperCase()} COMPLETION
         </div>
         <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
-          {PERSPECTIVES.map((persp) => {
+          {activePerspectives.map((persp) => {
             const has = songCards.some((c) => c.perspective === persp);
-            const pLabel = persp === "J&J" ? "J&J" : persp.split(" ")[1];
+            const pLabel = persp === "J&J" ? "J&J" : persp.includes(" ") ? persp.split(" ")[1] : persp.charAt(0);
             return (
               <div key={persp} style={{
                 flex: 1, padding: "12px 6px", textAlign: "center",
@@ -167,7 +169,7 @@ export default function CardDetailScreen({ card, ownedCards, onBack, onDisconnec
         }}>
           {complete && <div style={skeuo.gloss} />}
           <div style={{ fontSize: 9, fontFamily: MONO, letterSpacing: 2, color: complete ? C.accent : C.textDim, position: "relative", zIndex: 1 }}>
-            {complete ? "\u2726 ALL 3 PERSPECTIVES  -  BADGE UNLOCKED" : `${uniquePerspectives} OF 3  -  COLLECT ALL TO UNLOCK BADGE`}
+            {complete ? `\u2726 ALL ${totalPerspectives} PERSPECTIVES  -  BADGE UNLOCKED` : `${uniquePerspectives} OF ${totalPerspectives}  -  COLLECT ALL TO UNLOCK BADGE`}
           </div>
         </div>
 
