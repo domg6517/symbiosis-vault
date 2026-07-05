@@ -3,7 +3,7 @@ import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { LockSmall } from "./Icons";
 import { PERSPECTIVES } from "./data";
 
-// âââ MINI PHOTO CARD (SKEUOMORPHIC) ââââââââââ
+// ─── MINI PHOTO CARD (SKEUOMORPHIC) ────────────
 export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster = false, imageUrl = null, editionNum = null, goldFrame = false }) => {
   const label = perspective === "J&J" ? "J&J" : perspective.split(" ")[1];
   const isRare = rarity === "rare";
@@ -41,7 +41,7 @@ export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster =
           <div style={{ position: "absolute", top: 2, right: 3, fontSize: 6, color: C.purple, fontFamily: MONO }}>R</div>
         )}
         {isBooster && (
-          <div style={{ position: "absolute", bottom: 2, left: 3, fontSize: 5, color: C.booster, fontFamily: MONO, letterSpacing: 1 }}>B</div>
+          <div style={{ position: "absolute", bottom: 2, left: 3, fontSize: 5, color: C.booster, fontFamily: MONO, letterSpacing: 1 }}>S</div>
         )}
       </div>
       <div style={{
@@ -60,7 +60,7 @@ export const EmptyCell = () => (
   }}><LockSmall /></div>
 );
 
-// âââ SONG ROW (SKEUOMORPHIC) âââââââââââââââââ
+// ─── SONG ROW (SKEUOMORPHIC) ──────────────────────
 export const SongRow = ({ song, ownedCards, onCardClick, isBooster = false, isLast = false }) => {
   const songCards = ownedCards.filter((c) => c.songId === song.id && c.linked);
   const uniquePerspectives = new Set(songCards.map((c) => c.perspective)).size;
@@ -81,7 +81,7 @@ export const SongRow = ({ song, ownedCards, onCardClick, isBooster = false, isLa
       }}>
         <div style={{ width: 80, flexShrink: 0 }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: isBooster ? C.booster : C.textDim, letterSpacing: 1, marginBottom: 2 }}>
-            {isBooster ? `B${song.num}` : song.num}
+            {isBooster ? `S${song.num}` : song.num}
           </div>
           <div style={{
             fontSize: 13, fontFamily: SANS, fontWeight: 500,
