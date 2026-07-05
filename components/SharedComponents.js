@@ -3,7 +3,7 @@ import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { LockSmall } from "./Icons";
 import { PERSPECTIVES } from "./data";
 
-// ─── MINI PHOTO CARD (SKEUOMORPHIC) ────────────
+// âââ MINI PHOTO CARD (SKEUOMORPHIC) ââââââââââââ
 export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster = false, imageUrl = null, editionNum = null, goldFrame = false }) => {
   const label = perspective === "J&J" ? "J&J" : perspective.split(" ")[1];
   const isRare = rarity === "rare";
@@ -60,13 +60,13 @@ export const EmptyCell = () => (
   }}><LockSmall /></div>
 );
 
-// ─── SONG ROW (SKEUOMORPHIC) ──────────────────────
-export const SongRow = ({ song, ownedCards, onCardClick, isBooster = false, isLast = false }) => {
+// âââ SONG ROW (SKEUOMORPHIC) ââââââââââââââââââââââ
+export const SongRow = ({ song, ownedCards, onCardClick, isBooster = false, isLast = false, perspectives: perspList = PERSPECTIVES }) => {
   const songCards = ownedCards.filter((c) => c.songId === song.id && c.linked);
   const uniquePerspectives = new Set(songCards.map((c) => c.perspective)).size;
   const complete = uniquePerspectives === 3;
 
-  const perspGroups = PERSPECTIVES.map((persp) => {
+  const perspGroups = perspList.map((persp) => {
     const matching = songCards.filter((c) => c.perspective === persp);
     return { perspective: persp, cards: matching };
   });
