@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { C, SERIF, SANS, MONO, skeuo } from "./design";
 import { FilmGrain, NfcIcon, CheckIcon, LockSmall, StarIcon, TrophyIcon, ProfileIcon } from "./Icons";
-import { SINGLES, BOOSTERS, PERSPECTIVES, generateUltraRares } from "./data";
+import { SINGLES, BOOSTERS, PERSPECTIVES, BOOSTER_PERSPECTIVES, generateUltraRares } from "./data";
 import { SongRow } from "./SharedComponents";
 import ActivityFeed from "./ActivityFeed";
 
@@ -257,6 +257,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>G</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J</div>
                 <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>J&J</div>
+                <div style={{ width: 60, textAlign: "center", flexShrink: 0 }}>S</div>
               </div>
               <div style={{ width: 32, flexShrink: 0 }} />
             </div>
@@ -266,8 +267,8 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                 ownedCards={ownedCards.filter((c) => c.type === "booster")}
                 onCardClick={onCardClick}
                 isBooster isLast={idx === BOOSTERS.length - 1}
+                perspectives={BOOSTER_PERSPECTIVES}
               />
-            ))}
           </div>
         )}
 
@@ -497,7 +498,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                 {selectedUR.perspective === "J&J" ? "J&J" : selectedUR.perspective?.split(" ")[1] || selectedUR.perspective}
               </div>
               <div style={{ fontFamily: MONO, fontSize: 10, color: C.textDim, letterSpacing: 2 }}>
-                {selectedUR.songNum} Â· {selectedUR.songTitle}
+                {selectedUR.songNum} ÃÂ· {selectedUR.songTitle}
               </div>
               <div style={{ fontFamily: MONO, fontSize: 9, color: "#C4A030", letterSpacing: 3, marginTop: 6 }}>1 OF 1</div>
             </div>
