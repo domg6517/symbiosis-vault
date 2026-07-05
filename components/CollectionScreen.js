@@ -166,7 +166,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
         }}>
           {[
             { key: "singles", label: "SINGLES" },
-            { key: "boosters", label: "BOOSTER PACKS" },
+            { key: "boosters", label: "SPECIALS" },
             { key: "ultra", label: "1/1" },
             { key: "feed", label: "FEED" },
           ].map((tab) => (
@@ -296,8 +296,9 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
               </div>
             </div>
 
-            {SINGLES.map((song) => {
+            {[...SINGLES, ...BOOSTERS].map((song) => {
               const songURs = ULTRA_RARES.filter((ur) => ur.songId === song.id);
+              if (songURs.length === 0) return null;
               const songOwnedCount = songURs.filter((ur) => ur.owned).length;
               return (
                 <div key={song.id} style={{ marginBottom: 12 }}>
@@ -496,7 +497,7 @@ export default function CollectionScreen({ ownedCards, onCardClick, onScan, onLe
                 {selectedUR.perspective === "J&J" ? "J&J" : selectedUR.perspective?.split(" ")[1] || selectedUR.perspective}
               </div>
               <div style={{ fontFamily: MONO, fontSize: 10, color: C.textDim, letterSpacing: 2 }}>
-                {selectedUR.songNum} · {selectedUR.songTitle}
+                {selectedUR.songNum} Â· {selectedUR.songTitle}
               </div>
               <div style={{ fontFamily: MONO, fontSize: 9, color: "#C4A030", letterSpacing: 3, marginTop: 6 }}>1 OF 1</div>
             </div>
