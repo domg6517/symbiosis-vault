@@ -5,7 +5,7 @@ import { PERSPECTIVES } from "./data";
 
 // âââ MINI PHOTO CARD (SKEUOMORPHIC) ââââââââââââ
 export const MiniPhotoCard = ({ perspective, rarity, count, onClick, isBooster = false, imageUrl = null, editionNum = null, goldFrame = false }) => {
-  const label = perspective === "J&J" ? "J&J" : perspective.split(" ")[1];
+  const label = perspective === "J&J" ? "J&J" : perspective.includes(" ") ? perspective.split(" ")[1] : perspective;
   const isRare = rarity === "rare";
   return (
     <div onClick={onClick} style={{
@@ -64,7 +64,7 @@ export const EmptyCell = () => (
 export const SongRow = ({ song, ownedCards, onCardClick, isBooster = false, isLast = false, perspectives: perspList = PERSPECTIVES }) => {
   const songCards = ownedCards.filter((c) => c.songId === song.id && c.linked);
   const uniquePerspectives = new Set(songCards.map((c) => c.perspective)).size;
-  const complete = uniquePerspectives === 3;
+  const complete = uniquePerspectives === perspList.length;
 
   const perspGroups = perspList.map((persp) => {
     const matching = songCards.filter((c) => c.perspective === persp);
@@ -122,7 +122,7 @@ export const SongRow = ({ song, ownedCards, onCardClick, isBooster = false, isLa
             </div>
           ) : (
             <div style={{ fontSize: 10, fontFamily: MONO, color: C.textDim }}>
-              {uniquePerspectives}/3
+              {uniquePerspectives}/{perspList.length}
             </div>
           )}
         </div>
