@@ -1,4 +1,4 @@
-// ââ SONG DATA ââââââââââââââââââââââââââââââââââââââââââââââ
+// ── SONG DATA ──────────────────────────────────────────────
 export const SINGLES = [
   { id: 36, title: "Hideaway", num: "01" },
   { id: 37, title: "ITIL", num: "02" },
@@ -12,15 +12,11 @@ export const SINGLES = [
   { id: 11, title: "[REDACTED]", num: "10" },
 ];
 
-export const BOOSTERS = Array.from({ length: 22 }, (_, i) => ({
-  id: 100 + i + 1,
-  title: "[REDACTED]",
-  num: String(i + 1).padStart(2, "0"),
-}));
+export const BOOSTERS = [{ id: 40, title: "Savage", num: "01" }];
 
 export const PERSPECTIVES = ["Jack G", "Jack J", "J&J"];
 
-// ââ DEMO DATA ââââââââââââââââââââââââââââââââââââââââââââââ
+// ── DEMO DATA ──────────────────────────────────────────────
 export const generateOwnedCards = () => [];
 
 export const generateUltraRares = () => {
