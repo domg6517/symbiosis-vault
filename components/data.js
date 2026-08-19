@@ -6,7 +6,7 @@ export const SINGLES = [
   { id: 39, title: "WM", num: "04" },
   { id: 41, title: "SP", num: "05" },
   { id: 42, title: "GYO", num: "06" },
-  { id: 8, title: "[REDACTED]", num: "07" },
+  { id: 43, title: "BP", num: "07" },
   { id: 9, title: "[REDACTED]", num: "08" },
   { id: 10, title: "[REDACTED]", num: "09" },
   { id: 11, title: "[REDACTED]", num: "10" },
